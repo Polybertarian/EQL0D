@@ -13,7 +13,7 @@ if(OPT.reactControl)
         if(~isempty(OPT.REA.feedMat))
             SYS.IDX.feedMat=find(strcmp({MAT.name},OPT.REA.feedMat));
             SYS.IDX.feedNucUp=MAT(SYS.IDX.feedMat).find(OPT.REA.upNuclides);
- 	    if(ismember(OPT.REA.mode,{'replace'})
+ 	    if(ismember(OPT.REA.mode,{'replace'}))
         	SYS.IDX.feedNucRepl=MAT(SYS.IDX.feedMat).find(OPT.REA.replNuclides);
  	    end
         end
@@ -26,7 +26,7 @@ if(OPT.reactControl)
         end
         SYS.IDX.targetNucDo=MAT(SYS.IDX.targetMat).find(OPT.REA.downNuclides);
         SYS.IDX.feedNucDo=MAT(SYS.IDX.feedMat).find(OPT.REA.downNuclides);
-	if(ismember(OPT.REA.mode,{'replace'})
+	if(ismember(OPT.REA.mode,{'replace'}))
 		SYS.IDX.targetNucRepl=MAT(SYS.IDX.targetMat).find(OPT.REA.replNuclides);
  		if(any(OPT.REA.replNuclides<999))
      			OPT.REA.replFraction=[];
