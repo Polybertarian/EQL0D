@@ -1,0 +1,18 @@
+set acelib "/afs/psi.ch/project/stars/archive/COD/SERP/SB-SERP-ACT-001-11/Libraries/endfb7/sss_endfb7u.xsdata"
+set declib "/afs/psi.ch/project/stars/archive/COD/SERP/SB-SERP-ACT-001-11/Libraries/endfb7/sss_endfb7.dec"
+set nfylib "/afs/psi.ch/project/stars/archive/COD/SERP/SB-SERP-ACT-001-11/Libraries/endfb7/sss_endfb7.nfy"
+
+include "../../../geometry.serp"
+include "../../../graphite.serp"
+include "blanket.serp"
+include "fuel.serp"
+
+set power 556e6
+set pop 3000 300 30
+set ures 1
+set pcc 0
+set depmtx 1 1
+dep daytot 1
+set arr 1 0
+
+det intFlux dm fuel dm blanket dm graphite 

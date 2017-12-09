@@ -1,0 +1,3 @@
+Source  PCC Cycle Step Rep Time         k-inf     k-eff    
+EQL0D   C     001  000  AB 0            1.013349  1.006993 
+EQL0D   P     001  001  BB 1            1.009667  1.003334 

@@ -1,0 +1,42 @@
+[?1h=
+                                                                             < M A T L A B (R) >
+                                                                   Copyright 1984-2017 The MathWorks, Inc.
+                                                                    R2017b (9.3.0.713579) 64-bit (maci64)
+                                                                              September 14, 2017
+
+ 
+For online documentation, see http://www.mathworks.com/support
+For product information, visit www.mathworks.com.
+ 
+
+OPT = 
+
+  struct with fields:
+
+           serpentPath: 'nice -n 10 runsss /afs/psi.ch/project/fast_lrs/workspace/COD/SERP/Serpent2/EQL0D/2.1.26/sss2'
+           cycleLength: 365
+               nCycles: 9
+                nSteps: [50 2000]
+              iterMode: 'equilibrium'
+            printSteps: 0
+          printStepsBB: 0
+           printCycles: 1
+    defaultDataLibrary: 'endfb7'
+                   PCC: 0
+          reactControl: 0
+                   REA: [1x1 struct]
+
+[?1h=[?1h=[?1h=[?1h=[?1h=bicgstab converged at iteration 2 to a solution with relative residual 4.9e-17.
+bicgstab converged at iteration 1 to a solution with relative residual 4.1e-13.
+bicgstab converged at iteration 1 to a solution with relative residual 2.1e-16.
+bicgstab converged at iteration 1 to a solution with relative residual 1.8e-16.
+bicgstab converged at iteration 1 to a solution with relative residual 1.2e-16.
+bicgstab converged at iteration 1 to a solution with relative residual 3.1e-16.
+bicgstab converged at iteration 1 to a solution with relative residual 1.6e-16.
+bicgstab converged at iteration 1 to a solution with relative residual 1.3e-14.
+[?1h=[?1h=[?1h=[?1h=[?1h=
+ans =
+
+     0
+
+[?1l>

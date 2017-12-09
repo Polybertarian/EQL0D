@@ -13,7 +13,7 @@ if(SYS.restartCalc)
         error(errmsg)
     end
     [SYS.FID.keff,errmsg]=fopen('keff.txt','at');
-    
+
     if(OPT.reactControl)
         switch OPT.REA.mode
             case {'replace','addMass'}
@@ -42,7 +42,7 @@ else
             MAT(i).N=tmp.MAT(i).N;
         end
     end
-    
+
     %%% load isotope list and properties
     if(exist('DAT','var')~=1)
         warning('Library undefined! Loading default...')
@@ -57,7 +57,7 @@ else
         warning('No reprocessing streams defined!')
         REP=struct([]);
     end
-    
+
     %%% Initialization of various variables
     SYS.ouCntr=0;
     SYS.inCntr=0;
@@ -72,7 +72,7 @@ else
     SYS.RR.NU=cell(2,1);
     SYS.RR.LEAK=cell(2,1);
     SYS.MTX.defaultDecay=DAT.decayMatrix;
-    
+
     %%% Write material compositions for Serpent
     if(SYS.printAndQuit)
         for i=find([MAT.isBurned])
@@ -95,12 +95,12 @@ else
             end
         end
     end
-    
+
     %%% Neutron balance outputs
     [SYS.FID.keff,errmsg]=fopen('keff.txt','w');
     fprintf(SYS.FID.keff,'%-7s %-3s %-5s %-4s %-3s %-12s %-9s %-9s\n',...
         'Source','PCC','Cycle','Step','Rep','Time','k-inf','k-eff');
-    
+
     %%% Reactivity control outputs
     if(OPT.reactControl)
         switch OPT.REA.mode
@@ -117,10 +117,10 @@ else
                 if(strcmp(OPT.REA.mode,'addMass')&~isempty(SYS.IDX.feedMat))
                     fprintf(SYS.FID.react,['%-' num2str(13*numel(SYS.IDX.targetNucUp)) 's'],name{2});
                 elseif(strcmp(OPT.REA.mode,'replace'))
-                    fprintf(SYS.FID.react,['%-' num2str(13*numel(SYS.IDX.targetNucDo)) 's'],name{1});
+                    fprintf(SYS.FID.react,['%-' num2str(13*numel(SYS.IDX.targetNucRepl)) 's'],name{1});
                     if(~isempty(SYS.IDX.feedMat))
                         fprintf(SYS.FID.react,['%-' num2str(13*numel(SYS.IDX.targetNucUp)) 's'],name{2});
-                        fprintf(SYS.FID.react,['%-' num2str(13*numel(SYS.IDX.targetNucDo)) 's'],name{2});
+                        fprintf(SYS.FID.react,['%-' num2str(13*numel(SYS.IDX.targetNucRepl)) 's'],name{2});
                     end
                 end
                 fprintf(SYS.FID.react,'\n');
@@ -147,7 +147,7 @@ else
                     'Cycle','Step','EFPD','Add. Vol. [cm^3]');
         end
     end
-    
+
     %%% Check presence of necessary input parameters in Serpent file
     [~,isAbsent]=unix(['grep -c "set depmtx 1" ' SYS.Casename]);
     if(str2double(isAbsent)==0)
@@ -174,4 +174,3 @@ end
 clearvars -except OPT SYS DAT MAT REP
 save([SYS.Casename '.mat']);
 fprintf(SYS.FID.log,'%s\n','**** EQL0D **** Procedure initialized.');
-
