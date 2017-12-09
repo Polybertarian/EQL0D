@@ -3,7 +3,7 @@ function [MAT,SYS] = reactivityControl(MAT,OPT,SYS)
 %selected nuclides in selected materials of the MAT vector according to
 %user options given in the OPT.REA vector
 
-diff=10e5*(1/SYS.keff(end)-1/OPT.REA.targetKeff); % reactivity in pcm
+diff=1e5*(1/OPT.REA.targetKeff-1/SYS.keff(end)); % reactivity in pcm
 
 if(OPT.REA.allowNegative)
     criterion=abs(diff)>OPT.REA.tol;
@@ -87,7 +87,7 @@ if(criterion) %activate reactivity control if above tolerance
                   end
                 end
                 SYS=computeK(MAT,SYS);
-                diff(end+1)=10e5*(1/SYS.keff(end)-1/OPT.REA.targetKeff);
+                diff(end+1)=1e5*(1/SYS.keff(end)-1/OPT.REA.targetKeff);
                 if(SYS.verboseMode)
                     fprintf(SYS.FID.log,'%s\n',['** REACT ** Current k-eff: ' num2str(SYS.keff(end))]);
                 end
@@ -156,7 +156,7 @@ if(criterion) %activate reactivity control if above tolerance
                     addVolume(end)*MAT(SYS.IDX.feedMat).atDens(SYS.IDX.feedNuc);
                 MAT(SYS.IDX.targetMat).volume=MAT(SYS.IDX.targetMat).volume+addVolume(end);
                 SYS=computeK(MAT,SYS);
-                diff(end+1)=10e5*(1/SYS.keff(end)-1/OPT.REA.targetKeff);
+                diff(end+1)=1e5*(1/SYS.keff(end)-1/OPT.REA.targetKeff);
             end
             MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNuc)=MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNuc)-addVolume(end)*MAT(SYS.IDX.feedMat).atDens(SYS.IDX.feedNuc);
             if(SYS.verboseMode)
