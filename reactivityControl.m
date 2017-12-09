@@ -24,13 +24,17 @@ if(criterion) %activate reactivity control if above tolerance
             if(diff>0)
                 maxBound=0; minBound=-1;
                 changeUp(end+1)=-0.001; % initial guess
-                if(isempty(OPT.REA.replFraction))
+                replReset=false;
+                if(isempty(OPT.REA.replFraction)&strcmp(OPT.REA.mode,'replace'))
+                  replReset=true;
                   OPT.REA.replFraction=MAT(SYS.IDX.feedMat).mFrac(SYS.IDX.feedNucRepl);
                 end
             elseif(diff<0)
                 maxBound=1; minBound=0;
                 changeUp(end+1)=0.001;
-                if(isempty(OPT.REA.replFraction))
+                replReset=false;
+                if(isempty(OPT.REA.replFraction)&strcmp(OPT.REA.mode,'replace'))
+                  replReset=true;
                   OPT.REA.replFraction=MAT(SYS.IDX.targetMat).mFrac(SYS.IDX.targetNucRepl);
                 end
             end
@@ -112,6 +116,9 @@ if(criterion) %activate reactivity control if above tolerance
             end
             if(downReset)
                 OPT.REA.downFraction=[];
+            end
+            if(replReset)
+                OPT.REA.replFraction=[];
             end
             if(abs(changeUp)==1)
                 fprintf(SYS.FID.log,'%s\n','** REACT ** Max. composition change reached!');
