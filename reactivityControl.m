@@ -55,11 +55,15 @@ if(criterion) %activate reactivity control if above tolerance
                     if(~isempty(OPT.REA.feedMat))
                         MAT(SYS.IDX.feedMat).N=saveFeed;
                     end
+                    if(j==OPT.REA.maxIter)
+                        changeUp(end+1)=changeUp(find(diff==min(abs(diff)))+2)
+                    else
                     changeUp(end+1)=max([min([(changeUp(end-1)*diff(end)-changeUp(end)*diff(end-1))/...
                         (diff(end)-diff(end-1)) maxBound]),minBound]);
+                      end
                 end
                 NChange=0;
-                if(diff>0)
+                if(diff(1)>0)
                   NChange=changeUp(end)*MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucDo);
                   MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucDo)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucDo)+NChange;
                   if(strcmp(OPT.REA.mode,'replace'))
@@ -67,7 +71,7 @@ if(criterion) %activate reactivity control if above tolerance
                         ./MAT(SYS.IDX.targetMat).avMass(SYS.IDX.targetNucRepl);
                     MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucRepl)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucRepl)-NChangeRepl;
                   end
-                elseif(diff<0)
+                elseif(diff(1)<0)
                   NChange=changeUp(end)*MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucUp);
                   MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucUp)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucUp)+NChange;
                   if(strcmp(OPT.REA.mode,'replace'))
@@ -77,9 +81,9 @@ if(criterion) %activate reactivity control if above tolerance
                   end
                 end
                 if(~isempty(OPT.REA.feedMat))
-                  if(diff>0)
+                  if(diff(1)>0)
                       MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucDo)=MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucDo)-NChange;
-                  elseif(diff<0)
+                  elseif(diff(1)<0)
                       MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucUp)=MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucUp)-NChange;
                   end
                   if(strcmp(OPT.REA.mode,'replace'))
