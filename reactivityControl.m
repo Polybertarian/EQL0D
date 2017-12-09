@@ -72,7 +72,7 @@ if(criterion) %activate reactivity control if above tolerance
                   MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucUp)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucUp)+NChange;
                   if(strcmp(OPT.REA.mode,'replace'))
                     NChangeRepl=OPT.REA.replFraction.*sum(NChange.*MAT(SYS.IDX.feedMat).atomicMass(SYS.IDX.feedNucUp))...
-                        ./MAT(SYS.IDX.feedMat).avMass(SYS.IDX.feedNucRepl);
+                        ./MAT(SYS.IDX.feedMat).avMass(SYS.IDX.feedNucRepl)
                     MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucRepl)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucRepl)-NChangeRepl;
                   end
                 end
