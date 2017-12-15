@@ -8,7 +8,7 @@ diff=1e5*(1/OPT.REA.targetKeff-1/SYS.keff(end)); % reactivity in pcm
 if(OPT.REA.allowNegative)
     criterion=abs(diff)>OPT.REA.tol;
 else
-    criterion=diff>OPT.REA.tol;
+    criterion=diff<-OPT.REA.tol;
 end
 
 if(criterion) %activate reactivity control if above tolerance
