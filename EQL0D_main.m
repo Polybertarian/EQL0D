@@ -86,9 +86,7 @@ try
             for i=SYS.IDX.contMat
                 MAT(i).printMaterial(SYS,'EQL_AB');
                 mat=MAT(i); mat.N=SYS.prevN.EOC(:,i);
-                if(OPT.printStepsBB)
-                    mat.printMaterial(SYS,'EQL_BB');
-                end
+                mat.printMaterial(SYS,'EQL_BB');
             end
             neutronBalance(MAT,SYS)
         case 'steps'
@@ -97,9 +95,9 @@ try
                     MAT(i).printMaterial(SYS,'EoC');
                 end
             end
-    end
-    if(~SYS.debugMode)
-        saveFiles(MAT,OPT,SYS);
+    		if(~SYS.debugMode)
+        		saveFiles(MAT,OPT,SYS);
+    		end
     end
     save([SYS.Casename '.mat']);
     fprintf(SYS.FID.log,'%s\n','**** EQL0D **** Procedure finished.');
