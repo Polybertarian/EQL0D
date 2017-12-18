@@ -60,7 +60,7 @@ for k=skipped
     dst=SYS.IDX.dstMat(k);
     src=SYS.IDX.srcMat(k);
     tmpMtx=blkdiag(SYS.MTX.burn{2,:}); %%% Temporary rep matrix sum
-    for i=1:k-1
+    for i=SYS.IDX.contStr(SYS.IDX.contStr<k)
         tmpMtx=tmpMtx+SYS.MTX.rep{2,i};
     end
     switch REP(k).mode
