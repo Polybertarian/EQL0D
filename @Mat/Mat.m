@@ -245,24 +245,28 @@ classdef Mat < NuclearObject
             end
             suffix=[num2str(obj.temp/100,'%02d') 'c'];
             switch matWriteStyle
+                case 'dec'
+                    fprintf(fid,'%s\n',['mat ' obj.name ' sum burn 1 vol ' num2str(obj.volume,'%.16E') ' fix ' obj.name ' 300']);
+                    nucIdx=find(~ismember(obj.ZAI,[1:1:111]*1E4)&obj.N>0.0)'; %avoid X-nat nuclides
+                    suffix='';
                 case 'fix'
                     fprintf(fid,'%s\n',['mat ' obj.name ' sum burn 1 vol ' num2str(obj.volume,'%.16E') ' fix ' suffix ' ' num2str(obj.temp)]);
                     nucIdx=find(ones(size(obj.ZAI)))';
+                    suffix=['.' num2str(obj.temp/100,'%02d') 'c'];
                 case 'nofix'
                     fprintf(fid,'%s\n',['mat ' obj.name ' sum burn 1 vol ' num2str(obj.volume,'%.16E')]);
                     nucIdx=find(hasNuclearData(obj.ZAI))';
+                    suffix=['.' num2str(obj.temp/100,'%02d') 'c'];
                 otherwise
                     fprintf(fid,'%s\n',['mat ' obj.name ' sum burn 1 vol ' num2str(obj.volume,'%.16E')]);
                     nucIdx=find(hasNuclearData(obj.ZAI)&obj.N>0.0)';
+                    suffix=['.' num2str(obj.temp/100,'%02d') 'c'];
             end
             for i=nucIdx
-                if(hasNuclearData(obj.ZAI(i)))
-                    fprintf(fid,'%+11s   %.16E\n',[char(obj.nuclideName(i)) '.' suffix],obj.atDens(i));
-                    %elseif(ismember(obj.ZAI(i),[70100,70110,70130,70160,70170,290702,491162,491182,511242,511262,611522,631522,721792]))
-                    %    fprintf(fid,'%+11u   %.16E\n',obj.ZAI(i),obj.atDens(i));
+                if(strcmp(matWriteStyle,'dec')||~hasSymbol(obj.ZAI(i)))
+                    fprintf(fid,'%-13u%.16E\n',obj.ZAI(i),obj.atDens(i));
                 else
-                    %fprintf(fid,'%+11s   %.16E\n',char(obj.nuclideName(i)),obj.atDens(i));
-                    fprintf(fid,'%+11u   %.16E\n',obj.ZAI(i),obj.atDens(i));
+                    fprintf(fid,'%-13s%.16E\n',[char(obj.nuclideName(i)) suffix],obj.atDens(i));
                 end
             end
             status=fclose(fid);
@@ -371,6 +375,9 @@ classdef Mat < NuclearObject
             status=fclose(fid);
         end
         %%% Methods
+        function obj=set.temp(obj,temp)
+            obj.temp=temp;
+        end
         function idx=find(obj,ZAI)
             if(all(ZAI<1000))
                 idx=find(isElement(ZAI,obj.ZAI));
@@ -387,7 +394,7 @@ classdef Mat < NuclearObject
             aFrac=aFrac/sum(aFrac);
         end
         function avMass=avMass(obj,IDX)
-           avMass=sum(obj.aFrac(IDX).*obj.atomicMass(IDX));
+            avMass=sum(obj.aFrac(IDX).*obj.atomicMass(IDX));
         end
     end
 end
