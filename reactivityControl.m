@@ -56,7 +56,7 @@ if(criterion) %activate reactivity control if above tolerance
                         MAT(SYS.IDX.feedMat).N=saveFeed;
                     end
                     if(j==OPT.REA.maxIter)
-                        changeUp(end+1)=changeUp(find(abs(diff)==min(abs(diff))));
+                        changeUp(end+1)=changeUp(abs(diff)==min(abs(diff)));
                     else
                     	changeUp(end+1)=max([min([(changeUp(end-1)*diff(end)-changeUp(end)*diff(end-1))/(diff(end)-diff(end-1)) maxBound]),minBound]);
                     end
@@ -136,27 +136,29 @@ if(criterion) %activate reactivity control if above tolerance
             saveVol=MAT(SYS.IDX.targetMat).volume;
             saveTarget=MAT(SYS.IDX.targetMat).N;
             addVolume=[];
-            changeVol=[0 0];
+            changeVol=0;
             if(diff<0)
                 maxBound=0;
                 minBound=-1;
-                changeVol(end+1)=-0.001;
+                changeVol(end+1)=-0.05;
             elseif(diff>0)
                 maxBound=1;
                 minBound=0;
-                changeVol(end+1)=0.001;
+                changeVol(end+1)=0.05;
             end
             while(j<OPT.REA.maxIter&abs(diff(end))>OPT.REA.tol)
                 j=j+1;
                 if(j>1)
                     MAT(SYS.IDX.targetMat).N=saveTarget;
                     MAT(SYS.IDX.targetMat).volume=saveVol;
-                    changeVol(end+1)=max([min([(changeVol(end-1)*diff(end)-changeVol(end)*diff(end-1))/...
-                        (diff(end)-diff(end-1)) maxBound]), minBound]);
+                    if(j==OPT.REA.maxIter)
+                        changeVol(end+1)=changeVol(abs(diff)==min(abs(diff)));
+                    else
+                        changeVol(end+1)=max([min([(changeVol(end-1)*diff(end)-changeVol(end)*diff(end-1))/(diff(end)-diff(end-1)) maxBound]), minBound]);
+                    end
                 end
                 addVolume(end+1)=changeVol(end)*saveVol;
-                MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNuc)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNuc)+...
-                    addVolume(end)*MAT(SYS.IDX.feedMat).atDens(SYS.IDX.feedNuc);
+                MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNuc)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNuc)+addVolume(end)*MAT(SYS.IDX.feedMat).atDens(SYS.IDX.feedNuc);
                 MAT(SYS.IDX.targetMat).volume=MAT(SYS.IDX.targetMat).volume+addVolume(end);
                 SYS=computeK(MAT,SYS);
                 diff(end+1)=1e5*(1/SYS.keff(end)-1/OPT.REA.targetKeff);
@@ -167,8 +169,7 @@ if(criterion) %activate reactivity control if above tolerance
             end
             if(~OPT.PCC||SYS.PCC.active)
                 MAT(SYS.IDX.feedMat).volume=MAT(SYS.IDX.feedMat).volume-addVolume(end);
-                fprintf(SYS.FID.volume,'%-7.3d %-6.3d %-9G %#-13.6G\n',...
-                    SYS.ouCntr,SYS.inCntr,SYS.nowTime(end),addVolume(end));
+                fprintf(SYS.FID.volume,'%-7.3d %-6.3d %-9G %#-13.6G\n',SYS.ouCntr,SYS.inCntr,SYS.nowTime(end),addVolume(end));
             end
     end
     if(j>=OPT.REA.maxIter)

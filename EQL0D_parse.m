@@ -9,38 +9,35 @@ end
 %%% Reactivity control
 if(OPT.reactControl)
     SYS.IDX.targetMat=find(strcmp({MAT.name},OPT.REA.targetMat));
-    if(ismember(OPT.REA.mode,{'replace','addMass'}))
-        if(~isempty(OPT.REA.feedMat))
-            SYS.IDX.feedMat=find(strcmp({MAT.name},OPT.REA.feedMat));
-            SYS.IDX.feedNucUp=MAT(SYS.IDX.feedMat).find(OPT.REA.upNuclides);
- 	    if(ismember(OPT.REA.mode,{'replace'}))
-        	SYS.IDX.feedNucRepl=MAT(SYS.IDX.feedMat).find(OPT.REA.replNuclides);
- 	    end
-        end
-	if(any(OPT.REA.upNuclides<999))
-    	    OPT.REA.upFraction=[];
- 	end
-        SYS.IDX.targetNucUp=MAT(SYS.IDX.feedMat).find(OPT.REA.upNuclides);
-        if(any(OPT.REA.downNuclides<999))
-            OPT.REA.downFraction=[];
-        end
-        SYS.IDX.targetNucDo=MAT(SYS.IDX.targetMat).find(OPT.REA.downNuclides);
-        SYS.IDX.feedNucDo=MAT(SYS.IDX.feedMat).find(OPT.REA.downNuclides);
-	if(ismember(OPT.REA.mode,{'replace'}))
-		SYS.IDX.targetNucRepl=MAT(SYS.IDX.targetMat).find(OPT.REA.replNuclides);
- 		if(any(OPT.REA.replNuclides<999))
-     			OPT.REA.replFraction=[];
- 		end
-	end
-    elseif(strcmp(OPT.REA.mode,'addVolume'))
-        if(~isempty(OPT.REA.feedMat))
-            SYS.IDX.feedMat=find(strcmp({MAT.name},OPT.REA.feedMat));
-            SYS.IDX.targetNuc=find(ismember(MAT(SYS.IDX.targetMat).ZAI,...
-                MAT(SYS.IDX.feedMat).ZAI(MAT(SYS.IDX.feedMat).atDens>0)));
+    if(~isempty(OPT.REA.feedMat))
+        SYS.IDX.feedMat=find(strcmp({MAT.name},OPT.REA.feedMat));
+        if(strcmp(OPT.REA.mode,'addVolume'))
             SYS.IDX.feedNuc=find(MAT(SYS.IDX.feedMat).atDens>0);
         else
-            SYS.IDX.targetNuc=MAT(SYS.IDX.targetMat).find(OPT.REA.upNuclides);
+            SYS.IDX.feedNucUp=MAT(SYS.IDX.feedMat).find(OPT.REA.upNuclides);
+            SYS.IDX.feedNucDo=MAT(SYS.IDX.feedMat).find(OPT.REA.downNuclides);
+            if(ismember(OPT.REA.mode,{'replace'}))
+                SYS.IDX.feedNucRepl=MAT(SYS.IDX.feedMat).find(OPT.REA.replNuclides);
+            end
         end
+    end
+    if(ismember(OPT.REA.mode,{'replace','addMass'}))
+        SYS.IDX.targetNucUp=MAT(SYS.IDX.targetMat).find(OPT.REA.upNuclides);
+        SYS.IDX.targetNucDo=MAT(SYS.IDX.targetMat).find(OPT.REA.downNuclides);
+        if(ismember(OPT.REA.mode,{'replace'}))
+            SYS.IDX.targetNucRepl=MAT(SYS.IDX.targetMat).find(OPT.REA.replNuclides);
+            if(any(OPT.REA.replNuclides<999))
+                OPT.REA.replFraction=[];
+            end
+        end
+    elseif(strcmp(OPT.REA.mode,'addVolume'))
+        SYS.IDX.targetNuc=MAT(SYS.IDX.targetMat).find(OPT.REA.upNuclides);
+    end
+    if(any(OPT.REA.upNuclides<999))
+        OPT.REA.upFraction=[];
+    end
+    if(any(OPT.REA.downNuclides<999))
+        OPT.REA.downFraction=[];
     end
     SYS.reactAdditions=[];
 end
@@ -65,7 +62,7 @@ if(~isempty(REP))
     matsNeeded=unique({REP.source REP.destination}); % materials declared as source/destination for streams
     matsExisting={'void' MAT.name}; % materials declared in input
     for j=find(~ismember(matsNeeded,matsExisting))
-        MAT(end+1)=Mat(matsNeeded{j},0,0,1e6,0,[],[]); % create dummy materials 
+        MAT(end+1)=Mat(matsNeeded{j},0,0,1e6,0,[],[]); % create dummy materials
     end
     
     %%% Look for continuous/batch reprocessing streams
