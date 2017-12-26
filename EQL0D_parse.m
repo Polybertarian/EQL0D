@@ -12,7 +12,7 @@ if(OPT.reactControl)
     if(~isempty(OPT.REA.feedMat))
         SYS.IDX.feedMat=find(strcmp({MAT.name},OPT.REA.feedMat));
         if(strcmp(OPT.REA.mode,'addVolume'))
-            SYS.IDX.feedNuc=find(MAT(SYS.IDX.feedMat).atDens>0);
+            SYS.IDX.feedNuc=MAT(SYS.IDX.feedMat).find(OPT.REA.upNuclides);
         else
             SYS.IDX.feedNucUp=MAT(SYS.IDX.feedMat).find(OPT.REA.upNuclides);
             SYS.IDX.feedNucDo=MAT(SYS.IDX.feedMat).find(OPT.REA.downNuclides);
