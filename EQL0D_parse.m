@@ -1,4 +1,4 @@
-%%% Adapt vectors (Cycle length, etc.)
+%% Adapt vectors (Cycle length, etc.)
 if(length(OPT.cycleLength)<OPT.nCycles) % repeat last value in cycleLength vector to match nCycles
     OPT.cycleLength=[OPT.cycleLength repmat(OPT.cycleLength(end),1,OPT.nCycles-length(OPT.cycleLength))];
 end
