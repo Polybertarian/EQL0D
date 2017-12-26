@@ -21,7 +21,9 @@ if(OPT.reactControl)
             end
         end
     end
-    if(ismember(OPT.REA.mode,{'replace','addMass'}))
+    if(strcmp(OPT.REA.mode,'addVolume'))
+        SYS.IDX.targetNuc=MAT(SYS.IDX.targetMat).find(OPT.REA.upNuclides);
+    else
         SYS.IDX.targetNucUp=MAT(SYS.IDX.targetMat).find(OPT.REA.upNuclides);
         SYS.IDX.targetNucDo=MAT(SYS.IDX.targetMat).find(OPT.REA.downNuclides);
         if(ismember(OPT.REA.mode,{'replace'}))
@@ -29,9 +31,7 @@ if(OPT.reactControl)
             if(any(OPT.REA.replNuclides<999))
                 OPT.REA.replFraction=[];
             end
-        end
-    elseif(strcmp(OPT.REA.mode,'addVolume'))
-        SYS.IDX.targetNuc=MAT(SYS.IDX.targetMat).find(OPT.REA.upNuclides);
+        end        
     end
     if(any(OPT.REA.upNuclides<999))
         OPT.REA.upFraction=[];
