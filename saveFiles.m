@@ -1,6 +1,8 @@
 function [] = saveFiles(MAT,OPT,SYS)
-if(SYS.PCC.active)
+if(SYS.PCC.active&SYS.ouCntr>1)
     suffix='c';
+elseif(SYS.ouCntr==0)
+    suffix='';
 else
     suffix='p';
 end
