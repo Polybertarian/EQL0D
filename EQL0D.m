@@ -13,7 +13,7 @@ try
         elseif(strcmp(OPT.iterMode,'steps'))
             SYS.tStep(end+1)=OPT.cycleLength(SYS.ouCntr)*24.0*3600.0/OPT.nSteps(SYS.ouCntr);
         end
-        SYS.stopInner=false;  SYS.PCC=[]; if(OPT.PCC) SYS.PCC.corrector=false; end
+        SYS.stopInner=false; SYS.PCC.active=OPT.PCC; SYS.PCC.corrector=false;
         SYS.oldFIMA=[MAT.FIMA]; SYS.oldN = [MAT.N]; %%% Save previous cycle data
         if(~SYS.debugMode)
             %%% Adapt depletion time/burnup in Serpent

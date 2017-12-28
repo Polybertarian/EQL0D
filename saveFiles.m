@@ -3,7 +3,7 @@ function [] = saveFiles(matNames,keepFiles,SYS)
 % others
 
 if(keepFiles)
-    if(isempty(SYS.PCC))
+    if(~SYS.PCC.active)
         dirName=['Cycle' num2str(SYS.ouCntr-1,'%03d')];
     else
         if(SYS.PCC.corrector)
