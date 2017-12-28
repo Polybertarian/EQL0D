@@ -12,7 +12,7 @@ if(keepFiles)
             if(SYS.ouCntr==1)
                 dirName=['Cycle' num2str(SYS.ouCntr-1,'%03d')];
             else
-                dirName=['Cycle' num2str(SYS.ouCntr,'%03d') 'c'];
+                dirName=['Cycle' num2str(SYS.ouCntr-1,'%03d') 'c'];
             end
         end
     end
