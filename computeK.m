@@ -1,5 +1,5 @@
 function SYS = computeK(MAT,SYS)
-%COMPUTEK compute k-inf and k-eff using reaction rates from Serpent and compositions
+%SYS = COMPUTEK(MAT,SYS) compute k-inf and k-eff using reaction rates from Serpent and compositions
 %from the MAT vector
 
 fiss=sum([SYS.RR.notInMat{2}.fiss]); %%% usually 0 if all materials correctly input
