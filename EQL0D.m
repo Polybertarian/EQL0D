@@ -96,6 +96,7 @@ try
                 end
             end
     		if(~SYS.debugMode)
+                SYS.ouCntr=SYS.ouCntr+1;
         		saveFiles({MAT(SYS.IDX.burnMat).name},OPT.keepFiles,SYS);
     		end
     end

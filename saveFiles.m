@@ -4,21 +4,13 @@ function [] = saveFiles(matNames,keepFiles,SYS)
 
 if(keepFiles)
     if(isempty(SYS.PCC))
-        suffix='';
+        dirName=['Cycle' num2str(SYS.ouCntr-1,'%03d')];
     else
         if(SYS.PCC.corrector)
-            suffix='p';
+            dirName=['Cycle' num2str(SYS.ouCntr-1,'%03d') 'c'];
         else
-            suffix='c';
+            dirName=['Cycle' num2str(SYS.ouCntr-1,'%03d') 'p'];
         end
-        if(SYS.ouCntr==1&~SYS.PCC.corrector)
-            suffix='';
-        end
-    end
-    if(SYS.stopOuter) % directory name
-        dirName=['Cycle' num2str(SYS.ouCntr,'%03d') suffix];
-    else
-        dirName=['Cycle' num2str(SYS.ouCntr-1,'%03d') suffix];
     end
     mkdir(dirName);
     
