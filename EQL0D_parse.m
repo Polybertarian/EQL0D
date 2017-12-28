@@ -44,23 +44,9 @@ end
 
 %% Reprocessing
 if(~isempty(REP))
-    if(~isfield(REP,'share'))
-        tmp=repmat({1},size(REP));
-        [REP.share]=deal(tmp{:});
-    end
-    if(~isfield(REP,'frequency'))
-        tmp=repmat({1},size(REP));
-        [REP.frequency]=deal(tmp{:});
-    end
-    
-    %%% Check the modes are recognized
-    if(any(~ismember({REP.mode},{'remove','keepAFPM','keepAM','keepTotM','keepAFPA','keepAA','keepTotA'})))
-        error(['Reprocessing stream mode ' REP(i).mode ' of stream ' REP(i).name ' not recognized!']);
-    end
-    
     %%% Create 'dummy' materials for streams
-    matsNeeded=unique({REP.source REP.destination}); % materials declared as source/destination for streams
-    matsExisting={'void' MAT.name}; % materials declared in input
+    matsNeeded=unique({REP.srcMat REP.dstMat}); % materials declared as source/destination for streams
+    matsExisting={'' MAT.name}; % materials declared in input
     for j=find(~ismember(matsNeeded,matsExisting))
         MAT(end+1)=Mat(matsNeeded{j},0,0,1e6,0,[],[]); % create dummy materials
     end
@@ -71,30 +57,8 @@ if(~isempty(REP))
     
     %%% Identify source and destination material indexes
     for i=1:length(REP)
-        if(~iscolumn(REP(i).share))
-            REP(i).share=REP(i).share';
-        end
-        if(~iscolumn(REP(i).elements))
-            REP(i).elements=REP(i).elements';
-        end
-        
-        %%% find source/dest material, if any
-        SYS.IDX.srcMat(i)=find(ismember({'void' MAT.name},REP(i).source))-1;
-        SYS.IDX.dstMat(i)=find(ismember({'void' MAT.name},REP(i).destination))-1;
-        
-        %%% clarify shares
-        if(length(REP(i).share)==1)
-            REP(i).share=REP(i).share(1)*ones(size(REP(i).elements));
-        elseif(length(REP(i).share)<length(REP(i).elements))
-            error('Error: share and elements vector length mismatch.')
-        end
-        
-        %%% transform elemental input into isotopes
-        if(any(REP(i).elements<111))
-            [idx1,idx2]=isElement(REP(i).elements,MAT(SYS.IDX.srcMat(i)).ZAI);
-            REP(i).elements=MAT(SYS.IDX.srcMat(i)).ZAI(idx1);
-            REP(i).share=REP(i).share(idx2);
-        end
+        SYS.IDX.srcMat(i)=REP(i).findSrc({MAT.name});
+        SYS.IDX.dstMat(i)=REP(i).findDst({MAT.name});
     end
     
     %%% find nuclide positions affected by batch streams
