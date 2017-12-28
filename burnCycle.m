@@ -1,6 +1,6 @@
 function [MAT,SYS] = burnCycle(MAT,OPT,REP,SYS)
 %[MAT,SYS] = burnCycle(MAT,OPT,REP,SYS) depletes the materials in the
-%SYSTEM
+%System
 %% Burning
 if(SYS.PCC.corrector)
     prefix='C';
@@ -26,7 +26,7 @@ else
     for i=SYS.IDX.contMat
         SYS.burnVec=vertcat(SYS.burnVec,MAT(i).atDens(SYS.IDX.burnZAI{2,i}));
     end
-    if(OPT.PCC)
+    if(SYS.PCC.active)
         SYS.burnVec2=CRAMsolve(SYS.MTX.total{2},SYS.tStep(end)*OPT.nSteps(SYS.ouCntr),SYS.burnVec);
         SYS.nowTime(end+1)=SYS.nowTime(end)+SYS.tStep(end)*OPT.nSteps(SYS.ouCntr)/(24.0*3600.0); %in EFPD
     else
@@ -78,19 +78,10 @@ end
 
 %%% Print material composition to file
 if(OPT.printSteps)
-    if(OPT.PCC)
-        if(SYS.PCC.corrector)
-            for i=SYS.IDX.contMat
-                MAT(i).printMaterial(SYS,'AB');
-            end
-        end
-    else
-        for i=SYS.IDX.contMat
-            MAT(i).printMaterial(SYS,'AB');
-        end
+    for i=SYS.IDX.contMat
+        MAT(i).printMaterial(SYS,'AB');
     end
 end
-        
 
 for i=SYS.IDX.burnMat
     MAT(i).write(OPT.matWriteStyle); %%% Write compositions

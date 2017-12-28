@@ -126,7 +126,7 @@ if(criterion) %activate reactivity control if above tolerance
             if(abs(changeUp)==1)
                 fprintf(SYS.FID.log,'%s\n','** REACT ** Max. composition change reached!');
             end
-            if(~OPT.PCC||SYS.PCC.corrector)
+            if(~SYS.PCC.active||SYS.PCC.corrector)
                 fprintf(SYS.FID.log,'%s\n',['** REACT ** Change: ' num2str(sum(NChange/1000.0)) ' kg.']);
                 fprintf(SYS.FID.react,'%-7.3d%-6.3d%-9G',SYS.ouCntr,SYS.inCntr,SYS.nowTime(end));
                 fprintf(SYS.FID.react,[repmat('%#-13.6G',1,numel(SYS.reactAdditions)) '\n'],SYS.reactAdditions);
@@ -167,7 +167,7 @@ if(criterion) %activate reactivity control if above tolerance
             if(SYS.verboseMode)
                 fprintf(SYS.FID.log,'%s\n',['** REACT ** Current k-eff: ' num2str(SYS.keff(end))]);
             end
-            if(~OPT.PCC||SYS.PCC.corrector)
+            if(~SYS.PCC.active||SYS.PCC.corrector)
                 MAT(SYS.IDX.feedMat).volume=MAT(SYS.IDX.feedMat).volume-addVolume(end);
                 fprintf(SYS.FID.volume,'%-7.3d %-6.3d %-9G %#-13.6G\n',SYS.ouCntr,SYS.inCntr,SYS.nowTime(end),addVolume(end));
             end
