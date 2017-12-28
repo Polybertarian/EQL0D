@@ -2,15 +2,15 @@ classdef Rep
     %REP Reprocessing stream in EQL0D
     
     properties
-        name     char
-        srcMat   char
-        dstMat   char
-        elements(1,:)
+        name    
+        srcMat   
+        dstMat  
+        elements
         share
-        frequency(1,1)
+        frequency
         rate
-        type     char
-        mode     char
+        type    
+        mode    
     end
     
     methods

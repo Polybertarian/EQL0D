@@ -1,10 +1,11 @@
 function [] = saveFiles(MAT,OPT,SYS)
-if(SYS.ouCntr==1)
+if(SYS.PCC.active)
+suffix='p';
+else
+suffix='c';
+end
+if(SYS.ouCntr==1&~SYS.PCC.active)
     suffix='';
-elseif(SYS.PCC.active&SYS.ouCntr>1)
-    suffix='c';
-elseif(~SYS.PCC.active)
-    suffix='p';
 end
 if(OPT.keepFiles)
     if(~SYS.stopOuter) % directory name
