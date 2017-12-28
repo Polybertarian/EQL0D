@@ -1,9 +1,9 @@
 function [] = saveFiles(MAT,OPT,SYS)
-if(SYS.PCC.active&SYS.ouCntr>1)
-    suffix='c';
-elseif(SYS.ouCntr==0)
+if(SYS.ouCntr==1)
     suffix='';
-else
+elseif(SYS.PCC.active&SYS.ouCntr>1)
+    suffix='c';
+elseif(~SYS.PCC.active)
     suffix='p';
 end
 if(OPT.keepFiles)
