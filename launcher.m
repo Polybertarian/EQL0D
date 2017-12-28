@@ -10,11 +10,11 @@ for i=1:length(Cases)
         [PATH,FILE,EXT]=fileparts(Cases{i});
         if(isempty(PATH))
             SYS.Casename=[FILE EXT];
-            EQL0D_main(SYS);
+            EQL0D(SYS);
         else
             OLDDIR=cd(PATH);
             SYS.Casename=[FILE EXT];
-            EQL0D_main(SYS);
+            EQL0D(SYS);
             cd(OLDDIR);
         end 
     else

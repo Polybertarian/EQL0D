@@ -1,4 +1,5 @@
-%EQL0D_INITIALIZE regroups all steps to parse the user input and initialize
+function [MAT,OPT,REP,SYS] = initialize(SYS)
+%[MAT,OPT,REP,SYS] = INITIALIZE(SYS) regroups all steps to parse the user input and initialize
 %the initial variables of EQL0D
 
 stdFields={'nCores','debugMode','verboseMode','printAndQuit','restartCalc','restartCalc','resetCounters'};
@@ -26,7 +27,7 @@ if(SYS.restartCalc)
         error(errmsg)
     end
 else
-    run('EQL0D_defaultConfig.m'); %%% Default config
+    run('defaultConfig.m'); %%% Default config
     if(exist([SYS.Casename '.m'],'file')==2)
         run([SYS.Casename '.m']);
     else
@@ -46,7 +47,7 @@ else
     %%% load isotope list and properties
     if(exist('DAT','var')~=1)
         warning('Library undefined! Loading default...')
-        load([OPT.defaultDataLibrary '.mat'])
+        load([OPT.defaultDataLibrary '.mat'],DAT)
     end
     if(~exist('MAT','var'))
         error('Error: MAT vector undefined!')
@@ -55,7 +56,6 @@ else
     end
     if(~exist('REP','var'))
         warning('No reprocessing streams defined!')
-        REP=struct([]);
     end
 
     %%% Initialization of various variables
@@ -83,7 +83,7 @@ else
         exit(0)
     else
         %%% Parse all data
-        run('EQL0D_parse.m')
+        [MAT,OPT,REP,SYS] = parseInput(MAT,OPT,REP,SYS);
         for i=SYS.IDX.burnMat
             MAT(i).write(OPT.matWriteStyle);
         end
@@ -174,3 +174,6 @@ end
 clearvars -except OPT SYS DAT MAT REP
 save([SYS.Casename '.mat']);
 fprintf(SYS.FID.log,'%s\n','**** EQL0D **** Procedure initialized.');
+
+return 
+end

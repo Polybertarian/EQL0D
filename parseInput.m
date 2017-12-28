@@ -1,4 +1,6 @@
-%% Adapt vectors (Cycle length, etc.)
+function [MAT,OPT,REP,SYS] = parseInput(MAT,OPT,REP,SYS)
+%[MAT,OPT,REP,SYS] = PARSEINPUT(MAT,OPT,REP,SYS) parses the input data 
+% Adapt vectors (Cycle length, etc.)
 if(length(OPT.cycleLength)<OPT.nCycles) % repeat last value in cycleLength vector to match nCycles
     OPT.cycleLength=[OPT.cycleLength repmat(OPT.cycleLength(end),1,OPT.nCycles-length(OPT.cycleLength))];
 end

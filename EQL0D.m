@@ -1,9 +1,9 @@
-function [] = EQL0D_main(SYS)
-%EQL0D_MAIN is the main function of the EQL0D procedure, containing the
+function [] = EQL0D(SYS)
+%EQL0D(SYS) is the main function of the EQL0D procedure, containing the
 %outer and inner loops
 
 try
-    run('EQL0D_initialize.m'); %%% Initialize or restart from .mat file
+    [MAT,OPT,REP,SYS] = initialize(SYS); %%% Initialize or restart from .mat file
     
     %% Outer Loop / Cycles
     while(~SYS.stopOuter)

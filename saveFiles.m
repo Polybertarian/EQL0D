@@ -1,5 +1,5 @@
-function [] = saveFiles(MATnames,keepFiles,SYS)
-% SAVEFILES(MAT,OPT,SYS) moves Serpent outputs to be saved to corresponding folder and deletes
+function [] = saveFiles(matNames,keepFiles,SYS)
+% SAVEFILES(matNames,keepFiles,SYS) moves Serpent outputs to be saved to corresponding folder and deletes
 % others
 
 if(keepFiles)
@@ -29,12 +29,12 @@ if(keepFiles)
             movefile([SYS.Casename ext{1}],dirName);
         end
     end
-    for j=1:length(MATnames)
-        if(exist(['depmtx_' MATnames{j} '0.m'],'file')==2)
-            movefile(['depmtx_' MATnames{j} '0.m'],dirName);
+    for j=1:length(matNames)
+        if(exist(['depmtx_' matNames{j} '0.m'],'file')==2)
+            movefile(['depmtx_' matNames{j} '0.m'],dirName);
         end
-        if(exist([MATnames{j} '.serp.bak'],'file')==2)
-            movefile([MATnames{j} '.serp.bak'],dirName);
+        if(exist([matNames{j} '.serp.bak'],'file')==2)
+            movefile([matNames{j} '.serp.bak'],dirName);
         end
     end
 else
