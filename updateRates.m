@@ -1,7 +1,7 @@
 function MAT = updateRates(MAT,SYS)
 %UPDATERATES Updates reaction rates in case of PCC
 
-if(SYS.PCC.active)
+if(SYS.PCC.corrector)
     for i=SYS.IDX.fluxMat
         MAT(i).mCaptXS=((SYS.PCC.nSteps-SYS.inCntr+1)*SYS.RR.inMat{1}.capt+...
             (SYS.inCntr)*SYS.RR.inMat{2}.capt)/SYS.PCC.nSteps;

@@ -1,10 +1,15 @@
 function [] = saveFiles(MAT,OPT,SYS)
-if(SYS.PCC.active)
-suffix='p';
+
+if(~OPT.PCC)
+    suffix='';
 else
-suffix='c';
+    if(SYS.PCC.corrector)
+        suffix='p';
+    else
+        suffix='c';
+    end
 end
-if(SYS.ouCntr==1&~SYS.PCC.active)
+if(SYS.ouCntr==1&~SYS.PCC.corrector)
     suffix='';
 end
 if(OPT.keepFiles)

@@ -13,7 +13,7 @@ try
         elseif(strcmp(OPT.iterMode,'steps'))
             SYS.tStep(end+1)=OPT.cycleLength(SYS.ouCntr)*24.0*3600.0/OPT.nSteps(SYS.ouCntr);
         end
-        SYS.stopInner=false;  SYS.PCC.active=false;
+        SYS.stopInner=false;  SYS.PCC.corrector=false;
         SYS.oldFIMA=[MAT.FIMA]; SYS.oldN = [MAT.N]; %%% Save previous cycle data
         if(~SYS.debugMode)
             %%% Adapt depletion time/burnup in Serpent
@@ -42,7 +42,7 @@ try
             [MAT,SYS]=burnCycle(MAT,OPT,REP,SYS);
             
             if(OPT.PCC&&~SYS.debugMode) %Corrector step
-                SYS.PCC.active=true; SYS.PCC.nSteps=OPT.nSteps(SYS.ouCntr);
+                SYS.PCC.corrector=true; SYS.PCC.nSteps=OPT.nSteps(SYS.ouCntr);
                 runSerpent(OPT,SYS); %%% Run Serpent/Read outputs
                 [MAT,SYS] = loadSerpentData(MAT,SYS);
                 MAT=updateRates(MAT,SYS);
@@ -62,7 +62,7 @@ try
                     [MAT,SYS]=burnCycle(MAT,OPT,REP,SYS);
                     SYS.inCntr=SYS.inCntr+1;
                 end
-                SYS.PCC.active=false; SYS.stopInner=true;
+                SYS.PCC.corrector=false; SYS.stopInner=true;
             else
                 SYS=testConvergence(MAT,OPT,SYS,'inner');
             end

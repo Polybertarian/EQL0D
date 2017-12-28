@@ -2,7 +2,7 @@ function [MAT,SYS] = burnCycle(MAT,OPT,REP,SYS)
 %[MAT,SYS] = burnCycle(MAT,OPT,REP,SYS) depletes the materials in the
 %SYSTEM
 %% Burning
-if(SYS.PCC.active)
+if(SYS.PCC.corrector)
     prefix='C';
     prefix2='CORRECTOR';
     if(SYS.inCntr==1)
@@ -79,7 +79,7 @@ end
 %%% Print material composition to file
 if(OPT.printSteps)
     if(OPT.PCC)
-        if(SYS.PCC.active)
+        if(SYS.PCC.corrector)
             for i=SYS.IDX.contMat
                 MAT(i).printMaterial(SYS,'AB');
             end

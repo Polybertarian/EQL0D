@@ -14,7 +14,7 @@ for i=SYS.IDX.fluxMat
     n3n =n3n+sum(MAT(i).n3nRate);
 end
 
-if(SYS.PCC.active)
+if(SYS.PCC.corrector)
     kinf=(((SYS.PCC.nSteps-SYS.inCntr)*SYS.RR.NU{1}+(SYS.inCntr)*SYS.RR.NU{2})/SYS.PCC.nSteps*fiss+2.0*n2n+3.0*n3n)/(fiss+capt+n2n+n3n);
     keff=kinf*((SYS.PCC.nSteps-SYS.inCntr)*1/SYS.RR.LEAK{1}+(SYS.inCntr)*1/SYS.RR.LEAK{2})/SYS.PCC.nSteps;   
 else
