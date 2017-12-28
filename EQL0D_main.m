@@ -24,7 +24,7 @@ try
             [MAT,SYS] = loadSerpentData(MAT,SYS); %%% Read Serpent outputs
             MAT=updateRates(MAT,SYS);
             if(~SYS.debugMode)
-                saveFiles(MAT,OPT,SYS);  %%% Move files to folder
+                saveFiles({MAT(SYS.IDX.burnMat).name},OPT.keepFiles,SYS);  %%% Move files to folder
                 printK(SYS,'AB','C','Serpent');
             end
         end
@@ -47,7 +47,7 @@ try
                 [MAT,SYS] = loadSerpentData(MAT,SYS);
                 MAT=updateRates(MAT,SYS);
                 if(~SYS.debugMode)
-                    saveFiles(MAT,OPT,SYS);
+                    saveFiles({MAT(SYS.IDX.burnMat).name},OPT.keepFiles,SYS);
                     printK(SYS,'AB','P','Serpent');
                 end
                 SYS = computeK(MAT,SYS);
@@ -96,7 +96,7 @@ try
                 end
             end
     		if(~SYS.debugMode)
-        		saveFiles(MAT,OPT,SYS);
+        		saveFiles({MAT(SYS.IDX.burnMat).name},OPT.keepFiles,SYS);
     		end
     end
     save([SYS.Casename '.mat']);
