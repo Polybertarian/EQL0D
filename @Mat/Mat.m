@@ -1,32 +1,32 @@
 classdef Mat < NuclearObject
     %MAT Material for EQL0D
     properties
-        name='fuel'
-        N;               % Number of atoms per nuclide (1e24 units)
-        volume;          % Volume
-        intFlux=0.0;
+        name
+        N               % Number of atoms per nuclide (1e24 units)
+        oldN
+        volume
+        intFlux=0.0
+        mFissXS %%% Cross-sections
+        mCaptXS
+        mN2nXS
+        mN3nXS
+    end
+    properties (SetAccess = immutable)
+        temp;            % Temperature (for Serpent)
         isBurned=false;  % is the material being depleted?
         isInFlux=false;  % is the material in the neutron flux?
         isStr=false;     % is the material involved in Streams?
         isCont=false;    % is the material continuously processed?
-        %%% Cross-sections
-        mFissXS;
-        mCaptXS;
-        mN2nXS;
-        mN3nXS;
     end
     properties (SetAccess = private)
-        temp;            % Temperature (for Serpent)
-        %%% Initial values
-        initN;           % Initial number of atoms
-        initVolume;      % initial Volume
-        initTotMass;        % initial total Mass
-        initTotActMass;  % initial total Actinide Mass
-        %%% Qualifiers
-        streams
+        
     end
     properties (Dependent = true, SetAccess = private)
         %%% Initial values
+        initN;           % Initial number of atoms
+        initVolume;      % initial Volume
+        initTotMass;     % initial total Mass
+        initTotActMass;  % initial total Actinide Mass
         initActN         % initial actinide atoms
         initTotActN      % initial total actinide atoms
         initTotN
@@ -77,7 +77,6 @@ classdef Mat < NuclearObject
                 end
                 obj.name=name;
                 obj.volume=vol;
-                obj.initVolume=vol;
                 obj.temp=temp;
                 switch type
                     case 1
@@ -123,9 +122,6 @@ classdef Mat < NuclearObject
                         error('Error: Mixed positive and negative values in composition!')
                     end
                 end
-                obj.initN=obj.N;
-                obj.initTotMass=obj.totMass;
-                obj.initTotActMass=obj.totActMass;
                 obj.mFissXS=zeros(size(obj.N));
                 obj.mCaptXS=zeros(size(obj.N));
                 obj.mN2nXS=zeros(size(obj.N));
@@ -133,13 +129,24 @@ classdef Mat < NuclearObject
             else
                 obj.name='fuel';
                 obj.volume=1;
-                obj.initVolume=1;
                 obj.temp=900;
+                obj.oldN=[];
                 obj.N=zeros(size(obj.ZAI));
-                obj.initN=obj.N;
             end
         end
         %%% Initial values
+        function initN = get.initN(obj)
+           initN=obj.N(:,1); 
+        end
+        function initVolume = get.initVolume(obj)
+            initVolume=obj.volume(1);
+        end
+        function initTotMass=get.initTotMass(obj)
+            initTotMass=sum(obj.atomicMass.*obj.initN*1E24);
+        end
+        function initTotActMass=get.initTotActMass(obj)
+            initTotActMass=sum(obj.atomicMass(isActinide(obj.ZAI)).*obj.initActN*1E24);
+        end
         function initTotN = get.initTotN(obj)
             initTotN=sum(obj.initN);
         end
@@ -151,13 +158,13 @@ classdef Mat < NuclearObject
         end
         %%% Total values
         function totN = get.totN(obj)
-            totN=sum(obj.N);
+            totN=sum(obj.N(:,end));
         end
         function totActN = get.totActN(obj)
-            totActN=sum(obj.N(isActinide(obj.ZAI)));
+            totActN=sum(obj.N(isActinide(obj.ZAI),end));
         end
         function totFPN = get.totFPN(obj)
-            totFPN=sum(obj.N(isFP(obj.ZAI)));
+            totFPN=sum(obj.N(isFP(obj.ZAI),end));
         end
         function totActMass = get.totActMass(obj)
             totActMass=obj.volume*sum(obj.actMass);
@@ -168,19 +175,18 @@ classdef Mat < NuclearObject
         function totFPMass=get.totFPMass(obj)
             totFPMass=obj.volume*sum(obj.FPMass);
         end
-        %%% Isotope-wise values
         function atDens = get.atDens(obj)
-            atDens=obj.N/obj.volume;
+            atDens=obj.N(:,end)/obj.volume;
         end
         function massDens = get.massDens(obj)
-            massDens=1e24*obj.atomicMass.*obj.atDens;
+            massDens=1E24*obj.atomicMass.*obj.atDens;
         end
         function actMass = get.actMass(obj)
             actMass=obj.massDens(isActinide(obj.ZAI));
         end
         function molarComp = get.molarComp(obj)
-            molarComp=zeros(size(obj.N));
-            molarComp(~isElement([8,9,17],obj.ZAI))=obj.N(~isElement([8,9,17],obj.ZAI));
+            molarComp=zeros(size(obj.N(:,end)));
+            molarComp(~isElement([8,9,17],obj.ZAI))=obj.N(~isElement([8,9,17],obj.ZAI),end);
             molarComp=100*molarComp/sum(molarComp);
             molarComp(isnan(molarComp))=0.0;
         end
@@ -202,7 +208,7 @@ classdef Mat < NuclearObject
             ingTox=obj.activity.*obj.ingToxicity;
         end
         function activity = get.activity(obj)
-            activity=1.0E24*obj.N*log(2)./obj.halfLife;
+            activity=1.0E24*obj.N(:,end)*log(2)./obj.halfLife;
             activity(isnan(activity)|isinf(activity))=0.0;
         end
         function decayHeat = get.decayHeat(obj)
@@ -210,7 +216,7 @@ classdef Mat < NuclearObject
         end
         %%% Other
         function denat=get.isDenatured(obj)
-            denat=(obj.N(obj.find(922330))+0.6*obj.N(obj.find(922350)))<0.12*sum(obj.N(obj.find(92)));
+            denat=(obj.N(obj.find(922330),end)+0.6*obj.N(obj.find(922350),end))<0.12*sum(obj.N(obj.find(92),end));
         end
         function halideExcess = get.halideExcess(obj)
             halideExcess=sum(obj.oxState.*obj.atDens);
@@ -247,7 +253,7 @@ classdef Mat < NuclearObject
             switch matWriteStyle
                 case 'dec'
                     fprintf(fid,'%s\n',['mat ' obj.name ' sum burn 1 vol ' num2str(obj.volume,'%.16E') ' fix ' obj.name ' 300']);
-                    nucIdx=find(~ismember(obj.ZAI,[1:1:111]*1E4)&obj.N>0.0)'; %avoid X-nat nuclides
+                    nucIdx=find(~ismember(obj.ZAI,[1:1:111]*1E4)&obj.N(:,end)>0.0)'; %avoid X-nat nuclides
                     suffix='';
                 case 'fix'
                     fprintf(fid,'%s\n',['mat ' obj.name ' sum burn 1 vol ' num2str(obj.volume,'%.16E') ' fix ' suffix ' ' num2str(obj.temp)]);
@@ -259,7 +265,7 @@ classdef Mat < NuclearObject
                     suffix=['.' num2str(obj.temp/100,'%02d') 'c'];
                 otherwise
                     fprintf(fid,'%s\n',['mat ' obj.name ' sum burn 1 vol ' num2str(obj.volume,'%.16E')]);
-                    nucIdx=find(hasNuclearData(obj.ZAI)&obj.N>0.0)';
+                    nucIdx=find(hasNuclearData(obj.ZAI)&obj.N(:,end)>0.0)';
                     suffix=['.' num2str(obj.temp/100,'%02d') 'c'];
             end
             for i=nucIdx
@@ -287,7 +293,7 @@ classdef Mat < NuclearObject
                 error(errmsg)
             end
             matZAI=obj.ZAI;
-            matN=obj.N*1e24;
+            matN=obj.N(:,end)*1e24;
             matADens=obj.atDens;
             matV=obj.volume;
             matMDens=obj.massDens;
@@ -375,26 +381,29 @@ classdef Mat < NuclearObject
             status=fclose(fid);
         end
         %%% Methods
-        function obj=set.temp(obj,temp)
-            obj.temp=temp;
-        end
-        function idx=find(obj,ZAI)
+        function idx = find(obj,ZAI)
             if(all(ZAI<1000))
-                idx=find(isElement(ZAI,obj.ZAI));
+                idx=find(isElement(ZAI,obj.ZAI)&isProduced(obj.ZAI));
             else
-                idx=find(ismember(obj.ZAI,ZAI));
+                idx=find(ismember(obj.ZAI,ZAI)&isProduced(obj.ZAI));
             end
         end
-        function mFrac=mFrac(obj,IDX)
+        function mFrac = mFrac(obj,IDX)
             mFrac=obj.massDens(IDX);
             mFrac=mFrac/sum(mFrac);
         end
-        function aFrac=aFrac(obj,IDX)
+        function aFrac = aFrac(obj,IDX)
             aFrac=obj.atDens(IDX);
             aFrac=aFrac/sum(aFrac);
         end
-        function avMass=avMass(obj,IDX)
+        function avMass = avMass(obj,IDX)
             avMass=sum(obj.aFrac(IDX).*obj.atomicMass(IDX));
+        end
+        function obj = set.N(obj,newN)
+            if(~isempty(obj.N))
+                obj.oldN(:,end+1)=obj.N;
+            end
+            obj.N=newN;
         end
     end
 end
