@@ -66,6 +66,13 @@ classdef Rep
                 dstIdx=find(ismember(matList,obj.dstMat));
             end
         end
+        function obj = adaptElements(obj,ZAIList)
+            if(any(obj.elements<111))
+                [idx1,idx2]=isElement(obj.elements,ZAIList);
+                obj.elements=ZAIList(idx1);
+                obj.share=obj.share(idx2);
+            end
+        end
     end
     
 end

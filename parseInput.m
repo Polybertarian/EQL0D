@@ -61,6 +61,7 @@ if(~isempty(REP))
     for i=1:length(REP)
         SYS.IDX.srcMat(i)=REP(i).findSrc({MAT.name});
         SYS.IDX.dstMat(i)=REP(i).findDst({MAT.name});
+        REP(i)=REP(i).adaptElements(MAT(1).ZAI);
     end
     
     %%% find nuclide positions affected by batch streams
