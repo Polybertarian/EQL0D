@@ -22,31 +22,23 @@ if(criterion) %activate reactivity control if above tolerance
             j=0;
             changeUp=0;
             if(diff>0)
-                maxBound=0; minBound=-1;
-                changeUp(end+1)=-0.99; % initial guess
-                replReset=false;
+                maxBound=0; minBound=-1; changeUp(end+1)=-0.99;replReset=false;
                 if(isempty(OPT.REA.replFraction)&strcmp(OPT.REA.mode,'replace'))
-                  replReset=true;
-                  OPT.REA.replFraction=MAT(SYS.IDX.feedMat).mFrac(SYS.IDX.feedNucRepl);
+                  replReset=true; OPT.REA.replFraction=MAT(SYS.IDX.feedMat).mFrac(SYS.IDX.feedNucRepl);
                 end
             elseif(diff<0)
-                maxBound=1; minBound=0;
-                changeUp(end+1)=0.99;
-                replReset=false;
+                maxBound=1; minBound=0; changeUp(end+1)=0.99; replReset=false;
                 if(isempty(OPT.REA.replFraction)&strcmp(OPT.REA.mode,'replace'))
-                  replReset=true;
-                  OPT.REA.replFraction=MAT(SYS.IDX.targetMat).mFrac(SYS.IDX.targetNucRepl);
+                  replReset=true; OPT.REA.replFraction=MAT(SYS.IDX.targetMat).mFrac(SYS.IDX.targetNucRepl);
                 end
             end
             upReset=false;
             if(isempty(OPT.REA.upFraction)) % mass fractions given by feed material
-                upReset=true;
-                OPT.REA.upFraction=MAT(SYS.IDX.feedMat).mFrac(SYS.IDX.feedNucUp);
+                upReset=true; OPT.REA.upFraction=MAT(SYS.IDX.feedMat).mFrac(SYS.IDX.feedNucUp);
             end
             downReset=false;
             if(isempty(OPT.REA.downFraction))
-                downReset=true;
-                OPT.REA.downFraction=MAT(SYS.IDX.targetMat).mFrac(SYS.IDX.targetNucDo);
+                downReset=true; OPT.REA.downFraction=MAT(SYS.IDX.targetMat).mFrac(SYS.IDX.targetNucDo);
             end
             while(j<OPT.REA.maxIter&abs(diff(end))>OPT.REA.tol)
                 j=j+1;
@@ -56,7 +48,7 @@ if(criterion) %activate reactivity control if above tolerance
                         MAT(SYS.IDX.feedMat).N=saveFeed;
                     end
                     if(j==OPT.REA.maxIter)
-                        changeUp(end+1)=changeUp(abs(diff)==min(abs(diff)));
+                        changeUp(end+1)=changeUp(max(find(abs(diff)==min(abs(diff)))));
                     else
                     	changeUp(end+1)=max([min([(changeUp(end-1)*diff(end)-changeUp(end)*diff(end-1))/(diff(end)-diff(end-1)) maxBound]),minBound]);
                     end
@@ -138,13 +130,9 @@ if(criterion) %activate reactivity control if above tolerance
             addVolume=[];
             changeVol=0;
             if(diff<0)
-                maxBound=0;
-                minBound=-1;
-                changeVol(end+1)=-0.05;
+                maxBound=0; minBound=-1; changeVol(end+1)=-0.05;
             elseif(diff>0)
-                maxBound=1;
-                minBound=0;
-                changeVol(end+1)=0.05;
+                maxBound=1; minBound=0; changeVol(end+1)=0.05;
             end
             while(j<OPT.REA.maxIter&abs(diff(end))>OPT.REA.tol)
                 j=j+1;
@@ -152,7 +140,7 @@ if(criterion) %activate reactivity control if above tolerance
                     MAT(SYS.IDX.targetMat).N=saveTarget;
                     MAT(SYS.IDX.targetMat).volume=saveVol;
                     if(j==OPT.REA.maxIter)
-                        changeVol(end+1)=changeVol(abs(diff)==min(abs(diff)));
+                        changeVol(end+1)=changeVol(max(find(abs(diff)==min(abs(diff)))));
                     else
                         changeVol(end+1)=max([min([(changeVol(end-1)*diff(end)-changeVol(end)*diff(end-1))/(diff(end)-diff(end-1)) maxBound]), minBound]);
                     end
