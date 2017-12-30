@@ -53,7 +53,10 @@ if(OPT.printSteps&&OPT.printStepsBB)
     end
 end
 
-SYS.prevN.EOC=[MAT.N(:,end)];
+SYS.prevN.EOC=[];
+for i=1:length(MAT)
+    SYS.prevN.EOC=[SYS.prevN.EOC MAT(i).N(:,end)]; %%% Store compositions from previous loop
+end
 
 if(OPT.redoxControl) %%% Adjust redox
     MAT = redoxControl(MAT,OPT,SYS);
