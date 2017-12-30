@@ -1,0 +1,17 @@
+#Test folder
+/test
+
+#.asv Windows MATLAB files
+*.asv
+
+#UNIX backup files 
+*~
+
+#Other backup files
+*.bak
+
+#Mac OS stuff
+.DS_Store
+
+#Windows stuff
+Thumbs.db
