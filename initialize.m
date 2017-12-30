@@ -71,7 +71,7 @@ else
     SYS.kinf=[];
     SYS.RR.NU=cell(2,1);
     SYS.RR.LEAK=cell(2,1);
-    SYS.MTX.defaultDecay=DAT.decayMatrix(isProduced(DAT.ZAI0),isProduced(DAT.ZAI0));
+    SYS.MTX.defaultDecay=sparse(DAT.decayMatrix(isProduced(DAT.ZAI0),isProduced(DAT.ZAI0)));
 
     %%% Write material compositions for Serpent
     if(SYS.printAndQuit)

@@ -81,10 +81,13 @@ for k=skipped
     % share between feed nuclides
     if(SYS.IDX.srcMat(k)~=0)
         share=MAT(src).massDens(ismember(MAT(src).ZAI,burnZAI(feedNucInDst)));
-        share=share/sum(share);
+        if(sum(share)==0)
+            share=REP(k).share;
+        end
     else
         share=REP(k).share;
     end
+    share=share/sum(share);
     
     if(ismember(REP(k).mode,{'keepAFPM','keepAM','keepTotM'}))
         mFeedNuc=MAT(dst).atomicMass(ismember(MAT(dst).ZAI,burnZAI(feedNucInDst))); % masses of feed nuclides
