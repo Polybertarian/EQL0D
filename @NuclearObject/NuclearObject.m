@@ -18,10 +18,11 @@ classdef NuclearObject
         function obj = NuclearObject()
             global DAT
             if exist('DAT','var')
-                obj.ZAI=DAT.ZAI0;
-                obj.atomicMass=DAT.AMASS;
-                obj.decayEnergy=DAT.Q;
-                obj.halfLife=DAT.T12;
+                idx=isProduced(DAT.ZAI0);
+		obj.ZAI=DAT.ZAI0(idx);
+                obj.atomicMass=DAT.AMASS(idx);
+                obj.decayEnergy=DAT.Q(idx);
+                obj.halfLife=DAT.T12(idx);
                 obj.oxState=valenceStates(obj.ZAI);
                 [obj.ingToxicity,obj.inhToxicity]=ingAndInhTox(obj.ZAI);
                 obj.hasNucData=hasXSData(obj.ZAI);
