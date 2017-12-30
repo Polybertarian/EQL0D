@@ -49,7 +49,7 @@ switch OPT.iterMode
                 end
                 
                 %%% Compute relative difference
-                relDiff=abs((Nold(idx)-MAT(i).N(idx))./Nold(idx));
+                relDiff=abs((Nold(idx)-MAT(i).N(idx,end))./Nold(idx));
                 relDiff(isnan(relDiff))=0;
                 relDiff(isinf(relDiff))=0;
                 

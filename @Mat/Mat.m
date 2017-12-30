@@ -3,7 +3,6 @@ classdef Mat < NuclearObject
     properties
         name
         N               % Number of atoms per nuclide (1e24 units)
-        oldN
         volume
         intFlux=0.0
         mFissXS %%% Cross-sections
@@ -17,9 +16,6 @@ classdef Mat < NuclearObject
         isInFlux=false;  % is the material in the neutron flux?
         isStr=false;     % is the material involved in Streams?
         isCont=false;    % is the material continuously processed?
-    end
-    properties (SetAccess = private)
-        
     end
     properties (Dependent = true, SetAccess = private)
         %%% Initial values
@@ -398,12 +394,6 @@ classdef Mat < NuclearObject
         end
         function avMass = avMass(obj,IDX)
             avMass=sum(obj.aFrac(IDX).*obj.atomicMass(IDX));
-        end
-        function obj = set.N(obj,newN)
-            if(~isempty(obj.N))
-                obj.oldN(:,end+1)=obj.N;
-            end
-            obj.N=newN;
         end
     end
 end

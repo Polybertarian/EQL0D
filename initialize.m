@@ -40,7 +40,7 @@ else
     if(SYS.resetCounters)
         tmp=load([SYS.Casename '.mat'],'MAT');
         for i=find([MAT.isCont]&~[MAT.isStr])
-            MAT(i).N=tmp.MAT(i).N;
+            MAT(i).N(:,end+1)=tmp.MAT(i).N(:,end);
         end
     end
 

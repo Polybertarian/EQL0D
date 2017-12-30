@@ -15,7 +15,7 @@ for i=1:nMat
     fissRate=MAT(SYS.IDX.fluxMat(i)).fissRate;
     n2nRate=MAT(SYS.IDX.fluxMat(i)).n2nRate;
     decRate=MAT(SYS.IDX.fluxMat(i)).activity;
-    atoms=MAT(SYS.IDX.fluxMat(i)).N*1.0E24;
+    atoms=MAT(SYS.IDX.fluxMat(i)).N(:,end)*1.0E24;
     %Nuclides
     nBalance(1:nNuc,nCols*(i-1)+1)=atoms;
     nBalance(1:nNuc,nCols*(i-1)+2)=captRate;

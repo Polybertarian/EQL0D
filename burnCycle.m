@@ -8,7 +8,7 @@ if(SYS.PCC.corrector)
     if(SYS.inCntr==1)
         SYS.nowTime(end+1)=SYS.nowTime(end)-SYS.tStep(end)*OPT.nSteps(SYS.ouCntr)/(24.0*3600.0);
         for i=SYS.IDX.contMat
-            MAT(i).N=SYS.prevN.BOC(:,i);
+            MAT(i).N(:,end+1)=SYS.prevN.BOC(:,i);
         end
     end
     MAT=updateRates(MAT,SYS);
@@ -17,7 +17,7 @@ if(SYS.PCC.corrector)
     SYS.burnVec=CRAMsolve(SYS.MTX.interp,SYS.tStep(end),SYS.burnVec);
     SYS.nowTime(end+1)=SYS.nowTime(end)+SYS.tStep(end)/(24.0*3600.0);
     for i=SYS.IDX.contMat %%% Change material compositions
-        MAT(i).N(SYS.IDX.burnZAI{2,i})=SYS.burnVec(vertcat(SYS.IDX.matZAI{2,:})==i)*MAT(i).volume;
+        MAT(i).N(SYS.IDX.burnZAI{2,i},end+1)=SYS.burnVec(vertcat(SYS.IDX.matZAI{2,:})==i)*MAT(i).volume;
     end
 else
     prefix='P';
@@ -34,7 +34,7 @@ else
         SYS.nowTime(end+1)=SYS.nowTime(end)+SYS.tStep(end)/(24.0*3600.0); %in EFPD
     end
     for i=SYS.IDX.contMat %%% Change material compositions
-        MAT(i).N(SYS.IDX.burnZAI{2,i})=SYS.burnVec2(vertcat(SYS.IDX.matZAI{2,:})==i)*MAT(i).volume;
+        MAT(i).N(SYS.IDX.burnZAI{2,i},end+1)=SYS.burnVec2(vertcat(SYS.IDX.matZAI{2,:})==i)*MAT(i).volume;
     end
 end
 
@@ -53,7 +53,7 @@ if(OPT.printSteps&&OPT.printStepsBB)
     end
 end
 
-SYS.prevN.EOC=[MAT.N];
+SYS.prevN.EOC=[MAT.N(:,end)];
 
 if(OPT.redoxControl) %%% Adjust redox
     MAT = redoxControl(MAT,OPT,SYS);

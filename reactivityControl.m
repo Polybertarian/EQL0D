@@ -11,12 +11,14 @@ else
     criterion=diff<-OPT.REA.tol;
 end
 
+saveTarget=MAT(SYS.IDX.targetMat).N(:,end);
+if(~isempty(OPT.REA.feedMat))
+    saveFeed=MAT(SYS.IDX.feedMat).N(:,end);
+end
+
 if(criterion) %activate reactivity control if above tolerance
     fprintf(SYS.FID.log,'%s\n',['** REACT ** k-eff: ' num2str(SYS.keff(end)) ' > tol. limit, searching...']);
-    saveTarget=MAT(SYS.IDX.targetMat).N;
-    if(~isempty(OPT.REA.feedMat))
-        saveFeed=MAT(SYS.IDX.feedMat).N;
-    end
+
     switch OPT.REA.mode
         case {'replace','addMass'}
             j=0;
@@ -42,10 +44,15 @@ if(criterion) %activate reactivity control if above tolerance
             end
             while(j<OPT.REA.maxIter&abs(diff(end))>OPT.REA.tol)
                 j=j+1;
-                if(j>1)
-                    MAT(SYS.IDX.targetMat).N=saveTarget;
+                if(j==1)
+                    MAT(SYS.IDX.targetMat).N(:,end+1)=saveTarget;
                     if(~isempty(OPT.REA.feedMat))
-                        MAT(SYS.IDX.feedMat).N=saveFeed;
+                        MAT(SYS.IDX.feedMat).N(:,end+1)=saveFeed;
+                    end
+                elseif(j>1)
+                    MAT(SYS.IDX.targetMat).N(:,end)=saveTarget;
+                    if(~isempty(OPT.REA.feedMat))
+                        MAT(SYS.IDX.feedMat).N(:,end)=saveFeed;
                     end
                     if(j==OPT.REA.maxIter)
                         changeUp(end+1)=changeUp(max(find(abs(diff)==min(abs(diff)))));
@@ -55,30 +62,30 @@ if(criterion) %activate reactivity control if above tolerance
                 end
                 NChange=0;
                 if(diff(1)>0)
-                  NChange=changeUp(end)*MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucDo);
-                  MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucDo)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucDo)+NChange;
+                  NChange=changeUp(end)*MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucDo,end);
+                  MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucDo,end)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucDo,end)+NChange;
                   if(strcmp(OPT.REA.mode,'replace'))
                     NChangeRepl=OPT.REA.replFraction.*sum(NChange.*MAT(SYS.IDX.targetMat).atomicMass(SYS.IDX.targetNucDo))...
                         ./MAT(SYS.IDX.targetMat).avMass(SYS.IDX.targetNucRepl);
-                    MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucRepl)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucRepl)-NChangeRepl;
+                    MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucRepl,end)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucRepl,end)-NChangeRepl;
                   end
                 elseif(diff(1)<0)
-                  NChange=changeUp(end)*MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucUp);
-                  MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucUp)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucUp)+NChange;
+                  NChange=changeUp(end)*MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucUp,end);
+                  MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucUp,end)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucUp,end)+NChange;
                   if(strcmp(OPT.REA.mode,'replace'))
                     NChangeRepl=OPT.REA.replFraction.*sum(NChange.*MAT(SYS.IDX.feedMat).atomicMass(SYS.IDX.feedNucUp))...
                         ./MAT(SYS.IDX.feedMat).avMass(SYS.IDX.feedNucRepl);
-                    MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucRepl)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucRepl)-NChangeRepl;
+                    MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucRepl,end)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucRepl,end)-NChangeRepl;
                   end
                 end
                 if(~isempty(OPT.REA.feedMat))
                   if(diff(1)>0)
-                      MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucDo)=MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucDo)-NChange;
+                      MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucDo,end)=MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucDo,end)-NChange;
                   elseif(diff(1)<0)
-                      MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucUp)=MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucUp)-NChange;
+                      MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucUp,end)=MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucUp,end)-NChange;
                   end
                   if(strcmp(OPT.REA.mode,'replace'))
-                    MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucRepl)=MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucRepl)+NChangeRepl;
+                    MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucRepl,end)=MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucRepl,end)+NChangeRepl;
                   end
                 end
                 SYS=computeK(MAT,SYS);
@@ -126,7 +133,6 @@ if(criterion) %activate reactivity control if above tolerance
         case 'addVolume'
             j=0;
             saveVol=MAT(SYS.IDX.targetMat).volume;
-            saveTarget=MAT(SYS.IDX.targetMat).N;
             addVolume=[];
             changeVol=0;
             if(diff<0)
@@ -136,8 +142,13 @@ if(criterion) %activate reactivity control if above tolerance
             end
             while(j<OPT.REA.maxIter&abs(diff(end))>OPT.REA.tol)
                 j=j+1;
-                if(j>1)
-                    MAT(SYS.IDX.targetMat).N=saveTarget;
+                if(j==1)
+                    MAT(SYS.IDX.targetMat).N(:,end+1)=saveTarget;
+                    if(~isempty(OPT.REA.feedMat))
+                        MAT(SYS.IDX.feedMat).N(:,end+1)=saveFeed;
+                    end
+                elseif(j>1)
+                    MAT(SYS.IDX.targetMat).N(:,end)=saveTarget;
                     MAT(SYS.IDX.targetMat).volume=saveVol;
                     if(j==OPT.REA.maxIter)
                         changeVol(end+1)=changeVol(max(find(abs(diff)==min(abs(diff)))));
@@ -146,12 +157,12 @@ if(criterion) %activate reactivity control if above tolerance
                     end
                 end
                 addVolume(end+1)=changeVol(end)*saveVol;
-                MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNuc)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNuc)+addVolume(end)*MAT(SYS.IDX.feedMat).atDens(SYS.IDX.feedNuc);
+                MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNuc,end)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNuc,end)+addVolume(end)*MAT(SYS.IDX.feedMat).atDens(SYS.IDX.feedNuc);
                 MAT(SYS.IDX.targetMat).volume=MAT(SYS.IDX.targetMat).volume+addVolume(end);
                 SYS=computeK(MAT,SYS);
                 diff(end+1)=1e5*(1/SYS.keff(end)-1/OPT.REA.targetKeff);
             end
-            MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNuc)=MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNuc)-addVolume(end)*MAT(SYS.IDX.feedMat).atDens(SYS.IDX.feedNuc);
+            MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNuc,end)=MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNuc,end)-addVolume(end)*MAT(SYS.IDX.feedMat).atDens(SYS.IDX.feedNuc);
             if(SYS.verboseMode)
                 fprintf(SYS.FID.log,'%s\n',['** REACT ** Current k-eff: ' num2str(SYS.keff(end))]);
             end
