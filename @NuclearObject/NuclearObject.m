@@ -24,7 +24,7 @@ classdef NuclearObject
                 obj.halfLife=DAT.T12;
                 obj.oxState=valenceStates(obj.ZAI);
                 [obj.ingToxicity,obj.inhToxicity]=ingAndInhTox(obj.ZAI);
-                obj.hasNucData=hasNuclearData(obj.ZAI);
+                obj.hasNucData=hasXSData(obj.ZAI);
                 obj.nuclideName=ZAI2Name(obj.ZAI);
             else
                 error('Nuclear data library not found.')
