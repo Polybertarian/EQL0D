@@ -261,11 +261,11 @@ classdef Mat < NuclearObject
                     suffix=['.' num2str(obj.temp/100,'%02d') 'c'];
                 case 'nofix'
                     fprintf(fid,'%s\n',['mat ' obj.name ' sum burn 1 vol ' num2str(obj.volume,'%.16E')]);
-                    nucIdx=find(hasNuclearData(obj.ZAI))';
+                    nucIdx=find(hasXSData(obj.ZAI))';
                     suffix=['.' num2str(obj.temp/100,'%02d') 'c'];
                 otherwise
                     fprintf(fid,'%s\n',['mat ' obj.name ' sum burn 1 vol ' num2str(obj.volume,'%.16E')]);
-                    nucIdx=find(hasNuclearData(obj.ZAI)&obj.N(:,end)>0.0)';
+                    nucIdx=find(hasXSData(obj.ZAI)&obj.N(:,end)>0.0)';
                     suffix=['.' num2str(obj.temp/100,'%02d') 'c'];
             end
             for i=nucIdx

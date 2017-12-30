@@ -1,5 +1,5 @@
-function varargout=hasNuclearData(varargin)
-%HASNUCLEARDATA Returns the ZAI given in varargin that have nuclear data libraries for neutron-induced reactions, discards the others
+function varargout=hasXSData(varargin)
+%HASXSDATA Returns the ZAI given in varargin that have nuclear data libraries for neutron-induced reactions, discards the others
 
 haveNuclearData=[
     10010	;	%	'H-1'
@@ -276,6 +276,7 @@ haveNuclearData=[
     601500	;	%	'Nd-150'
     611470	;	%	'Pm-147'
     611480	;	%	'Pm-148'
+    611481  ;   %   'Pm-148m'
     611490	;	%	'Pm-149'
     611510	;	%	'Pm-151'
     620000	;	%	'Sm-nat'
@@ -410,6 +411,7 @@ haveNuclearData=[
     952421	;	%	'Am-242m'
     952430	;	%	'Am-243'
     952440	;	%	'Am-244'
+    952441  ;   %   'Am-244m'
     962400	;	%	'Cm-240'
     962410	;	%	'Cm-241'
     962420	;	%	'Cm-242'
