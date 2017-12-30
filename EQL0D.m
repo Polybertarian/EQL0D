@@ -14,7 +14,11 @@ try
             SYS.tStep(end+1)=OPT.cycleLength(SYS.ouCntr)*24.0*3600.0/OPT.nSteps(SYS.ouCntr);
         end
         SYS.stopInner=false; SYS.PCC.active=OPT.PCC; SYS.PCC.corrector=false;
-        SYS.oldFIMA=[MAT.FIMA]; SYS.oldN = [MAT.N(:,end)]; %%% Save previous cycle data
+        SYS.oldFIMA=[MAT.FIMA];
+        SYS.oldN=[];
+        for i=1:length(MAT)
+            SYS.oldN=[SYS.oldN MAT(i).N(:,end)]; %%% Store compositions from previous loop
+        end
         if(~SYS.debugMode)
             %%% Adapt depletion time/burnup in Serpent
             modifyInput(SYS.Casename,'dep',OPT.cycleLength(SYS.ouCntr));
@@ -37,7 +41,10 @@ try
         save([SYS.Casename '.mat']);
         while(~SYS.stopInner) %%% Inner loop
             SYS.inCntr=SYS.inCntr+1; SYS.prevFIMA=[MAT(SYS.IDX.contMat).FIMA];
-            SYS.prevN.BOC=[MAT.N(:,end)]; %%% Store compositions from previous loop
+            SYS.prevN.BOC=[];
+            for i=1:length(MAT)
+                SYS.prevN.BOC=[SYS.prevN.BOC MAT(i).N(:,end)]; %%% Store compositions from previous loop
+            end
             
             [MAT,SYS]=burnCycle(MAT,OPT,REP,SYS);
             
@@ -95,10 +102,10 @@ try
                     MAT(i).printMaterial(SYS,'EoC');
                 end
             end
-    		if(~SYS.debugMode)
+            if(~SYS.debugMode)
                 SYS.ouCntr=SYS.ouCntr+1;
-        		saveFiles({MAT(SYS.IDX.burnMat).name},OPT.keepFiles,SYS);
-    		end
+                saveFiles({MAT(SYS.IDX.burnMat).name},OPT.keepFiles,SYS);
+            end
     end
     save([SYS.Casename '.mat']);
     fprintf(SYS.FID.log,'%s\n','**** EQL0D **** Procedure finished.');
