@@ -39,10 +39,12 @@ for r=SYS.IDX.batchStr
             share=REP(r).share;
     end
     if(SYS.IDX.srcMat(r)~=0)
-        MAT(SYS.IDX.srcMat(r)).N(SYS.IDX.srcPos{r},end+1)=MAT(SYS.IDX.srcMat(r)).N(SYS.IDX.srcPos{r},end)-share.*mDefect;
+        MAT(SYS.IDX.srcMat(r)).N(:,end+1)=MAT(SYS.IDX.srcMat(r)).N(:,end);
+        MAT(SYS.IDX.srcMat(r)).N(SYS.IDX.srcPos{r},end)=MAT(SYS.IDX.srcMat(r)).N(SYS.IDX.srcPos{r},end)-share.*mDefect;
     end
     if(SYS.IDX.dstMat(r)~=0)
-        MAT(SYS.IDX.dstMat(r)).N(SYS.IDX.dstPos{r},end+1)=MAT(SYS.IDX.dstMat(r)).N(SYS.IDX.dstPos{r},end)+share.*mDefect;
+        MAT(SYS.IDX.dstMat(r)).N(:,end+1)=MAT(SYS.IDX.dstMat(r)).N(:,end);
+        MAT(SYS.IDX.dstMat(r)).N(SYS.IDX.dstPos{r},end)=MAT(SYS.IDX.dstMat(r)).N(SYS.IDX.dstPos{r},end)+share.*mDefect;
     end
     clearvars mDefect share
 end
