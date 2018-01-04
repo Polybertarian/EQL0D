@@ -1,0 +1,22 @@
+% Nuclear data files
+set acelib "sss_endfb7u.xsdata"
+set declib "sss_endfb7.dec"
+set nfylib "sss_endfb7.nfy"
+
+% Include
+include "geometry.serp"
+include "graphite.serp"
+include "blanket.serp"
+include "fuel.serp"
+
+% Options
+set power 556e6
+set pop 5000 500 50
+set ures 1
+set pcc 0
+set depmtx 1 1
+dep daytot 15485
+set arr 1 0
+
+% EQL0D flux detector
+det intFlux dm fuel dm blanket dm graphite 

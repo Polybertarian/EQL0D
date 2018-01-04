@@ -1,0 +1,5 @@
+%%% MSBR 2f graphite from ORNL-4528
+%%% density @ 20°C 1.84212329
+mat graphite -1.84 moder gre7.20t 6000
+C-nat.09c 100.0
+therm gre7.20t gre7.20t
