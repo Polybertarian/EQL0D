@@ -23,8 +23,8 @@ OPT.REA.replNuclides=902320;
 OPT.REA.replFraction=[];
 OPT.REA.feedMat='feed';
 OPT.REA.targetMat='fuel';
-OPT.REA.tol=300; %pcm
-OPT.REA.maxIter=20; 
+OPT.REA.tol=200; %pcm
+OPT.REA.maxIter=50; 
 
 %%% Redox control
 OPT.redoxControl=false;
