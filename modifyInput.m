@@ -17,17 +17,19 @@ if(exist(inputName,'file')==2)
         case 'dep'
             currentValue=output{1}(pos+3);
             output=strcat('sed -i.bak ''',line,'s/',currentValue,'/', num2str(paramValue),'/''',[' ' inputName]);
-            [status,~]=unix(output{1});
+            [status,out]=unix(output{1});
         case 'depmtx'
             currentValue=output{1}(pos+3);
             output=strcat('sed -i.bak ''',line,'s/',currentValue,'/', num2str(paramValue),'/g''',[' ' inputName]);
-            [status,~]=unix(output{1});
+            [status,out]=unix(output{1});
         otherwise
             error(['Error: parameter to change ''' paramName ''' not recognized!'])
     end
     if(status~=0)
-        error('Error while writing in Serpent file!');
+        error(['Error: while writing in input: ' out]);
     end
+else
+	error('Error: Input file not found!')
 end
 
 end
