@@ -114,7 +114,7 @@ if(OPT.redoxControl)
             end
         end
     end
-    if(~isempty(OPT.REDOX.replaceMode)&~isempty(OPT.REDOX.replaceWith))
+    if(~isempty(OPT.REDOX.replaceMode)&&~isempty(OPT.REDOX.replaceWith))
         for i=SYS.IDX.redoxMat
             SYS.IDX.redoxNuc{i}=find(ismember(MAT(i).ZAI,OPT.REDOX.replaceWith));
         end

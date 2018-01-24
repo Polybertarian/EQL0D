@@ -65,7 +65,7 @@ if(criterion) %activate reactivity control if above tolerance
                   NChange=changeUp(end)*MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucDo,end);
                   MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucDo,end)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucDo,end)+NChange;
                   if(strcmp(OPT.REA.mode,'replace'))
-                    NChangeRepl=OPT.REA.replFraction.*sum(NChange.*MAT(SYS.IDX.targetMat).atomicMass(SYS.IDX.targetNucDo))...
+                    NChangeRepl=OPT.REA.replFraction'.*sum(NChange.*MAT(SYS.IDX.targetMat).atomicMass(SYS.IDX.targetNucDo))...
                         ./MAT(SYS.IDX.targetMat).avMass(SYS.IDX.targetNucRepl);
                     MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucRepl,end)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucRepl,end)-NChangeRepl;
                   end
@@ -73,7 +73,7 @@ if(criterion) %activate reactivity control if above tolerance
                   NChange=changeUp(end)*MAT(SYS.IDX.feedMat).N(SYS.IDX.feedNucUp,end);
                   MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucUp,end)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucUp,end)+NChange;
                   if(strcmp(OPT.REA.mode,'replace'))
-                    NChangeRepl=OPT.REA.replFraction.*sum(NChange.*MAT(SYS.IDX.feedMat).atomicMass(SYS.IDX.feedNucUp))...
+                    NChangeRepl=OPT.REA.replFraction'.*sum(NChange.*MAT(SYS.IDX.feedMat).atomicMass(SYS.IDX.feedNucUp))...
                         ./MAT(SYS.IDX.feedMat).avMass(SYS.IDX.feedNucRepl);
                     MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucRepl,end)=MAT(SYS.IDX.targetMat).N(SYS.IDX.targetNucRepl,end)-NChangeRepl;
                   end

@@ -1,4 +1,7 @@
+function EQL0Dlauncher(Cases,nCores,verbose,printNquit,restart,reset,debug)
 %%% Launcher for EQL0D
+SYS=struct('nCores',nCores,'verboseMode',logical(verbose),'printAndQuit',logical(printNquit),...
+    'restartCalc',logical(restart),'resetCounters',logical(reset),'debugMode',logical(debug));
 format long
 warning('off','backtrace')
 warning('off','MATLAB:declareGlobalBeforeUse')
@@ -22,3 +25,4 @@ for i=1:length(Cases)
     end
 end
 
+end

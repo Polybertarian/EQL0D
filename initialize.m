@@ -90,14 +90,14 @@ else
         for i=SYS.IDX.contMat
             if(OPT.printSteps)
                 MAT(i).printMaterial(SYS,'AB');
-            elseif(OPT.printCycles&~OPT.printSteps)
+            elseif(OPT.printCycles&&~OPT.printSteps)
                 MAT(i).printMaterial(SYS,'EoC');
             end
         end
     end
 
     %%% Neutron balance outputs
-    [SYS.FID.keff,errmsg]=fopen('keff.txt','w');
+    [SYS.FID.keff,~]=fopen('keff.txt','w');
     fprintf(SYS.FID.keff,'%-7s %-3s %-5s %-4s %-3s %-12s %-9s %-9s\n',...
         'Source','PCC','Cycle','Step','Rep','Time','k-inf','k-eff');
 
@@ -114,7 +114,7 @@ else
                 end
                 fprintf(SYS.FID.react,'%-22s','Time');
                 fprintf(SYS.FID.react,['%-' num2str(12*numel(SYS.IDX.targetNucUp)) 's'],name{1});
-                if(strcmp(OPT.REA.mode,'addMass')&~isempty(SYS.IDX.feedMat))
+                if(strcmp(OPT.REA.mode,'addMass')&&~isempty(SYS.IDX.feedMat))
                     fprintf(SYS.FID.react,['%-' num2str(13*numel(SYS.IDX.targetNucUp)) 's'],name{2});
                 elseif(strcmp(OPT.REA.mode,'replace'))
                     fprintf(SYS.FID.react,['%-' num2str(13*numel(SYS.IDX.targetNucRepl)) 's'],name{1});
@@ -127,7 +127,7 @@ else
                 fprintf(SYS.FID.react,'%-7s%-6s%-9s','Cycle','Step','EFPD');
                 names{1}=MAT(SYS.IDX.targetMat).nuclideName(SYS.IDX.targetNucUp);
                 fprintf(SYS.FID.react,repmat('%-13s',1,numel(names{1})),names{1}{:});
-                if(strcmp(OPT.REA.mode,'addMass')&~isempty(SYS.IDX.feedMat))
+                if(strcmp(OPT.REA.mode,'addMass')&&~isempty(SYS.IDX.feedMat))
                     names{2}=MAT(SYS.IDX.feedMat).nuclideName(SYS.IDX.feedNucUp);
                     fprintf(SYS.FID.react,repmat('%-13s',1,numel(names{2})),names{2}{:});
                 elseif(strcmp(OPT.REA.mode,'replace'))
@@ -142,7 +142,7 @@ else
                 end
                 fprintf(SYS.FID.react,'\n');
             case 'addVolume'
-                [SYS.FID.volume,errmsg]=fopen('volume.txt','w');
+                [SYS.FID.volume,~]=fopen('volume.txt','w');
                 fprintf(SYS.FID.volume,'%-7s%-6s%-9s%-12s\n',...
                     'Cycle','Step','EFPD','Add. Vol. [cm^3]');
         end
@@ -151,19 +151,19 @@ else
     %%% Check presence of necessary input parameters in Serpent file
     [~,isAbsent]=unix(['grep -c "set depmtx 1" ' SYS.Casename]);
     if(str2double(isAbsent)==0)
-        [fID,errmsg]=fopen(SYS.Casename,'a');
+        [fID,~]=fopen(SYS.Casename,'a');
         fprintf(fID,'\n%s\n','set depmtx 1 1');
         fclose(fID);
     end
     [~,isAbsent]=unix(['grep -c "set arr 1" ' SYS.Casename]);
     if(str2double(isAbsent)==0)
-        [fID,errmsg]=fopen(SYS.Casename,'a');
+        [fID,~]=fopen(SYS.Casename,'a');
         fprintf(fID,'\n%s\n','set arr 1 0');
         fclose(fID);
     end
     [~,isAbsent]=unix(['grep -c "det intFlux" ' SYS.Casename]);
     if(str2double(isAbsent)==0)
-        [fID,errmsg]=fopen(SYS.Casename,'a');
+        [fID,~]=fopen(SYS.Casename,'a');
         fprintf(fID,'\n%s','det intFlux ');
         for i=SYS.IDX.fluxMat
             fprintf(fID,'%s',['dm ' MAT(i).name ' ']);

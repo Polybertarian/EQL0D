@@ -71,6 +71,8 @@ classdef Mat < NuclearObject
                 if(~isempty(idx))
                     error(['Nuclide(s) ' num2str(zai(idx)) ' not found in library.'])
                 end
+                [zai,idx]=sort(zai);
+                comp=comp(idx);
                 obj.name=name;
                 obj.volume=vol;
                 obj.temp=temp;

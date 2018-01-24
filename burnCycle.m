@@ -58,17 +58,18 @@ for i=1:length(MAT)
     SYS.prevN.EOC=[SYS.prevN.EOC MAT(i).N(:,end)]; %%% Store compositions from previous loop
 end
 
-if(OPT.redoxControl) %%% Adjust redox
-    MAT = redoxControl(MAT,OPT,SYS);
+if(~OPT.PCC||SYS.PCC.corrector)
+    if(OPT.redoxControl) %%% Adjust redox
+        MAT = redoxControl(MAT,OPT,SYS);
+    end
+    if(~isempty(SYS.IDX.batchStr)) %%% Batchwise EoS processes
+        MAT=batchProcessing(MAT,REP,SYS);
+    end
+    SYS=computeK(MAT,SYS); %%% Compute k-eff
+    if(OPT.reactControl) %%% Adjust reactivity
+        [MAT,SYS] = reactivityControl(MAT,OPT,SYS);
+    end
 end
-if(~isempty(SYS.IDX.batchStr)) %%% Batchwise EoS processes
-    MAT=batchProcessing(MAT,REP,SYS);
-end
-SYS=computeK(MAT,SYS); %%% Compute k-eff
-if(OPT.reactControl) %%% Adjust reactivity
-    [MAT,SYS] = reactivityControl(MAT,OPT,SYS);
-end
-
 %% After Batch processing
 if(strcmp(OPT.iterMode,'steps')||SYS.inCntr==1||floor(SYS.inCntr/10)==ceil(SYS.inCntr/10))
     printStatus(MAT,SYS,prefix2,'EoS (AB)');  %%% Add status to log
