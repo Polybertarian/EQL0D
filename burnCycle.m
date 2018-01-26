@@ -48,7 +48,7 @@ SYS=computeK(MAT,SYS); %%% Compute k-eff
 printK(SYS,'BB',prefix,'EQL0D');
 
 if(OPT.printSteps&&OPT.printStepsBB)
-    for i=SYS.IDX.contMat
+    for i=[SYS.IDX.contMat SYS.IDX.strMat]
         MAT(i).printMaterial(SYS,'BB'); %%% Print EOS composition
     end
 end
@@ -82,7 +82,7 @@ end
 
 %%% Print material composition to file
 if(OPT.printSteps)
-    for i=SYS.IDX.contMat
+    for i=[SYS.IDX.contMat SYS.IDX.strMat]
         MAT(i).printMaterial(SYS,'AB');
     end
 end

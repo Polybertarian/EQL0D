@@ -13,6 +13,7 @@ classdef Rep
         mode
         isCont=false
         isBatch=false
+        isKeep=false;
     end
     
     methods
@@ -55,6 +56,7 @@ classdef Rep
                 obj.rate=1;
                 if(ismember(rate,{'keep','keepAM','keepAFPM','keepTotM','keepAA','keepAFPM','keepTotA'}))
                     obj.mode=rate;
+                    obj.isKeep=true;
                 else
                     error(['Reprocessing stream mode ' rate ' of stream ' obj.name ' not recognized!']);
                 end

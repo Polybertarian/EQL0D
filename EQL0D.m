@@ -76,7 +76,7 @@ try
             %save([SYS.Casename '.mat']);
         end
         if(OPT.printCycles&&~OPT.printSteps)
-            for i=SYS.IDX.contMat
+            for i=[SYS.IDX.contMat SYS.IDX.strMat]
                 MAT(i).printMaterial(SYS,'EoC'); %%% Print compositions at EoC
             end
         end
@@ -90,7 +90,7 @@ try
     [MAT,SYS] = loadSerpentData(MAT,SYS);
     switch OPT.iterMode
         case 'equilibrium'
-            for i=SYS.IDX.contMat
+            for i=[SYS.IDX.contMat SYS.IDX.strMat]
                 MAT(i).printMaterial(SYS,'EQL_AB');
                 mat=MAT(i); mat.N(:,end+1)=SYS.prevN.EOC(:,i);
                 mat.printMaterial(SYS,'EQL_BB');
@@ -98,7 +98,7 @@ try
             neutronBalance(MAT,SYS)
         case 'steps'
             if(OPT.printSteps)
-                for i=SYS.IDX.contMat
+                for i=[SYS.IDX.contMat SYS.IDX.strMat]
                     MAT(i).printMaterial(SYS,'EoC');
                 end
             end
