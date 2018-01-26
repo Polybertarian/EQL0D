@@ -54,8 +54,8 @@ if(~isempty(REP))
     end
     
     %%% Look for continuous/batch reprocessing streams
-    SYS.IDX.contStr=find(ismember({REP.type},{'continuous','cont'}));
-    SYS.IDX.batchStr=find(ismember({REP.type},{'batchwise','batch'}));
+    SYS.IDX.contStr=find([REP.isCont]);
+    SYS.IDX.batchStr=find([REP.isBatch]);
     
     %%% Identify source and destination material indexes
     for i=1:length(REP)
@@ -101,6 +101,7 @@ SYS.IDX.burnMat=find([MAT.isBurned]);
 SYS.IDX.fluxMat=find([MAT.isInFlux]);
 SYS.IDX.contMat=find(ismember({MAT.name},unique({REP([REP.isCont]).srcMat REP([REP.isCont]).dstMat})));
 SYS.IDX.strMat=find([MAT.isStr]);
+SYS.IDX.contStrMat=SYS.IDX.strMat(ismember(SYS.IDX.strMat,SYS.IDX.contMat));
 
 %%% Redox control material indexes
 if(OPT.redoxControl)
