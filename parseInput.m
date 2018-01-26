@@ -99,8 +99,8 @@ end
 %%% indexes refering to materials in flux
 SYS.IDX.burnMat=find([MAT.isBurned]);
 SYS.IDX.fluxMat=find([MAT.isInFlux]);
+SYS.IDX.contMat=find(ismember({MAT.name},unique({REP([REP.isCont]).srcMat REP([REP.isCont]).dstMat})));
 SYS.IDX.strMat=find([MAT.isStr]);
-SYS.IDX.contMat=find([MAT.isCont]);
 
 %%% Redox control material indexes
 if(OPT.redoxControl)

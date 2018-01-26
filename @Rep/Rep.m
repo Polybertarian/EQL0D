@@ -10,7 +10,9 @@ classdef Rep
         frequency
         rate
         type    
-        mode    
+        mode
+        isCont=false
+        isBatch=false
     end
     
     methods
@@ -38,7 +40,16 @@ classdef Rep
                 obj.share=obj.share(idx2);
             end
             obj.elements=elements;
-            obj.type=type;
+            switch type
+                case {'cont','continuous'}
+                    obj.type='cont';
+                    obj.isCont=true;
+                case {'batch','batchwise'}
+                    obj.type='batch';
+                    obj.isBatch=true;
+                otherwise
+                    error('Error while setting REP: type not recognized!');
+            end
             obj.frequency=1;
             if(ischar(rate))
                 obj.rate=1;
