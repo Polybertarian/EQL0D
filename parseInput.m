@@ -1,5 +1,5 @@
 function [MAT,OPT,REP,SYS] = parseInput(MAT,OPT,REP,SYS)
-%[MAT,OPT,REP,SYS] = PARSEINPUT(MAT,OPT,REP,SYS) parses the input data 
+%[MAT,OPT,REP,SYS] = PARSEINPUT(MAT,OPT,REP,SYS) parses the input data
 % Adapt vectors (Cycle length, etc.)
 if(length(OPT.cycleLength)<OPT.nCycles) % repeat last value in cycleLength vector to match nCycles
     OPT.cycleLength=[OPT.cycleLength repmat(OPT.cycleLength(end),1,OPT.nCycles-length(OPT.cycleLength))];
@@ -33,7 +33,7 @@ if(OPT.reactControl)
             if(any(OPT.REA.replNuclides<999))
                 OPT.REA.replFraction=[];
             end
-        end        
+        end
     end
     if(any(OPT.REA.upNuclides<999))
         OPT.REA.upFraction=[];
@@ -90,18 +90,21 @@ if(~isempty(REP))
             REP(j).share=REP(j).share/sum(REP(j).share);
         end
     end
+    %%% indexes refering to materials in flux
     
+    SYS.IDX.contMat=find(ismember({MAT.name},unique({REP([REP.isCont]).srcMat REP([REP.isCont]).dstMat})));
+    SYS.IDX.strMat=find([MAT.isStr]);
+    SYS.IDX.contStrMat=SYS.IDX.strMat(ismember(SYS.IDX.strMat,SYS.IDX.contMat));
 else %no reprocessing
     SYS.IDX.contStr=[];
     SYS.IDX.batchStr=[];
+    SYS.IDX.contMat=[];
+    SYS.IDX.strMat=[];
+    SYS.IDX.contStrMat=[];
+    SYS.IDX.contStrMat=[];
 end
-
-%%% indexes refering to materials in flux
 SYS.IDX.burnMat=find([MAT.isBurned]);
 SYS.IDX.fluxMat=find([MAT.isInFlux]);
-SYS.IDX.contMat=find(ismember({MAT.name},unique({REP([REP.isCont]).srcMat REP([REP.isCont]).dstMat})));
-SYS.IDX.strMat=find([MAT.isStr]);
-SYS.IDX.contStrMat=SYS.IDX.strMat(ismember(SYS.IDX.strMat,SYS.IDX.contMat));
 
 %%% Redox control material indexes
 if(OPT.redoxControl)

@@ -7,7 +7,7 @@ if(SYS.PCC.corrector)
     prefix2='CORRECTOR';
     if(SYS.inCntr==1)
         SYS.nowTime(end+1)=SYS.nowTime(end)-SYS.tStep(end)*OPT.nSteps(SYS.ouCntr)/(24.0*3600.0);
-        for i=SYS.IDX.contMat
+        for i=[SYS.IDX.burnMat SYS.IDX.contStrMat]
             MAT(i).N(:,end+1)=SYS.prevN.BOC(:,i);
         end
     end
@@ -16,14 +16,14 @@ if(SYS.PCC.corrector)
         (SYS.inCntr-1)*SYS.MTX.total{2})/SYS.PCC.nSteps; %%% Interpolate and solve
     SYS.burnVec=CRAMsolve(SYS.MTX.interp,SYS.tStep(end),SYS.burnVec);
     SYS.nowTime(end+1)=SYS.nowTime(end)+SYS.tStep(end)/(24.0*3600.0);
-    for i=SYS.IDX.contMat %%% Change material compositions
+    for i=[SYS.IDX.burnMat SYS.IDX.contStrMat] %%% Change material compositions
         MAT(i).N(SYS.IDX.burnZAI{2,i},end+1)=SYS.burnVec(vertcat(SYS.IDX.matZAI{2,:})==i)*MAT(i).volume;
     end
 else
     prefix='P';
     prefix2='PREDICTOR';
     SYS.burnVec=[]; %%% Prepare vector for solving
-    for i=SYS.IDX.contMat
+    for i=[SYS.IDX.burnMat SYS.IDX.contStrMat]
         SYS.burnVec=vertcat(SYS.burnVec,MAT(i).atDens(SYS.IDX.burnZAI{2,i}));
     end
     if(SYS.PCC.active)
@@ -33,7 +33,7 @@ else
         SYS.burnVec2=CRAMsolve(SYS.MTX.total{2},SYS.tStep(end),SYS.burnVec);
         SYS.nowTime(end+1)=SYS.nowTime(end)+SYS.tStep(end)/(24.0*3600.0); %in EFPD
     end
-    for i=SYS.IDX.contMat %%% Change material compositions
+    for i=[SYS.IDX.burnMat SYS.IDX.contStrMat] %%% Change material compositions
         MAT(i).N(SYS.IDX.burnZAI{2,i},end+1)=SYS.burnVec2(vertcat(SYS.IDX.matZAI{2,:})==i)*MAT(i).volume;
     end
 end
@@ -48,7 +48,7 @@ SYS=computeK(MAT,SYS); %%% Compute k-eff
 printK(SYS,'BB',prefix,'EQL0D');
 
 if(OPT.printSteps&&OPT.printStepsBB)
-    for i=[SYS.IDX.contMat SYS.IDX.strMat]
+    for i=[SYS.IDX.burnMat SYS.IDX.strMat]
         MAT(i).printMaterial(SYS,'BB'); %%% Print EOS composition
     end
 end
@@ -82,7 +82,7 @@ end
 
 %%% Print material composition to file
 if(OPT.printSteps)
-    for i=[SYS.IDX.contMat SYS.IDX.strMat]
+    for i=[SYS.IDX.burnMat SYS.IDX.strMat]
         MAT(i).printMaterial(SYS,'AB');
     end
 end

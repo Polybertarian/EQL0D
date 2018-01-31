@@ -2,7 +2,7 @@ function EQL0Dlauncher(Cases,nCores,verbose,printNquit,restart,reset,debug)
 %%% Launcher for EQL0D
 SYS=struct('nCores',nCores,'verboseMode',logical(verbose),'printAndQuit',logical(printNquit),...
     'restartCalc',logical(restart),'resetCounters',logical(reset),'debugMode',logical(debug));
-format long
+format long 
 warning('off','backtrace')
 warning('off','MATLAB:declareGlobalBeforeUse')
 warning('off','MATLAB:maxNumCompThreads:Deprecated')
@@ -21,7 +21,7 @@ for i=1:length(Cases)
             cd(OLDDIR);
         end 
     else
-        warning(['Warning: file ' Cases{i} ' not found!'])
+        warning(['Warning: file ' Cases{i} ' not found! Skipping...'])
     end
 end
 

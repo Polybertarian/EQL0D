@@ -13,8 +13,7 @@ try
         elseif(strcmp(OPT.iterMode,'steps'))
             SYS.tStep(end+1)=OPT.cycleLength(SYS.ouCntr)*24.0*3600.0/OPT.nSteps(SYS.ouCntr);
         end
-        SYS.stopInner=false; SYS.PCC.active=OPT.PCC; SYS.PCC.corrector=false;
-        SYS.oldFIMA=[MAT.FIMA];
+        SYS.stopInner=false; SYS.PCC.active=OPT.PCC; SYS.PCC.corrector=false;SYS.oldFIMA=[MAT.FIMA];
         SYS.oldN=[];
         for i=1:length(MAT)
             SYS.oldN=[SYS.oldN MAT(i).N(:,end)]; %%% Store compositions from previous loop
@@ -34,16 +33,27 @@ try
         end
         SYS = computeK(MAT,SYS); %%% Compute k-eff
         printK(SYS,'AB','C','EQL0D');
+        if(OPT.renormalize)
+            [MAT,SYS] = renormalizeBurnMatrices(MAT,SYS);
+        end
         if(~isempty(SYS.IDX.contStr))
             SYS = createRepMatrices(MAT,REP,SYS);
         end
         SYS = buildSystemMatrix(SYS);
         save([SYS.Casename '.mat']);
         while(~SYS.stopInner) %%% Inner loop
-            SYS.inCntr=SYS.inCntr+1; SYS.prevFIMA=[MAT(SYS.IDX.contMat).FIMA];
+            SYS.inCntr=SYS.inCntr+1; SYS.prevFIMA=[MAT(SYS.IDX.burnMat).FIMA];
             SYS.prevN.BOC=[];
             for i=1:length(MAT)
                 SYS.prevN.BOC=[SYS.prevN.BOC MAT(i).N(:,end)]; %%% Store compositions from previous loop
+            end
+            
+            if(OPT.renormalize)
+                [MAT,SYS] = renormalizeBurnMatrices(MAT,SYS);
+                if(~isempty(SYS.IDX.contStr))
+                    SYS = createRepMatrices(MAT,REP,SYS);
+                end
+                SYS = buildSystemMatrix(SYS);
             end
             
             [MAT,SYS]=burnCycle(MAT,OPT,REP,SYS);
@@ -76,7 +86,7 @@ try
             %save([SYS.Casename '.mat']);
         end
         if(OPT.printCycles&&~OPT.printSteps)
-            for i=[SYS.IDX.contMat SYS.IDX.strMat]
+            for i=[SYS.IDX.burnMat SYS.IDX.strMat]
                 MAT(i).printMaterial(SYS,'EoC'); %%% Print compositions at EoC
             end
         end
@@ -90,7 +100,7 @@ try
     [MAT,SYS] = loadSerpentData(MAT,SYS);
     switch OPT.iterMode
         case 'equilibrium'
-            for i=[SYS.IDX.contMat SYS.IDX.strMat]
+            for i=[SYS.IDX.burnMat SYS.IDX.strMat]
                 MAT(i).printMaterial(SYS,'EQL_AB');
                 mat=MAT(i); mat.N(:,end+1)=SYS.prevN.EOC(:,i);
                 mat.printMaterial(SYS,'EQL_BB');
@@ -98,7 +108,7 @@ try
             neutronBalance(MAT,SYS)
         case 'steps'
             if(OPT.printSteps)
-                for i=[SYS.IDX.contMat SYS.IDX.strMat]
+                for i=[SYS.IDX.burnMat SYS.IDX.strMat]
                     MAT(i).printMaterial(SYS,'EoC');
                 end
             end

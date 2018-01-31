@@ -35,8 +35,10 @@ SYS.intFlux=sum([MAT(SYS.IDX.fluxMat).intFlux]);
 
 %%% Get one-group XS/Nubar/Serpent k-eff/inf
 run([SYS.Casename '_res.m']);
-SYS.RR.NU{2}=NUBAR(1,1); SYS.RR.LEAK{2} =ABS_KINF(1,1)/ABS_KEFF(1,1);
-SYS.keff(end+1)=ABS_KEFF(1,1); SYS.kinf(end+1)=ABS_KINF(1,1);
+idxUni=find(strcmp(GC_UNIVERSE_NAME,'0'));
+SYS.RR.NU{2}=NUBAR(idxUni,1); SYS.RR.LEAK{2} =ABS_KINF(idxUni,1)/ABS_KEFF(idxUni,1);
+SYS.keff(end+1)=ABS_KEFF(idxUni,1); SYS.kinf(end+1)=ABS_KINF(idxUni,1);
+SYS.tgtFissRate=TOT_FISSRATE(idxUni,1);
 
 %%% Get micro RR
 run([SYS.Casename '_arr0.m']);
@@ -71,9 +73,9 @@ SYS.RR.inMat{2}=struct('capt',RR(:,1),'fiss',RR(:,2),'n2n',RR(:,3),'n3n',RR(:,4)
 %%% Read data for burnable materials
 for i=SYS.IDX.burnMat
     run(strtrim(ls(['depmtx_' MAT(i).name '*0.m'])));
+    A=sparse(A);
     idx=ismember(ZAI,[-1 10 666]);
     A(:,idx)=[]; A(idx,:)=[];
-    A=sparse(A);
     N0(idx)=[]; ZAI(idx)=[];
     SYS.MTX.decay{2,i}=sparse(SYS.MTX.defaultDecay);
     SYS.IDX.burnZAI{2,i}=ismember(MAT(i).ZAI,ZAI);

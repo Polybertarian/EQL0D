@@ -18,7 +18,7 @@ for k=SYS.IDX.contStr
     if(SYS.debugMode)
         fprintf(SYS.FID.log,'%s\n',['*** CONT *** Adding processing stream ' REP(k).name '...']);
     end
-    if(~ismember(REP(k).mode,{'keep','keepAM','keepAFPM','keepTotM','keepAA','keepAFPM','keepTotA'}))
+    if(~REP(k).isKeep)
         if(SYS.IDX.srcMat(k)==0) %%% void source = find destination elements
             nucInDst=(matZAI==SYS.IDX.dstMat(k));
             replNuc=[]; % vector isotopes in source material
