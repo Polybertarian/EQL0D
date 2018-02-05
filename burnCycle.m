@@ -60,14 +60,18 @@ end
 
 if(~OPT.PCC||SYS.PCC.corrector)
     if(OPT.redoxControl) %%% Adjust redox
-        MAT = redoxControl(MAT,OPT,SYS);
+        for i=SYS.IDX.redoxMat
+            [MAT(i),dN] = MAT(i).redoxControl(SYS.IDX.redoxHalide{i},SYS.IDX.redoxNuc{i},OPT.REDOX.replaceMode);
+            name=MAT.nuclideName(SYS.IDX.redoxHalide{i});
+            fprintf(SYS.FID.log,'%s\n',['** REDOX ** Excess of ' num2str(-dN*1E24,'%E') ' ' [name{:}]  ' atoms corrected.']);
+        end
     end
     if(~isempty(SYS.IDX.batchStr)) %%% Batchwise EoS processes
-        MAT=batchProcessing(MAT,REP,SYS);
+        MAT = batchProcessing(MAT,REP,SYS);
     end
     SYS=computeK(MAT,SYS); %%% Compute k-eff
     if(OPT.reactControl) %%% Adjust reactivity
-        [MAT,SYS] = reactivityControl(MAT,OPT,SYS);
+        [MAT,SYS] = reactivityControl(MAT,OPT.REA,SYS);
     end
 end
 %% After Batch processing

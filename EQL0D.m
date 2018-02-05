@@ -70,6 +70,9 @@ try
                 SYS = computeK(MAT,SYS);
                 printK(SYS,'AB','P','EQL0D');
                 
+                if(OPT.renormalize)
+                [MAT,SYS] = renormalizeBurnMatrices(MAT,SYS);
+                end
                 if(~isempty(SYS.IDX.contStr))
                     SYS = createRepMatrices(MAT,REP,SYS);
                 end

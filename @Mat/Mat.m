@@ -397,6 +397,19 @@ classdef Mat < NuclearObject
         function avMass = avMass(obj,IDX)
             avMass=sum(obj.aFrac(IDX).*obj.atomicMass(IDX));
         end
+        function [obj,dN] = redoxControl(obj,halideIdx,nucIdx,mode)
+            switch mode
+                case 'replaceMass'
+                    dN=obj.halideExcess*obj.volume/(1+obj.oxState(nucIdx)*obj.avMass(halideIdx)/obj.atomicMass(nucIdx));
+                    obj.N(nucIdx,end+1)=obj.N(nucIdx,end)-dN*obj.avMass(halideIdx)/obj.atomicMass(nucIdx);
+                case 'replaceAtom'
+                    dN=obj.halideExcess*obj.volume/(1+obj.oxState(nucIdx));
+                    obj.N(nucIdx,end+1)=obj.N(nucIdx,end)-dN;
+                otherwise
+                    dN=obj.halideExcess*obj.volume;
+            end
+            obj.N(halideIdx,end+1)=obj.N(halideIdx,end)+dN*obj.aFrac(halideIdx);
+        end
     end
 end
 

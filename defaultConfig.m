@@ -9,7 +9,7 @@ OPT.printStepsBB=false;
 OPT.printCycles=true;
 OPT.defaultDataLibrary='endfb7';
 OPT.PCC=false;
-OPT.renormalize=false;
+OPT.renormalize=true;
 
 %%% Reactivity control
 OPT.reactControl=false;

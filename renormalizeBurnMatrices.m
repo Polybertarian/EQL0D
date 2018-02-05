@@ -12,10 +12,10 @@ if(SYS.verboseMode)
     fprintf(SYS.FID.log,'%s\n',['** RENORM ** Current integral flux: ' num2str([SYS.intFlux],'%E')]);
 end
 SYS.renormFactor=SYS.tgtFissRate./currentRate;
-if(SYS.verboseMode)
+%if(SYS.verboseMode)
     fprintf(SYS.FID.log,'%s\n',['** RENORM ** Current fission rate: ' num2str(currentRate,'%E') ...
         ', expected: ' num2str(SYS.tgtFissRate,'%E') ', factor: ' num2str(SYS.renormFactor)]);
-end
+%end
 if(SYS.renormFactor<0)
     error('Error: Renormalization factor negative! Something went wrong.')
 end
