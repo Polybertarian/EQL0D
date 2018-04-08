@@ -19,17 +19,17 @@ for k=SYS.IDX.contStr
         fprintf(SYS.FID.log,'%s\n',['*** CONT *** Adding processing stream ' REP(k).name '...']);
     end
     if(~REP(k).isKeep)
-        if(SYS.IDX.srcMat(k)==0) %%% void source = find destination elements
-            nucInDst=(matZAI==SYS.IDX.dstMat(k));
+        if(isempty(REP(k).srcMatIdx)) %%% void source = find destination elements
+            nucInDst=(matZAI==REP(k).dstMatIdx);
             replNuc=[]; % vector isotopes in source material
             feedNucInDst=find(ismember(burnZAI,REP(k).elements)&nucInDst);
-        elseif(SYS.IDX.dstMat(k)==0) %%% void destination = find source elements
-            nucInSrcMat=(matZAI==SYS.IDX.srcMat(k));
+        elseif(isempty(REP(k).dstMatIdx)) %%% void destination = find source elements
+            nucInSrcMat=(matZAI==REP(k).srcMatIdx);
             replNuc=find(ismember(burnZAI,REP(k).elements)&nucInSrcMat);
             feedNucInDst=[];
         else %%% non-void source & destination = find both
-            nucInDst=(matZAI==SYS.IDX.dstMat(k));
-            nucInSrcMat=(matZAI==SYS.IDX.srcMat(k));
+            nucInDst=(matZAI==REP(k).dstMatIdx);
+            nucInSrcMat=(matZAI==REP(k).srcMatIdx);
             replNuc=find(ismember(burnZAI,REP(k).elements)&nucInSrcMat);
             feedNucInDst=find(ismember(burnZAI,burnZAI(replNuc))&nucInDst);
             if(length(replNuc)>length(feedNucInDst))
@@ -39,11 +39,11 @@ for k=SYS.IDX.contStr
         SYS.MTX.rep{2,SYS.IDX.contStr==k}=spalloc(sz,sz,length(REP(k).elements));
         %%% modify matrix for found elements
         for l=1:length(replNuc)
-            if(SYS.IDX.srcMat(k)~=0)
+            if(REP(k).srcMatIdx~=0)
                 SYS.MTX.rep{2,SYS.IDX.contStr==k}(replNuc(l),replNuc(l))=-REP(k).rate;
-                if(SYS.IDX.dstMat(k)~=0)
+                if(REP(k).dstMatIdx~=0)
                     SYS.MTX.rep{2,SYS.IDX.contStr==k}(feedNucInDst(l),replNuc(l))=...
-                        +REP(k).rate*MAT(SYS.IDX.srcMat(k)).volume/MAT(SYS.IDX.dstMat(k)).volume;
+                        +REP(k).rate*MAT(REP(k).srcMatIdx).volume/MAT(REP(k).dstMatIdx).volume;
                 end
             else
                 SYS.MTX.rep{2,SYS.IDX.contStr==k}(feedNucInDst(l),feedNucInDst(l))=+REP(k).rate;
@@ -57,8 +57,8 @@ end
 
 %%% KeepX modes at the end
 for k=skipped
-    dst=SYS.IDX.dstMat(k);
-    src=SYS.IDX.srcMat(k);
+    dst=REP(k).dstMatIdx;
+    src=REP(k).srcMatIdx;
     tmpMtx=blkdiag(SYS.MTX.burn{2,:}); %%% Temporary rep matrix sum
     for i=SYS.IDX.contStr(SYS.IDX.contStr<k)
         tmpMtx=tmpMtx+SYS.MTX.rep{2,i};
@@ -79,7 +79,7 @@ for k=skipped
     repMtx=zeros(sz,sz);
     
     % share between feed nuclides
-    if(SYS.IDX.srcMat(k)~=0)
+    if(REP(k).srcMatIdx~=0)
         share=MAT(src).massDens(ismember(MAT(src).ZAI,burnZAI(feedNucInDst)));
         if(sum(share)==0)
             share=REP(k).share;
@@ -98,7 +98,7 @@ for k=skipped
         repMtx(feedNucInDst,replNuc)=-share*sum(tmpMtx(replNucInDst,replNuc));
     end
     % if source is a existing material
-    if(SYS.IDX.srcMat(k)~=0)
+    if(~isempty(REP(k).srcMatIdx))
         nucInSrc=(matZAI==src);
         feedNucInSrc=ismember(burnZAI,REP(k).elements)&nucInSrc&ismember(burnZAI,burnZAI(feedNucInDst));
         repMtx(feedNucInSrc,replNuc)=-MAT(dst).volume/MAT(src).volume*repMtx(feedNucInDst,replNuc);

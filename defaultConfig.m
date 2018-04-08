@@ -14,7 +14,8 @@ OPT.renormalize=true;
 %%% Reactivity control
 OPT.reactControl=false;
 OPT.REA.mode='replace';
-OPT.REA.allowNegative=true;
+OPT.REA.allowRemoval=true;
+OPT.REA.allowAddition=true;
 OPT.REA.targetKeff=1.0;
 OPT.REA.upNuclides=922330;
 OPT.REA.upFraction=[];

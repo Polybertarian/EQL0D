@@ -66,7 +66,7 @@ for i=SYS.IDX.fluxMat
     NPhi(:,i)=MAT(i).intFlux*MAT(i).atDens;
 end
 NPhi=sum(NPhi,2);
-RR=RR./repmat(NPhi,1,4); % create cross-sections using integralflux and nuclides densities
+RR=RR./repmat(NPhi,1,4); % create cross-sections using integral flux and nuclides densities
 RR(isnan(RR)|isinf(RR))=0.0;
 SYS.RR.inMat{2}=struct('capt',RR(:,1),'fiss',RR(:,2),'n2n',RR(:,3),'n3n',RR(:,4));
 
