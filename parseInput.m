@@ -106,7 +106,7 @@ if(~isempty(REP))
     
     SYS.IDX.contMat=find(ismember({MAT.name},unique({REP([REP.isCont]).srcMat REP([REP.isCont]).dstMat})));
     SYS.IDX.strMat=find([MAT.isStr]);
-    SYS.IDX.contStrMat=SYS.IDX.strMat(ismember(SYS.IDX.strMat,SYS.IDX.contMat));
+    SYS.IDX.contStrMat=SYS.IDX.strMat;
 else %no reprocessing
     SYS.IDX.contStr=[];
     SYS.IDX.batchStr=[];
