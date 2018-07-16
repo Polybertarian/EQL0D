@@ -27,10 +27,10 @@ switch OPT.iterMode
                 return
             end
         end
-        isConverged=zeros(size(SYS.IDX.burnMat));
+        isConverged=zeros(size(SYS.IDX.MAT.burn));
         if(ismember(OPT.CONV.(loop).criterion,{'maxRelDiff','maxActRelDiff','maxNucDatRelDiff'}))
             %%% Loop over burnt materials
-            for i=SYS.IDX.burnMat
+            for i=SYS.IDX.MAT.burn
                 switch OPT.CONV.(loop).criterion
                     case 'maxRelDiff'
                         idx=find(MAT(i).atDens>OPT.CONV.(loop).cutoff);
@@ -70,7 +70,7 @@ switch OPT.iterMode
                 
             end
         else
-            for i=SYS.IDX.burnMat
+            for i=SYS.IDX.MAT.burn
                 switch OPT.CONV.(loop).criterion
                     case 'maxBUDiff'
                         switch loop

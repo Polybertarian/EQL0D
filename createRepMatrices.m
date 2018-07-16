@@ -14,7 +14,7 @@ if(SYS.debugMode)
 end
 
 %%% Add continuous processing constants
-for k=SYS.IDX.contStr
+for k=SYS.IDX.REP.cont
     if(SYS.debugMode)
         fprintf(SYS.FID.log,'%s\n',['*** CONT *** Adding processing stream ' REP(k).name '...']);
     end
@@ -36,17 +36,17 @@ for k=SYS.IDX.contStr
                 replNuc=find(ismember(burnZAI,burnZAI(feedNucInDst))&nucInSrcMat);
             end
         end
-        SYS.MTX.rep{2,SYS.IDX.contStr==k}=spalloc(sz,sz,length(REP(k).elements));
+        SYS.MTX.rep{2,SYS.IDX.REP.cont==k}=spalloc(sz,sz,length(REP(k).elements));
         %%% modify matrix for found elements
         for l=1:length(replNuc)
             if(REP(k).srcMatIdx~=0)
-                SYS.MTX.rep{2,SYS.IDX.contStr==k}(replNuc(l),replNuc(l))=-REP(k).rate;
+                SYS.MTX.rep{2,SYS.IDX.REP.cont==k}(replNuc(l),replNuc(l))=-REP(k).rate;
                 if(REP(k).dstMatIdx~=0)
-                    SYS.MTX.rep{2,SYS.IDX.contStr==k}(feedNucInDst(l),replNuc(l))=...
+                    SYS.MTX.rep{2,SYS.IDX.REP.cont==k}(feedNucInDst(l),replNuc(l))=...
                         +REP(k).rate*MAT(REP(k).srcMatIdx).volume/MAT(REP(k).dstMatIdx).volume;
                 end
             else
-                SYS.MTX.rep{2,SYS.IDX.contStr==k}(feedNucInDst(l),feedNucInDst(l))=+REP(k).rate;
+                SYS.MTX.rep{2,SYS.IDX.REP.cont==k}(feedNucInDst(l),feedNucInDst(l))=+REP(k).rate;
             end
         end
     else
@@ -60,7 +60,7 @@ for k=skipped
     dst=REP(k).dstMatIdx;
     src=REP(k).srcMatIdx;
     tmpMtx=blkdiag(SYS.MTX.burn{2,:}); %%% Temporary rep matrix sum
-    for i=SYS.IDX.contStr(SYS.IDX.contStr<k)
+    for i=SYS.IDX.REP.cont(SYS.IDX.REP.cont<k)
         tmpMtx=tmpMtx+SYS.MTX.rep{2,i};
     end
     switch REP(k).mode
@@ -104,7 +104,7 @@ for k=skipped
         repMtx(feedNucInSrc,replNuc)=-MAT(dst).volume/MAT(src).volume*repMtx(feedNucInDst,replNuc);
     end
     
-    SYS.MTX.rep{2,SYS.IDX.contStr==k}=sparse(repMtx);
+    SYS.MTX.rep{2,SYS.IDX.REP.cont==k}=sparse(repMtx);
 end
 
 if(SYS.debugMode)

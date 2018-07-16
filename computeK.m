@@ -1,13 +1,13 @@
-function SYS = computeK(MAT,SYS)
-%SYS = COMPUTEK(MAT,SYS) compute k-inf and k-eff using reaction rates from Serpent and compositions
+function [keff,kinf] = computeK(MAT,SYS)
+%[keff,kinf] = COMPUTEK(MAT,SYS) compute k-inf and k-eff using reaction rates from Serpent and compositions
 %from the MAT vector
 
-fiss=sum([SYS.RR.notInMat{2}.fiss]); %%% usually 0 if all materials correctly input
-capt=sum([SYS.RR.notInMat{2}.capt]);
-n2n =sum([SYS.RR.notInMat{2}.n2n]);
-n3n =sum([SYS.RR.notInMat{2}.n3n]);
+fiss=sum([SYS.RR.notInMat{end}.fiss]); %%% usually 0 if all materials correctly input
+capt=sum([SYS.RR.notInMat{end}.capt]);
+n2n =sum([SYS.RR.notInMat{end}.n2n]);
+n3n =sum([SYS.RR.notInMat{end}.n3n]);
 
-for i=SYS.IDX.fluxMat
+for i=SYS.IDX.MAT.inFlux
     fiss=fiss+sum(MAT(i).fissRate);
     capt=capt+sum(MAT(i).captRate);
     n2n =n2n+sum(MAT(i).n2nRate);
@@ -22,7 +22,7 @@ else
     keff=kinf/SYS.RR.LEAK{2};
 end
 
-SYS.keff(end+1)=keff;
-SYS.kinf(end+1)=kinf;
+%SYS.keff(end+1)=keff;
+%SYS.kinf(end+1)=kinf;
 return
 end

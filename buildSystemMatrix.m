@@ -7,10 +7,10 @@ SYS.MTX.total(1)=[];
 
 %%% Add new by summing burn, decay and rep matrices
 SYS.MTX.total{2}=[];
-for i=[SYS.IDX.burnMat SYS.IDX.contStrMat]
+for i=[SYS.IDX.MAT.burn SYS.IDX.REP.contMat]
     SYS.MTX.total{2}=blkdiag(SYS.MTX.total{2},SYS.MTX.burn{2,i}+SYS.MTX.decay{2,i});
 end
-for i=SYS.IDX.contStr
+for i=SYS.IDX.REP.cont
     SYS.MTX.total{2}=SYS.MTX.total{2}+SYS.MTX.rep{2,i};
 end
 

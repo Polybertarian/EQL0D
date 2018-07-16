@@ -12,7 +12,7 @@ function [MAT,SYS] = loadSerpentData(MAT,SYS)
 exst=[exist([SYS.Casename '_arr0.m'],'file')==2,...
       exist([SYS.Casename  '_res.m'],'file')==2,...
       exist([SYS.Casename '_det0.m'],'file')==2];
-for i=SYS.IDX.burnMat
+for i=SYS.IDX.MAT.burn
     exst(end+1)=(exist(['depmtx_' MAT(i).name '0.m'],'file')==2);
 end
 if(~all(exst))
@@ -28,16 +28,17 @@ SYS.burnZAI(1,:)=[];
 
 %%% Get integral fluxes
 run([SYS.Casename '_det0.m']);
-for i=1:length(SYS.IDX.fluxMat)
-    MAT(SYS.IDX.fluxMat(i)).intFlux=DETintFlux(i,11);
+for i=1:length(SYS.IDX.MAT.inFlux)
+    MAT(SYS.IDX.MAT.inFlux(i)).intFlux=DETintFlux(i,11);
 end
-SYS.intFlux=sum([MAT(SYS.IDX.fluxMat).intFlux]);
+SYS.intFlux=sum([MAT(SYS.IDX.MAT.inFlux).intFlux]);
 
 %%% Get one-group XS/Nubar/Serpent k-eff/inf
 run([SYS.Casename '_res.m']);
 idxUni=find(strcmp(GC_UNIVERSE_NAME,'0'));
 SYS.RR.NU{2}=NUBAR(idxUni,1); SYS.RR.LEAK{2} =ABS_KINF(idxUni,1)/ABS_KEFF(idxUni,1);
-SYS.keff(end+1)=ABS_KEFF(idxUni,1); SYS.kinf(end+1)=ABS_KINF(idxUni,1);
+SYS.KEFF.Serpent(end+1)=ABS_KEFF(idxUni,1); 
+SYS.KINF.Serpent(end+1)=ABS_KINF(idxUni,1);
 SYS.tgtFissRate=TOT_FISSRATE(idxUni,1);
 
 %%% Get micro RR
@@ -62,7 +63,7 @@ RR=zeros(length(MAT(1).ZAI),4);
 ZAIidx=ismember(MAT(1).ZAI,ZAI); %in Mat
 RR(ZAIidx,:)=rr_sorted;
 NPhi=[];
-for i=SYS.IDX.fluxMat
+for i=SYS.IDX.MAT.inFlux
     NPhi(:,i)=MAT(i).intFlux*MAT(i).atDens;
 end
 NPhi=sum(NPhi,2);
@@ -71,7 +72,7 @@ RR(isnan(RR)|isinf(RR))=0.0;
 SYS.RR.inMat{2}=struct('capt',RR(:,1),'fiss',RR(:,2),'n2n',RR(:,3),'n3n',RR(:,4));
 
 %%% Read data for burnable materials
-for i=SYS.IDX.burnMat
+for i=SYS.IDX.MAT.burn
     run(strtrim(ls(['depmtx_' MAT(i).name '*0.m'])));
     A=sparse(A);
     idx=ismember(ZAI,[-1 10 666]);
@@ -92,7 +93,7 @@ for i=SYS.IDX.burnMat
 end
 
 %%% data for stream materials 
-for i=SYS.IDX.contStrMat
+for i=SYS.IDX.REP.contMat
    SYS.MTX.decay{2,i}=SYS.MTX.decay{1,i}; 
    SYS.IDX.matZAI{2,i}=SYS.IDX.matZAI{1,i};
    SYS.IDX.burnZAI{2,i}=SYS.IDX.burnZAI{1,i};

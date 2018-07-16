@@ -3,7 +3,7 @@ function [MAT,SYS] = burnCycle(MAT,OPT,REP,SYS)
 %System
 %% Burning
 SYS.burnVec=[]; %%% Prepare vector for solving
-for i=[SYS.IDX.burnMat SYS.IDX.contStrMat]
+for i=[SYS.IDX.MAT.burn SYS.IDX.REP.contMat]
     SYS.burnVec=vertcat(SYS.burnVec,MAT(i).atDens(SYS.IDX.burnZAI{2,i}));
 end
 if(SYS.PCC.corrector)
@@ -23,7 +23,7 @@ else
         SYS.nowTime(end+1)=SYS.nowTime(end)+SYS.tStep(end)/(24.0*3600.0); %in EFPD
     end
 end
-for i=[SYS.IDX.burnMat SYS.IDX.contStrMat] %%% Change material compositions
+for i=[SYS.IDX.MAT.burn SYS.IDX.REP.contMat] %%% Change material compositions
 	MAT(i).N(SYS.IDX.burnZAI{2,i},end+1)=SYS.burnVec2(vertcat(SYS.IDX.matZAI{2,:})==i)*MAT(i).volume;
 end
 
@@ -32,11 +32,11 @@ if(strcmp(OPT.iterMode,'steps')||SYS.inCntr==1||floor(SYS.inCntr/10)==ceil(SYS.i
     printStatus(MAT,SYS,prefix2,'EoS (BB)');            %%% Add status to log
 end
 
-SYS=computeK(MAT,SYS); %%% Compute k-eff
+[SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT,SYS); %%% Compute k-eff
 printK(SYS,'BB',prefix,'EQL0D');
 
 if(OPT.printSteps&&OPT.printStepsBB)
-    for i=[SYS.IDX.burnMat SYS.IDX.strMat]
+    for i=[SYS.IDX.MAT.burn SYS.IDX.strMat]
         MAT(i).printMaterial(SYS,'BB'); %%% Print EOS composition
     end
 end
@@ -54,13 +54,13 @@ end
             fprintf(SYS.FID.log,'%s\n',['** REDOX ** Excess of ' num2str(dN(1)*1E24,'%E') ' valence corrected.']);
         end
     end
-    if(~isempty(SYS.IDX.batchStr)) %%% Batchwise EoS processes
+    if(~isempty(SYS.IDX.REP.batch)) %%% Batchwise EoS processes
         %%% Performs batch-wise processing steps
         if(SYS.verboseMode)
             fprintf(SYS.FID.log,'%s\n','** BATCH ** Performing batch processing steps...');
         end
         %%% Loop on batch processing streams
-        for r=SYS.IDX.batchStr
+        for r=SYS.IDX.REP.batch
             if(SYS.verboseMode)
                 fprintf(SYS.FID.log,'%s\n',['** BATCH ** Performing processing step ' REP(r).name '...']);
             end
@@ -71,7 +71,7 @@ end
             fprintf(SYS.FID.log,'%s\n','** BATCH ** Batch processing steps finished!');
         end
     end
-    SYS=computeK(MAT,SYS); %%% Compute k-eff
+    [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT,SYS); %%% Compute k-eff
     if(OPT.reactControl) %%% Adjust reactivity
         [MAT,SYS] = reactivityControl(MAT,OPT.REA,SYS);
     end
@@ -82,18 +82,18 @@ if(strcmp(OPT.iterMode,'steps')||SYS.inCntr==1||floor(SYS.inCntr/10)==ceil(SYS.i
 end
 
 if(SYS.inCntr<OPT.nSteps(SYS.ouCntr))
-    SYS=computeK(MAT,SYS); %%% Compute k-eff
+    [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT,SYS); %%% Compute k-eff
     printK(SYS,'AB',prefix,'EQL0D');
 end
 
 %%% Print material composition to file
 if(OPT.printSteps)
-    for i=[SYS.IDX.burnMat SYS.IDX.strMat]
+    for i=[SYS.IDX.MAT.burn SYS.IDX.strMat]
         MAT(i).printMaterial(SYS,'AB');
     end
 end
 
-for i=SYS.IDX.burnMat
+for i=SYS.IDX.MAT.burn
     MAT(i).write(OPT.matWriteStyle); %%% Write compositions
 end
 

@@ -4,7 +4,7 @@ function [MAT,SYS] = renormalizeBurnMatrices(MAT,SYS)
 
 %%% Compare current rate to target
 currentRate=sum(SYS.RR.notInMat{2}.fiss);
-for i=SYS.IDX.fluxMat
+for i=SYS.IDX.MAT.inFlux
     currentRate=currentRate+sum(MAT(i).fissRate);
 end
 
@@ -20,9 +20,9 @@ if(SYS.renormFactor<0)
     error('Error: Renormalization factor negative! Something went wrong.')
 end
 SYS.intFlux=SYS.intFlux*SYS.renormFactor;
-for i=SYS.IDX.fluxMat
+for i=SYS.IDX.MAT.inFlux
     MAT(i).intFlux=MAT(i).intFlux*SYS.renormFactor;
-    if(ismember(i,SYS.IDX.burnMat))
+    if(ismember(i,SYS.IDX.MAT.burn))
         SYS.MTX.burn{2,i}=SYS.MTX.burn{2,i}*SYS.renormFactor;
     end
 end
@@ -36,7 +36,7 @@ for i=1:length(SYS.RR.notInMat{2})
 end
 
 currentRate=sum(SYS.RR.notInMat{2}.fiss);
-for i=SYS.IDX.fluxMat
+for i=SYS.IDX.MAT.inFlux
     currentRate=currentRate+sum(MAT(i).fissRate);
 end
 

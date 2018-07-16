@@ -20,26 +20,26 @@ if(OPT.reactControl)
         OPT.REA.replFraction=OPT.REA.replFraction';
     end
     
-    SYS.IDX.targetMat=find(strcmp({MAT.name},OPT.REA.targetMat));
+    SYS.IDX.REA.target=find(strcmp({MAT.name},OPT.REA.targetMat));
     if(~isempty(OPT.REA.feedMat))
-        SYS.IDX.feedMat=find(strcmp({MAT.name},OPT.REA.feedMat));
+        SYS.IDX.REA.feed=find(strcmp({MAT.name},OPT.REA.feedMat));
         if(strcmp(OPT.REA.mode,'addVolume'))
-            SYS.IDX.feedNuc=MAT(SYS.IDX.feedMat).find(OPT.REA.upNuclides);
+            SYS.IDX.feedNuc=MAT(SYS.IDX.REA.feed).find(OPT.REA.upNuclides);
         else
-            SYS.IDX.feedNucUp=MAT(SYS.IDX.feedMat).find(OPT.REA.upNuclides);
-            SYS.IDX.feedNucDo=MAT(SYS.IDX.feedMat).find(OPT.REA.downNuclides);
+            SYS.IDX.REA.feedNucUp=MAT(SYS.IDX.REA.feed).find(OPT.REA.upNuclides);
+            SYS.IDX.REA.feedNucDo=MAT(SYS.IDX.REA.feed).find(OPT.REA.downNuclides);
             if(ismember(OPT.REA.mode,{'replace'}))
-                SYS.IDX.feedNucRepl=MAT(SYS.IDX.feedMat).find(OPT.REA.replNuclides);
+                SYS.IDX.REA.feedNucRepl=MAT(SYS.IDX.REA.feed).find(OPT.REA.replNuclides);
             end
         end
     end
     if(strcmp(OPT.REA.mode,'addVolume'))
-        SYS.IDX.targetNuc=MAT(SYS.IDX.targetMat).find(OPT.REA.upNuclides);
+        SYS.IDX.targetNuc=MAT(SYS.IDX.REA.target).find(OPT.REA.upNuclides);
     else
-        SYS.IDX.targetNucUp=MAT(SYS.IDX.targetMat).find(OPT.REA.upNuclides);
-        SYS.IDX.targetNucDo=MAT(SYS.IDX.targetMat).find(OPT.REA.downNuclides);
+        SYS.IDX.REA.targetNucUp=MAT(SYS.IDX.REA.target).find(OPT.REA.upNuclides);
+        SYS.IDX.REA.targetNucDo=MAT(SYS.IDX.REA.target).find(OPT.REA.downNuclides);
         if(ismember(OPT.REA.mode,{'replace'}))
-            SYS.IDX.targetNucRepl=MAT(SYS.IDX.targetMat).find(OPT.REA.replNuclides);
+            SYS.IDX.REA.targetNucRepl=MAT(SYS.IDX.REA.target).find(OPT.REA.replNuclides);
             if(any(OPT.REA.replNuclides<999))
                 OPT.REA.replFraction=[];
             end
@@ -69,8 +69,8 @@ if(~isempty(REP))
         find([REP.isBatch]&~[REP.isKeep])...
         find([REP.isBatch]&[REP.isKeep])]);
     
-    SYS.IDX.contStr=find([REP.isCont]);
-    SYS.IDX.batchStr=find([REP.isBatch]);
+    SYS.IDX.REP.cont=find([REP.isCont]);
+    SYS.IDX.REP.batch=find([REP.isBatch]);
     
     %%% Identify source and destination material indexes
     for i=1:length(REP)
@@ -80,7 +80,7 @@ if(~isempty(REP))
     end
     
     %%% find nuclide positions affected by batch streams
-    for i=SYS.IDX.batchStr
+    for i=SYS.IDX.REP.batch
         if(isempty(REP(i).srcMatIdx)&~isempty(REP(i).dstMatIdx))
             REP(i).srcNucIdx=false(size(MAT(REP(i).dstMatIdx).ZAI));
             REP(i).dstNucIdx=ismember(MAT(REP(i).dstMatIdx).ZAI,REP(i).elements);
@@ -96,7 +96,7 @@ if(~isempty(REP))
     end
     
     %%% Convert to mass fraction for batch streams
-    for j=SYS.IDX.batchStr
+    for j=SYS.IDX.REP.batch
         if(ismember(REP(j).mode,{'keepTotM','keepAM','keepAFPM'}))
             REP(j).share=REP(j).share.*MAT(REP(j).dstMatIdx).atomicMass(REP(j).dstNucIdx);
             REP(j).share=REP(j).share/sum(REP(j).share);
@@ -106,16 +106,17 @@ if(~isempty(REP))
     
     SYS.IDX.contMat=find(ismember({MAT.name},unique({REP([REP.isCont]).srcMat REP([REP.isCont]).dstMat})));
     SYS.IDX.strMat=find([MAT.isStr]);
-    SYS.IDX.contStrMat=SYS.IDX.strMat;
+    SYS.IDX.REP.contMat=SYS.IDX.strMat;
 else %no reprocessing
-    SYS.IDX.contStr=[];
-    SYS.IDX.batchStr=[];
+    SYS.IDX.REP.cont=[];
+    SYS.IDX.REP.batch=[];
     SYS.IDX.contMat=[];
     SYS.IDX.strMat=[];
-    SYS.IDX.contStrMat=[];
+    SYS.IDX.REP.contMat=[];
 end
-SYS.IDX.burnMat=find([MAT.isBurned]);
-SYS.IDX.fluxMat=find([MAT.isInFlux]);
+SYS.IDX.MAT.burn=find([MAT.isBurned]);
+SYS.IDX.MAT.inFlux=find([MAT.isInFlux]);
+SYS.IDX.MAT.decay=find(~[MAT.isInFlux]&[MAT.isCont]);
 
 %% Redox control material indexes
 if(OPT.redoxControl)
@@ -136,7 +137,7 @@ if(OPT.redoxControl)
 end
 
 %% Adapt things for materials outside of the flux
-for i=SYS.IDX.burnMat
+for i=SYS.IDX.MAT.burn
     [SYS.MTX.decay{[1 2],i}]=deal([]);
     [SYS.MTX.burn{[1 2],i}]=deal(spalloc(length(SYS.MTX.decay{1,i}),length(SYS.MTX.decay{1,i}),0));
     [SYS.IDX.matZAI{[1 2],i}]=deal([]);
@@ -167,7 +168,7 @@ for i=SYS.IDX.strMat
     [SYS.IDX.matZAI{[1 2],i}]=deal(repmat(i,numel(b),1));
     clearvars b
 end
-for i=SYS.IDX.contStr
+for i=SYS.IDX.REP.cont
     [SYS.MTX.rep{[1 2],i}]=deal([]);
 end
 [SYS.MTX.total{[1 2]}]=deal([]);

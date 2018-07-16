@@ -67,8 +67,8 @@ else
   [SYS.RR.notInMat{1}]=deal(struct('fiss',[],'capt',[],'n2n',[],'n3n',[]));
   [SYS.RR.inMat{1}]=deal(struct('fiss',zeros(size(DAT.ZAI0)),'capt',zeros(size(DAT.ZAI0)),...
     'n2n',zeros(size(DAT.ZAI0)),'n3n',zeros(size(DAT.ZAI0))));
-  SYS.keff=[];
-  SYS.kinf=[];
+  SYS.KEFF.EQL0D=[];  SYS.KEFF.Serpent=[];
+  SYS.KINF.EQL0D=[];  SYS.KINF.Serpent=[];
   SYS.RR.NU=cell(2,1);
   SYS.RR.LEAK=cell(2,1);
   SYS.MTX.defaultDecay=sparse(DAT.decayMatrix(isProduced(DAT.ZAI0),isProduced(DAT.ZAI0)));
@@ -87,10 +87,10 @@ else
   else
     %%% Parse all data
     [MAT,OPT,REP,SYS] = parseInput(MAT,OPT,REP,SYS);
-    for i=SYS.IDX.burnMat
+    for i=SYS.IDX.MAT.burn
       MAT(i).write(OPT.matWriteStyle);
     end
-    for i=[SYS.IDX.burnMat SYS.IDX.strMat]
+    for i=[SYS.IDX.MAT.burn SYS.IDX.strMat]
       if(OPT.printSteps)
         MAT(i).printMaterial(SYS,'AB');
       elseif(OPT.printCycles&&~OPT.printSteps)
@@ -109,28 +109,28 @@ else
     switch OPT.REA.mode
       case {'addMass','replace'}
         SYS.FID.react=fopen('reactivity.txt','w');
-        name{1}=MAT(SYS.IDX.targetMat).name;
-        if(~isempty(SYS.IDX.feedMat))
-          name{2}=MAT(SYS.IDX.feedMat).name;
+        name{1}=MAT(SYS.IDX.REA.target).name;
+        if(~isempty(SYS.IDX.REA.feed))
+          name{2}=MAT(SYS.IDX.REA.feed).name;
         else
           name{2}=[];
         end
         fprintf(SYS.FID.react,'%-22s','Time');
-        if(strcmp(OPT.REA.mode,'addMass')&&~isempty(SYS.IDX.feedMat))
+        if(strcmp(OPT.REA.mode,'addMass')&&~isempty(SYS.IDX.REA.feed))
           elementsTarget=unique([SYS.IDX.targetNucUp;SYS.IDX.targetNucDo]);
           fprintf(SYS.FID.react,['%-' num2str(13*numel(elementsTarget)) 's'],name{1});
         elseif(strcmp(OPT.REA.mode,'replace'))
           elementsTarget=unique([SYS.IDX.targetNucRepl;SYS.IDX.targetNucUp;SYS.IDX.targetNucDo]);
           fprintf(SYS.FID.react,['%-' num2str(13*numel(elementsTarget)) 's'],name{1});
         end
-        if(~isempty(SYS.IDX.feedMat))
+        if(~isempty(SYS.IDX.REA.feed))
           fprintf(SYS.FID.react,['%-' num2str(13*numel(elementsTarget)) 's'],name{2});
         end
         fprintf(SYS.FID.react,'\n');
         fprintf(SYS.FID.react,'%-7s%-6s%-9s','Cycle','Step','EFPD');
-        names{1}=MAT(SYS.IDX.targetMat).nuclideName(elementsTarget);
+        names{1}=MAT(SYS.IDX.REA.target).nuclideName(elementsTarget);
         fprintf(SYS.FID.react,repmat('%-13s',1,numel(names{1})),names{1}{:});
-        if(~isempty(SYS.IDX.feedMat))
+        if(~isempty(SYS.IDX.REA.feed))
           fprintf(SYS.FID.react,repmat('%-13s',1,numel(names{1})),names{1}{:});
         end
         fprintf(SYS.FID.react,'\n');
@@ -157,7 +157,7 @@ else
   if(str2double(isAbsent)==0)
     [fID,~]=fopen(SYS.Casename,'a');
     fprintf(fID,'\n%s','det intFlux ');
-    for i=SYS.IDX.fluxMat
+    for i=SYS.IDX.MAT.inFlux
       fprintf(fID,'%s',['dm ' MAT(i).name ' ']);
     end
     fclose(fID);
