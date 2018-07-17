@@ -1,6 +1,8 @@
 function BurnedComp = CRAMsolve(Matrix,Timestep,InitComp)
 %CRAMSOLVE solves burnup equation with CRAM method of order 16
 
+Halphen=9.3; %Halphen constant
+
 theta=[ -1.0843917078696988026E1+1.9277446167181652284E1*1i
  -5.2649713434426468895E0+1.6220221473167927305E1*1i
  +5.9481522689511774808E0+3.5874573620183222829E0*1i
@@ -33,6 +35,6 @@ for j=1:length(theta)
     BurnedComp=BurnedComp+change;
 end
 BurnedComp=2*real(BurnedComp)+alpha_0*InitComp;
-BurnedComp(BurnedComp<0.0)=0.0;
+BurnedComp(BurnedComp<InitComp*Halphen^(-13))=0.0;
 
 end

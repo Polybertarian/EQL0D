@@ -3,6 +3,7 @@ OPT.serpentPath='nice -n 10 runsss /afs/psi.ch/project/fast_lrs/workspace/COD/SE
 OPT.cycleLength=365;
 OPT.nCycles=9;
 OPT.nSteps=[50 2000];
+OPT.nSubSteps=32;
 OPT.iterMode='equilibrium';
 OPT.printSteps=false;
 OPT.printStepsBB=false;

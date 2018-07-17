@@ -89,8 +89,8 @@ if(criterion) %activate reactivity control if above tolerance
             MAT(SYS.IDX.REA.feed).N(SYS.IDX.REA.feedNucRepl,end)=MAT(SYS.IDX.REA.feed).N(SYS.IDX.REA.feedNucRepl,end)+NChangeRepl;
           end
         end
-        [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT,SYS);
-        diff(end+1)=1e5*(1/SYS.KEFF.EQL0D(end)-1/REA.targetKeff);
+        [keff,kinf]=computeK(MAT,SYS);
+        diff(end+1)=1e5*(1/keff-1/REA.targetKeff);
         if(SYS.verboseMode)
           fprintf(SYS.FID.log,'%s\n',['** REACT ** Current k-eff: ' num2str(SYS.KEFF.EQL0D(end))]);
         end
@@ -170,8 +170,8 @@ if(criterion) %activate reactivity control if above tolerance
         addVolume(end+1)=changeVol(end)*saveVol;
         MAT(SYS.IDX.REA.target).N(SYS.IDX.targetNuc,end)=MAT(SYS.IDX.REA.target).N(SYS.IDX.targetNuc,end)+addVolume(end)*MAT(SYS.IDX.REA.feed).atDens(SYS.IDX.feedNuc);
         MAT(SYS.IDX.REA.target).volume=MAT(SYS.IDX.REA.target).volume+addVolume(end);
-        [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT,SYS);
-        diff(end+1)=1e5*(1/SYS.KEFF.EQL0D(end)-1/REA.targetKeff);
+        [keff,kinf]=computeK(MAT,SYS);
+        diff(end+1)=1e5*(1/2-1/REA.targetKeff);
       end
       MAT(SYS.IDX.REA.feed).N(SYS.IDX.feedNuc,end)=MAT(SYS.IDX.REA.feed).N(SYS.IDX.feedNuc,end)-addVolume(end)*MAT(SYS.IDX.REA.feed).atDens(SYS.IDX.feedNuc);
       if(SYS.verboseMode)

@@ -114,9 +114,9 @@ else %no reprocessing
     SYS.IDX.strMat=[];
     SYS.IDX.REP.contMat=[];
 end
-SYS.IDX.MAT.burn=find([MAT.isBurned]);
-SYS.IDX.MAT.inFlux=find([MAT.isInFlux]);
-SYS.IDX.MAT.decay=find(~[MAT.isInFlux]&[MAT.isCont]);
+SYS.IDX.MAT.burn=find([MAT.isBurned]);        % Index of materials burned in flux
+SYS.IDX.MAT.inFlux=find([MAT.isInFlux]);      % index of materials in flux but not burned
+SYS.IDX.MAT.decay=find(~[MAT.isInFlux]&[MAT.isCont]); % Index of decaying materials (out of flux)
 
 %% Redox control material indexes
 if(OPT.redoxControl)

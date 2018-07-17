@@ -44,7 +44,7 @@ classdef Rep
       end
       obj.elementsNames=strjoin(ZAI2Name(elements)');
       if(any(elements<111))
-        zailist=DAT.ZAI0(isProduced(DAT.ZAI0));
+        zailist=DAT.ZAI0(isProduced(DAT.libraryName,DAT.ZAI0));
         [idx1,idx2]=isElement(elements,zailist);
         obj.elements=zailist(idx1);
         obj.share=obj.share(idx2);

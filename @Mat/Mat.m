@@ -310,7 +310,7 @@ classdef Mat < NuclearObject
       matName=obj.nuclideName;
       idxAct=isActinide(matZAI);
       idxFP=isFP(matZAI);
-      idxExist=find(isProduced(matZAI));
+      idxExist=find(isProduced(SYS.nuclearDataLibrary,matZAI));
       matFiss=obj.fissRate;
       matCapt=obj.captRate;
       matN2n=obj.n2nRate;
@@ -332,7 +332,7 @@ classdef Mat < NuclearObject
       
       printFmt=struct('header',[],'content',[],'line',[]);
       printFmt.header=['%-9s%-9s' repmat('%-13s',1,11) '\n'];
-      printFmt.content=['%-9s%-9u' repmat('%-13.6G',1,11) '\n'];
+      printFmt.content=['%-9s%-9u' repmat('%-13.5E',1,11) '\n'];
       printFmt.line='%s\n';
       printContent=struct('header',[],'line',[]);
       printContent.header={{'Nuclide','ZAI','Atomic dens.','Tot. atoms',...
@@ -345,15 +345,15 @@ classdef Mat < NuclearObject
       fprintf(fid,printFmt.header,printContent.header{1}{:});
       fprintf(fid,printFmt.header,printContent.header{2}{:});
       fprintf(fid,printFmt.line,printContent.line);
-      fprintf(fid,['%-10s%-8s' repmat('%-13.6G',1,11) '\n'],'FPs','20<Z<73',sum(matADens(idxFP)),...
+      fprintf(fid,['%-10s%-8s' repmat('%-13.5E',1,11) '\n'],'FPs','20<Z<73',sum(matADens(idxFP)),...
         sum(matN(idxFP)) ,sum(matComp(idxFP)) ,sum(matMDens(idxFP)) ,sum(matM(idxFP)),...
         sum(matA(idxFP)) ,sum(matH(idxFP)) ,sum(matTox(idxFP)) ,sum(matCapt(idxFP)),...
         sum(matFiss(idxFP)) , sum(matN2n(idxFP)) );
-      fprintf(fid,['%-10s%-8s' repmat('%-13.6G',1,11) '\n'],'Actinides','Z>88',sum(matADens(idxAct)),...
+      fprintf(fid,['%-10s%-8s' repmat('%-13.5E',1,11) '\n'],'Actinides','Z>88',sum(matADens(idxAct)),...
         sum(matN(idxAct)),sum(matComp(idxAct)),sum(matMDens(idxAct)),sum(matM(idxAct)),...
         sum(matA(idxAct)),sum(matH(idxAct)),sum(matTox(idxAct)),sum(matCapt(idxAct)),...
         sum(matFiss(idxAct)),sum(matN2n(idxAct)));
-      fprintf(fid,['%-10s%-8s' repmat('%-13.6G',1,11) '\n'],'Total','',sum(matADens),...
+      fprintf(fid,['%-10s%-8s' repmat('%-13.5E',1,11) '\n'],'Total','',sum(matADens),...
         sum(matN),sum(matComp),sum(matMDens),sum(matM),...
         sum(matA),sum(matH),sum(matTox),sum(matCapt),...
         sum(matFiss),sum(matN2n));
@@ -389,9 +389,9 @@ classdef Mat < NuclearObject
     %%% Methods
     function idx = find(obj,ZAI)
       if(all(ZAI<1000))
-        idx=find(isElement(ZAI,obj.ZAI)&isProduced(obj.ZAI));
+        idx=find(isElement(ZAI,obj.ZAI));
       else
-        idx=find(ismember(obj.ZAI,ZAI)&isProduced(obj.ZAI));
+        idx=find(ismember(obj.ZAI,ZAI));
       end
     end
     function mFrac = mFrac(obj,IDX)

@@ -49,6 +49,7 @@ else
     warning('Library undefined! Loading default...')
     load([OPT.defaultDataLibrary '.mat'],DAT)
   end
+  SYS.nuclearDataLibrary=DAT.libraryName;
   if(~exist('MAT','var'))
     error('Error: MAT vector undefined!')
   elseif(isempty(MAT))
@@ -71,7 +72,7 @@ else
   SYS.KINF.EQL0D=[];  SYS.KINF.Serpent=[];
   SYS.RR.NU=cell(2,1);
   SYS.RR.LEAK=cell(2,1);
-  SYS.MTX.defaultDecay=sparse(DAT.decayMatrix(isProduced(DAT.ZAI0),isProduced(DAT.ZAI0)));
+  SYS.MTX.defaultDecay=sparse(DAT.decayMatrix(isProduced(DAT.libraryName,DAT.ZAI0),isProduced(DAT.libraryName,DAT.ZAI0)));
   if(OPT.PCC)
     OPT.renormalize=false;
   end
@@ -117,10 +118,10 @@ else
         end
         fprintf(SYS.FID.react,'%-22s','Time');
         if(strcmp(OPT.REA.mode,'addMass')&&~isempty(SYS.IDX.REA.feed))
-          elementsTarget=unique([SYS.IDX.targetNucUp;SYS.IDX.targetNucDo]);
+          elementsTarget=unique([SYS.IDX.REA.targetNucUp;SYS.IDX.REA.targetNucDo]);
           fprintf(SYS.FID.react,['%-' num2str(13*numel(elementsTarget)) 's'],name{1});
         elseif(strcmp(OPT.REA.mode,'replace'))
-          elementsTarget=unique([SYS.IDX.targetNucRepl;SYS.IDX.targetNucUp;SYS.IDX.targetNucDo]);
+          elementsTarget=unique([SYS.IDX.REA.targetNucRepl;SYS.IDX.REA.targetNucUp;SYS.IDX.REA.targetNucDo]);
           fprintf(SYS.FID.react,['%-' num2str(13*numel(elementsTarget)) 's'],name{1});
         end
         if(~isempty(SYS.IDX.REA.feed))
@@ -141,12 +142,12 @@ else
   end
   
   %%% Check presence of necessary input parameters in Serpent file
-  [~,isAbsent]=unix(['grep -c "set depmtx 1" ' SYS.Casename]);
-  if(str2double(isAbsent)==0)
-    [fID,~]=fopen(SYS.Casename,'a');
-    fprintf(fID,'\n%s\n','set depmtx 1 1');
-    fclose(fID);
-  end
+  %[~,isAbsent]=unix(['grep -c "set depmtx 1" ' SYS.Casename]);
+  %if(str2double(isAbsent)==0)
+  %  [fID,~]=fopen(SYS.Casename,'a');
+  %  fprintf(fID,'\n%s\n','set depmtx 1 1');
+  %  fclose(fID);
+  %end
   [~,isAbsent]=unix(['grep -c "set arr 1" ' SYS.Casename]);
   if(str2double(isAbsent)==0)
     [fID,~]=fopen(SYS.Casename,'a');

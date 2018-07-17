@@ -35,7 +35,8 @@ SYS.intFlux=sum([MAT(SYS.IDX.MAT.inFlux).intFlux]);
 
 %%% Get one-group XS/Nubar/Serpent k-eff/inf
 run([SYS.Casename '_res.m']);
-idxUni=find(strcmp(GC_UNIVERSE_NAME,'0'));
+idxUni=find(all(ismember(GC_UNIVERSE_NAME,'0'),2));
+idxUni=idxUni(1);
 SYS.RR.NU{2}=NUBAR(idxUni,1); SYS.RR.LEAK{2} =ABS_KINF(idxUni,1)/ABS_KEFF(idxUni,1);
 SYS.KEFF.Serpent(end+1)=ABS_KEFF(idxUni,1); 
 SYS.KINF.Serpent(end+1)=ABS_KINF(idxUni,1);
