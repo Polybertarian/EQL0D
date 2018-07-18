@@ -11,6 +11,9 @@ warning('off','MATLAB:nearlySingularMatrix')
 for i=1:length(Cases)
     if(exist(Cases{i},'file')==2)
         [PATH,FILE,EXT]=fileparts(Cases{i});
+        if(strcmp(EXT,'.m'))
+          EXT='';
+        end
         if(isempty(PATH))
             SYS.Casename=[FILE EXT];
             EQL0D(SYS);

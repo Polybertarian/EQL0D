@@ -58,35 +58,43 @@ if(criterion) %activate reactivity control if above tolerance
           if(j==REA.maxIter)
             changeUp(end+1)=changeUp(max(find(abs(diff)==min(abs(diff)))));
           else
-            changeUp(end+1)=max([min([(changeUp(end-1)*diff(end)-changeUp(end)*diff(end-1))/(diff(end)-diff(end-1)) maxBound]),minBound]);
+            changeUp(end+1)=max([min([(changeUp(end-1)*diff(end)-changeUp(end)*diff(end-1))/...
+              (diff(end)-diff(end-1)) maxBound]),minBound]);
           end
         end
         NChange=0;
         if(diff(1)>0)
           NChange=changeUp(end)*MAT(SYS.IDX.REA.target).N(SYS.IDX.REA.targetNucDo,end);
-          MAT(SYS.IDX.REA.target).N(SYS.IDX.REA.targetNucDo,end)=MAT(SYS.IDX.REA.target).N(SYS.IDX.REA.targetNucDo,end)+NChange;
+          MAT(SYS.IDX.REA.target).N(SYS.IDX.REA.targetNucDo,end)=...
+            MAT(SYS.IDX.REA.target).N(SYS.IDX.REA.targetNucDo,end)+NChange;
           if(strcmp(REA.mode,'replace'))
             NChangeRepl=REA.replFraction.*sum(NChange.*MAT(SYS.IDX.REA.target).atomicMass(SYS.IDX.REA.targetNucDo))...
               ./MAT(SYS.IDX.REA.target).avMass(SYS.IDX.REA.targetNucRepl);
-            MAT(SYS.IDX.REA.target).N(SYS.IDX.REA.targetNucRepl,end)=MAT(SYS.IDX.REA.target).N(SYS.IDX.REA.targetNucRepl,end)-NChangeRepl;
+            MAT(SYS.IDX.REA.target).N(SYS.IDX.REA.targetNucRepl,end)=...
+              MAT(SYS.IDX.REA.target).N(SYS.IDX.REA.targetNucRepl,end)-NChangeRepl;
           end
         elseif(diff(1)<0)
           NChange=changeUp(end)*MAT(SYS.IDX.REA.feed).N(SYS.IDX.REA.feedNucUp,end);
-          MAT(SYS.IDX.REA.target).N(SYS.IDX.REA.targetNucUp,end)=MAT(SYS.IDX.REA.target).N(SYS.IDX.REA.targetNucUp,end)+NChange;
+          MAT(SYS.IDX.REA.target).N(SYS.IDX.REA.targetNucUp,end)=...
+            MAT(SYS.IDX.REA.target).N(SYS.IDX.REA.targetNucUp,end)+NChange;
           if(strcmp(REA.mode,'replace'))
             NChangeRepl=REA.replFraction.*sum(NChange.*MAT(SYS.IDX.REA.feed).atomicMass(SYS.IDX.REA.feedNucUp))...
               ./MAT(SYS.IDX.REA.feed).avMass(SYS.IDX.REA.feedNucRepl);
-            MAT(SYS.IDX.REA.target).N(SYS.IDX.REA.targetNucRepl,end)=MAT(SYS.IDX.REA.target).N(SYS.IDX.REA.targetNucRepl,end)-NChangeRepl;
+            MAT(SYS.IDX.REA.target).N(SYS.IDX.REA.targetNucRepl,end)=...
+              MAT(SYS.IDX.REA.target).N(SYS.IDX.REA.targetNucRepl,end)-NChangeRepl;
           end
         end
         if(~isempty(REA.feedMat))
           if(diff(1)>0)
-            MAT(SYS.IDX.REA.feed).N(SYS.IDX.REA.feedNucDo,end)=MAT(SYS.IDX.REA.feed).N(SYS.IDX.REA.feedNucDo,end)-NChange;
+            MAT(SYS.IDX.REA.feed).N(SYS.IDX.REA.feedNucDo,end)=...
+              MAT(SYS.IDX.REA.feed).N(SYS.IDX.REA.feedNucDo,end)-NChange;
           elseif(diff(1)<0)
-            MAT(SYS.IDX.REA.feed).N(SYS.IDX.REA.feedNucUp,end)=MAT(SYS.IDX.REA.feed).N(SYS.IDX.REA.feedNucUp,end)-NChange;
+            MAT(SYS.IDX.REA.feed).N(SYS.IDX.REA.feedNucUp,end)=...
+              MAT(SYS.IDX.REA.feed).N(SYS.IDX.REA.feedNucUp,end)-NChange;
           end
           if(strcmp(REA.mode,'replace'))
-            MAT(SYS.IDX.REA.feed).N(SYS.IDX.REA.feedNucRepl,end)=MAT(SYS.IDX.REA.feed).N(SYS.IDX.REA.feedNucRepl,end)+NChangeRepl;
+            MAT(SYS.IDX.REA.feed).N(SYS.IDX.REA.feedNucRepl,end)=...
+              MAT(SYS.IDX.REA.feed).N(SYS.IDX.REA.feedNucRepl,end)+NChangeRepl;
           end
         end
         [keff,kinf]=computeK(MAT,SYS);
@@ -137,7 +145,8 @@ if(criterion) %activate reactivity control if above tolerance
         fprintf(SYS.FID.log,'%s\n','** REACT ** Max. composition change reached!');
       end
       if(~SYS.PCC.active||SYS.PCC.corrector)
-        fprintf(SYS.FID.log,'%s\n',['** REACT ** Time: ' num2str(SYS.nowTime(end)) ' EFPD Change: ' num2str(sum(NChange/1000.0),'%8.6G') ' kg.']);
+        fprintf(SYS.FID.log,'%s\n',['** REACT ** Time: ' num2str(SYS.nowTime(end))...
+          ' EFPD Change: ' num2str(sum(NChange/1000.0),'%8.6G') ' kg.']);
         fprintf(SYS.FID.react,'%-7.3d%-6.3d%-9G',SYS.ouCntr,SYS.inCntr,SYS.nowTime(end));
         fprintf(SYS.FID.react,[repmat('%-13.6G',1,numel(SYS.reactAdditions)) '\n'],SYS.reactAdditions);
       end
@@ -164,16 +173,19 @@ if(criterion) %activate reactivity control if above tolerance
           if(j==REA.maxIter)
             changeVol(end+1)=changeVol(max(find(abs(diff)==min(abs(diff)))));
           else
-            changeVol(end+1)=max([min([(changeVol(end-1)*diff(end)-changeVol(end)*diff(end-1))/(diff(end)-diff(end-1)) maxBound]), minBound]);
+            changeVol(end+1)=max([min([(changeVol(end-1)*diff(end)-changeVol(end)*diff(end-1))/...
+              (diff(end)-diff(end-1)) maxBound]), minBound]);
           end
         end
         addVolume(end+1)=changeVol(end)*saveVol;
-        MAT(SYS.IDX.REA.target).N(SYS.IDX.targetNuc,end)=MAT(SYS.IDX.REA.target).N(SYS.IDX.targetNuc,end)+addVolume(end)*MAT(SYS.IDX.REA.feed).atDens(SYS.IDX.feedNuc);
+        MAT(SYS.IDX.REA.target).N(SYS.IDX.targetNuc,end)=...
+          MAT(SYS.IDX.REA.target).N(SYS.IDX.targetNuc,end)+addVolume(end)*MAT(SYS.IDX.REA.feed).atDens(SYS.IDX.feedNuc);
         MAT(SYS.IDX.REA.target).volume=MAT(SYS.IDX.REA.target).volume+addVolume(end);
         [keff,kinf]=computeK(MAT,SYS);
-        diff(end+1)=1e5*(1/2-1/REA.targetKeff);
+        diff(end+1)=1e5*(1/keff-1/REA.targetKeff);
       end
-      MAT(SYS.IDX.REA.feed).N(SYS.IDX.feedNuc,end)=MAT(SYS.IDX.REA.feed).N(SYS.IDX.feedNuc,end)-addVolume(end)*MAT(SYS.IDX.REA.feed).atDens(SYS.IDX.feedNuc);
+      MAT(SYS.IDX.REA.feed).N(SYS.IDX.feedNuc,end)=...
+        MAT(SYS.IDX.REA.feed).N(SYS.IDX.feedNuc,end)-addVolume(end)*MAT(SYS.IDX.REA.feed).atDens(SYS.IDX.feedNuc);
       if(SYS.verboseMode)
         fprintf(SYS.FID.log,'%s\n',['** REACT ** Current k-eff: ' num2str(SYS.KEFF.EQL0D(end))]);
       end

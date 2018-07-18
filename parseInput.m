@@ -122,7 +122,7 @@ SYS.IDX.MAT.decay=find(~[MAT.isInFlux]&[MAT.isCont]); % Index of decaying materi
 if(OPT.redoxControl)
     SYS.IDX.redoxMat=find(strcmp({MAT.name},OPT.REDOX.materials));
     SYS.IDX.redoxHalide={MAT(SYS.IDX.redoxMat).mainHalide};
-    if(~isempty(OPT.REDOX.changeElement))
+    if(isfield(OPT.REDOX,'changeElement'))
         for i=SYS.IDX.redoxMat
             for j=1:length(OPT.REDOX.changeElement(:,1))
                 MAT(i).oxState(MAT(i).find(OPT.REDOX.changeElement(j,1)))=OPT.REDOX.changeElement(j,2);

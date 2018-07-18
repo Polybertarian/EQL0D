@@ -65,7 +65,7 @@ done
 EQL0D_COMMAND+="};addpath('$(dirname $0)');Cases(1)=[];EQL0Dlauncher(Cases,$CORES,$VERBOSE,$PRINTNQUIT,$RESTART,$RESET,$DEBUG);exit"
 
 #if [[ $(hostname) = lclrs[0-9][0-9] ]]; then
-k5run -B matlab -nodisplay -nojvm -nosplash -nodesktop -r $EQL0D_COMMAND > EQL0D.log &
+k5run -B matlab -nodisplay -nojvm -nosplash -nodesktop -r $EQL0D_COMMAND &> EQL0D.log &
 #else
 #nohup matlab -nodisplay -nojvm -nosplash -nodesktop -r $EQL0D_COMMAND > EQL0D.log  &
 #fi

@@ -406,7 +406,7 @@ classdef Mat < NuclearObject
       avMass=sum(obj.aFrac(IDX).*obj.atomicMass(IDX));
     end
     function [obj,sol] = redoxControl(obj,halideIdx,nucIdx,mode)
-      excess=sum(obj.oxState.*obj.N(:,end))
+      excess=sum(obj.oxState.*obj.N(:,end));
       if(excess~=0)
         alpha_halide=obj.N(halideIdx,end)/sum(obj.N(halideIdx,end));
         alpha_target=obj.N(nucIdx,end)/sum(obj.N(nucIdx,end));
