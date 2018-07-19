@@ -26,7 +26,9 @@ try
       [MAT,SYS] = loadSerpentData(MAT,SYS); %%% Read Serpent outputs
       [MAT,~] = updateRates(MAT,SYS); % update reaction rates in materials
       if(~SYS.debugMode)
-        SYS.ouCntr=0;
+        if(SYS.ouCntr==1)
+          SYS.ouCntr=0;
+        end
         for i=[SYS.IDX.MAT.burn SYS.IDX.strMat]
           if(OPT.printSteps)
             MAT(i).printMaterial(SYS,'AB'); % write material composition to txt file
@@ -34,7 +36,9 @@ try
             MAT(i).printMaterial(SYS,'EoC'); % write material composition to txt file
           end
         end
-        SYS.ouCntr=1;
+        if(SYS.ouCntr==0)
+          SYS.ouCntr=1;
+        end
         saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS);  %%% Move files to folder
         printK(SYS,'AB','C','Serpent'); % print keff and kinf to file
       end
