@@ -91,7 +91,7 @@ else
     for i=SYS.IDX.MAT.burn
       MAT(i).write(OPT.matWriteStyle);
     end
-    for i=[SYS.IDX.MAT.burn SYS.IDX.strMat]
+    for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
       if(OPT.printSteps)
         MAT(i).printMaterial(SYS,'AB');
       elseif(OPT.printCycles&&~OPT.printSteps)

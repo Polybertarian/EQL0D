@@ -29,7 +29,7 @@ try
         if(SYS.ouCntr==1)
           SYS.ouCntr=0;
         end
-        for i=[SYS.IDX.MAT.burn SYS.IDX.strMat]
+        for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
           if(OPT.printSteps)
             MAT(i).printMaterial(SYS,'AB'); % write material composition to txt file
           elseif(OPT.printCycles&&~OPT.printSteps)
@@ -75,7 +75,7 @@ try
         runSerpent(OPT,SYS); %%% Run Serpent/Read outputs
         [MAT,SYS] = loadSerpentData(MAT,SYS);
         SYS.nowTime(end+1)=SYS.nowTime(end)-SYS.tStep(end)*OPT.nSteps(SYS.ouCntr)/(24.0*3600.0);
-        for i=[SYS.IDX.MAT.burn SYS.IDX.strMat]
+        for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
           MAT(i).N(:,end+1)=SYS.prevN.BOC(:,i);
         end
         if(~isempty(SYS.IDX.REP.cont))
@@ -101,7 +101,7 @@ try
       %save([SYS.Casename '.mat']);
     end
     if(OPT.printCycles&&~OPT.printSteps)
-      for i=[SYS.IDX.MAT.burn SYS.IDX.strMat]
+      for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
         MAT(i).printMaterial(SYS,'EoC'); %%% Print compositions at EoC
       end
     end
@@ -115,7 +115,7 @@ try
   [MAT,SYS] = loadSerpentData(MAT,SYS);
   switch OPT.iterMode
     case 'equilibrium'
-      for i=[SYS.IDX.MAT.burn SYS.IDX.strMat]
+      for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
         MAT(i).printMaterial(SYS,'EQL_AB');
         mat=MAT(i); mat.N(:,end+1)=SYS.prevN.EOC(:,i);
         mat.printMaterial(SYS,'EQL_BB');
@@ -123,7 +123,7 @@ try
       neutronBalance(MAT,SYS)
     case 'steps'
       if(OPT.printSteps)
-        for i=[SYS.IDX.MAT.burn SYS.IDX.strMat]
+        for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
           MAT(i).printMaterial(SYS,'EoC');
         end
       end

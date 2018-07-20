@@ -94,7 +94,7 @@ for i=SYS.IDX.MAT.burn
 end
 
 %%% data for stream materials 
-for i=SYS.IDX.REP.contMat
+for i=SYS.IDX.MAT.decay
    SYS.MTX.decay{2,i}=SYS.MTX.decay{1,i}; 
    SYS.IDX.matZAI{2,i}=SYS.IDX.matZAI{1,i};
    SYS.IDX.burnZAI{2,i}=SYS.IDX.burnZAI{1,i};

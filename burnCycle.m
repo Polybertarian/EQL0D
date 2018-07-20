@@ -3,7 +3,7 @@ function [MAT,SYS] = burnCycle(MAT,OPT,REP,SYS)
 %System
 %% Burning
 SYS.burnVec=[]; %%% Prepare vector for solving
-for i=[SYS.IDX.MAT.burn SYS.IDX.REP.contMat]
+for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
   SYS.burnVec=vertcat(SYS.burnVec,MAT(i).atDens(SYS.IDX.burnZAI{2,i}));
 end
 if(SYS.PCC.corrector)
@@ -29,7 +29,7 @@ else
     SYS.nowTime(end+1)=SYS.nowTime(end)+SYS.tStep(end)/(24.0*3600.0); %in EFPD
   end
 end
-for i=[SYS.IDX.MAT.burn SYS.IDX.REP.contMat] %%% Change material compositions
+for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay] %%% Change material compositions
   MAT(i).N(SYS.IDX.burnZAI{2,i},end+1)=SYS.burnVec2(vertcat(SYS.IDX.matZAI{2,:})==i)*MAT(i).volume;
 end
 
@@ -42,7 +42,7 @@ end
 printK(SYS,'BB',prefix,'EQL0D');
 
 if(OPT.printSteps&&OPT.printStepsBB)
-  for i=[SYS.IDX.MAT.burn SYS.IDX.strMat]
+  for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
     MAT(i).printMaterial(SYS,'BB'); %%% Print EOS composition
   end
 end
@@ -94,7 +94,7 @@ end
 
 %%% Print material composition to file
 if(OPT.printSteps)
-  for i=[SYS.IDX.MAT.burn SYS.IDX.strMat]
+  for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
     MAT(i).printMaterial(SYS,'AB');
   end
 end
