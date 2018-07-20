@@ -9,6 +9,7 @@ classdef Mat < NuclearObject
     mCaptXS
     mN2nXS
     mN3nXS
+    burnMtx 
   end
   properties (SetAccess = immutable)
     temp;            % Temperature (for Serpent)
@@ -47,6 +48,8 @@ classdef Mat < NuclearObject
     totFPMass        % total FPs mass
     totActMass       % total Actinide mass
     totMass          % total Mass
+    %%%% 
+    normBurnMtx
     %%%% Other
     FIMA             % burnup (% FIMA)
     FPFrac           % burnup (FP/FP+Ac) mass ratio
@@ -425,6 +428,12 @@ classdef Mat < NuclearObject
     end
     function dN=lastNChange(obj)
       dN=obj.N(:,end)-obj.N(:,end-1);
+    end
+    function nBMtx = get.normBurnMtx(obj)
+        nBMtx = obj.burnMatrix*obj.intFlux;
+    end
+    function obj=set.burnMtx(obj,burnMtx)
+        obj.burnMtx=burnMtx;
     end
   end
 end
