@@ -124,6 +124,23 @@ for i=SYS.IDX.MAT.cont
   end
 end
 
+SYS.IDX.REP.matGroups={};
+i=SYS.IDX.MAT.cont;
+while(~isempty(i))
+  %for i=SYS.IDX.MAT.cont
+  SYS.IDX.REP.matGroups{end+1}=i(1);
+  for j=SYS.IDX.REP.cont
+    if(strcmp(REP(j).srcMat,MAT(i(1)).name))
+      SYS.IDX.REP.matGroups{end}=[SYS.IDX.REP.matGroups{end} REP(j).dstMatIdx];
+    elseif(strcmp(REP(j).dstMat,MAT(i(1)).name))
+      SYS.IDX.REP.matGroups{end}=[SYS.IDX.REP.matGroups{end} REP(j).srcMatIdx];
+    end
+  end
+  SYS.IDX.REP.matGroups{end}=sort(SYS.IDX.REP.matGroups{end});
+  i(ismember(i,SYS.IDX.REP.matGroups{end}))=[];
+end
+SYS.IDX.REP.matGroups=[SYS.IDX.REP.matGroups num2cell(SYS.IDX.MAT.decay(~ismember(SYS.IDX.MAT.decay,SYS.IDX.MAT.cont)))];
+
 %%% material groups
 
 

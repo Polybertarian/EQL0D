@@ -152,6 +152,9 @@ classdef Rep
         'VariableNames',{'Source','Destination','Elements','Cycletime','Mode','Type'},...
         'RowNames',{obj.name}')
     end
+    function usesMat=usesMat(obj,matName)
+      usesMat=strcmp(obj.srcMat,matName)|strcmp(obj.dstMat,matName);
+    end
   end
   
 end
