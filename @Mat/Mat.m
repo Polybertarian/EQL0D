@@ -9,7 +9,9 @@ classdef Mat < NuclearObject
     mCaptXS
     mN2nXS
     mN3nXS
-    burnMtx 
+    burnIdx
+    burnMtx
+    streams
   end
   properties (SetAccess = immutable)
     temp;            % Temperature (for Serpent)
@@ -17,6 +19,7 @@ classdef Mat < NuclearObject
     isInFlux=false;  % is the material in the neutron flux?
     isStr=false;     % is the material involved in Streams?
     isCont=false;    % is the material continuously processed?
+    
   end
   properties (Dependent = true, SetAccess = private)
     %%% Initial values
@@ -48,8 +51,10 @@ classdef Mat < NuclearObject
     totFPMass        % total FPs mass
     totActMass       % total Actinide mass
     totMass          % total Mass
-    %%%% 
+    %%%%
     normBurnMtx
+    burnZAI
+    decMtx
     %%%% Other
     FIMA             % burnup (% FIMA)
     FPFrac           % burnup (FP/FP+Ac) mass ratio
@@ -430,11 +435,33 @@ classdef Mat < NuclearObject
       dN=obj.N(:,end)-obj.N(:,end-1);
     end
     function nBMtx = get.normBurnMtx(obj)
-        nBMtx = obj.burnMatrix*obj.intFlux;
+      if(obj.isBurned)
+        nBMtx = obj.burnMtx*obj.intFlux;
+      else
+        nBMtx=[];
+      end
     end
     function obj=set.burnMtx(obj,burnMtx)
-        obj.burnMtx=burnMtx;
+      obj.burnMtx=burnMtx;
     end
+    function burnZAI=get.burnZAI(obj)
+      burnZAI=obj.ZAI(obj.burnIdx);
+    end
+    function obj=loadBurnMatrix(obj)
+      run(strtrim(ls(['depmtx_' obj.name '*0.m'])));
+      clearvars N0 N1 t
+      A=sparse(A);
+      idx=find(ismember(ZAI,[-1 10 666]));
+      A(:,idx)=[]; A(idx,:)=[]; ZAI(idx)=[];
+      obj.burnIdx=ismember(obj.ZAI,ZAI);
+      obj.burnMtx=(A-obj.defDecMtx)/obj.intFlux;
+    end
+    function decMtx=get.decMtx(obj)
+      decMtx=obj.defDecMtx;
+      decMtx(:,~obj.burnIdx)=[];
+      decMtx(~obj.burnIdx,:)=[];
+    end
+    
   end
 end
 

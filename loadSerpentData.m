@@ -28,8 +28,8 @@ SYS.burnZAI(1,:)=[];
 
 %%% Get integral fluxes
 run([SYS.Casename '_det0.m']);
-for i=1:length(SYS.IDX.MAT.inFlux)
-    MAT(SYS.IDX.MAT.inFlux(i)).intFlux=DETintFlux(i,11);
+for i=SYS.IDX.MAT.inFlux
+    MAT(i).intFlux=DETintFlux(i,11);
 end
 SYS.intFlux=sum([MAT(SYS.IDX.MAT.inFlux).intFlux]);
 
@@ -74,33 +74,9 @@ SYS.RR.inMat{2}=struct('capt',RR(:,1),'fiss',RR(:,2),'n2n',RR(:,3),'n3n',RR(:,4)
 
 %%% Read data for burnable materials
 for i=SYS.IDX.MAT.burn
-    run(strtrim(ls(['depmtx_' MAT(i).name '*0.m'])));
-    A=sparse(A);
-    idx=ismember(ZAI,[-1 10 666]);
-    A(:,idx)=[]; A(idx,:)=[];
-    N0(idx)=[]; ZAI(idx)=[];
-    SYS.MTX.decay{2,i}=sparse(SYS.MTX.defaultDecay);
-    SYS.IDX.burnZAI{2,i}=ismember(MAT(i).ZAI,ZAI);
-    SYS.MTX.decay{2,i}(:,~SYS.IDX.burnZAI{2,i})=[];
-    SYS.MTX.decay{2,i}(~SYS.IDX.burnZAI{2,i},:)=[];
-    SYS.IDX.matZAI{2,i}=repmat(i,length(ZAI),1);
-    if(~iscolumn(ZAI))
-        SYS.burnZAI{2,i}=ZAI';
-    else
-        SYS.burnZAI{2,i}=ZAI;
-    end
-    SYS.MTX.burn{2,i}=sparse(A-SYS.MTX.decay{end,i});
-    clearvars A N0 N1 t ZAI
+  MAT(i)=MAT(i).loadBurnMatrix;
 end
 
-%%% data for stream materials 
-for i=SYS.IDX.MAT.decay
-   SYS.MTX.decay{2,i}=SYS.MTX.decay{1,i}; 
-   SYS.IDX.matZAI{2,i}=SYS.IDX.matZAI{1,i};
-   SYS.IDX.burnZAI{2,i}=SYS.IDX.burnZAI{1,i};
-   SYS.burnZAI{2,i}=SYS.burnZAI{1,i};
-   SYS.MTX.burn{2,i}=SYS.MTX.burn{1,i};
-end
 return
 end
 

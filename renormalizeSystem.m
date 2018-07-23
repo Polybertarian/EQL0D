@@ -1,5 +1,5 @@
-function [MAT,SYS] = renormalizeBurnMatrices(MAT,SYS)
-%RENORMALIZERATES Takes burnup matrices in the system and renormalizes the
+function [MAT,SYS] = renormalizeSystem(MAT,SYS)
+%RENORMALIZESYSTEM Takes burnup matrices in the system and renormalizes the
 %flux-dependant rates by renormFactor (previously calculated)
 
 %%% Compare current rate to target
@@ -22,9 +22,6 @@ end
 SYS.intFlux=SYS.intFlux*SYS.renormFactor;
 for i=SYS.IDX.MAT.inFlux
     MAT(i).intFlux=MAT(i).intFlux*SYS.renormFactor;
-    if(ismember(i,SYS.IDX.MAT.burn))
-        SYS.MTX.burn{2,i}=SYS.MTX.burn{2,i}*SYS.renormFactor;
-    end
 end
 
 %%% Change flux in non-included materials

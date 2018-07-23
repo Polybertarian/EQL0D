@@ -72,7 +72,9 @@ else
   SYS.KINF.EQL0D=[];  SYS.KINF.Serpent=[];
   SYS.RR.NU=cell(2,1);
   SYS.RR.LEAK=cell(2,1);
-  SYS.MTX.defaultDecay=sparse(DAT.decayMatrix(isProduced(DAT.libraryName,DAT.ZAI0),isProduced(DAT.libraryName,DAT.ZAI0)));
+  for i=1:length(MAT)
+  MAT(i).defDecMtx=sparse(DAT.decayMatrix(isProduced(DAT.libraryName,DAT.ZAI0),isProduced(DAT.libraryName,DAT.ZAI0)));
+  end
   if(OPT.PCC)
     OPT.renormalize=false;
   end

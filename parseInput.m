@@ -64,13 +64,13 @@ if(~isempty(REP))
     end
     
     %%% Look for continuous/batch reprocessing streams
-    REP=REP([find([REP.isCont]&~[REP.isKeep])...
-        find([REP.isCont]&[REP.isKeep])...
-        find([REP.isBatch]&~[REP.isKeep])...
-        find([REP.isBatch]&[REP.isKeep])]);
+    REP=REP([find([REP.isCont]&~[REP.isKeep]) find([REP.isCont]&[REP.isKeep])...
+        find([REP.isBatch]&~[REP.isKeep]) find([REP.isBatch]&[REP.isKeep])]);
     
     SYS.IDX.REP.cont=find([REP.isCont]);
     SYS.IDX.REP.batch=find([REP.isBatch]);
+    SYS.IDX.REP.keep=find([REP.isKeep]);
+    SYS.IDX.REP.contKeep=find([REP.isKeep]&[REP.isCont]);
     
     %%% Identify source and destination material indexes
     for i=1:length(REP)
@@ -130,6 +130,7 @@ for i=SYS.IDX.MAT.cont
     end
 end
 
+%%% material groups
 SYS.IDX.REP.matGroups={};
 i=SYS.IDX.MAT.cont;
 while(~isempty(i))
@@ -147,7 +148,11 @@ while(~isempty(i))
 end
 SYS.IDX.REP.matGroups=[SYS.IDX.REP.matGroups num2cell(SYS.IDX.MAT.decay(~ismember(SYS.IDX.MAT.decay,SYS.IDX.MAT.cont)))];
 
-%%% material groups
+% streams for each material
+for i=1:length(MAT)
+  MAT(i).streams.cont=[find([REP(SYS.IDX.REP.cont).srcMatIdx]==i) find([REP(SYS.IDX.REP.cont).dstMatIdx]==i)];
+  MAT(i).streams.batch=[find([REP(SYS.IDX.REP.batch).srcMatIdx]==i) find([REP(SYS.IDX.REP.batch).dstMatIdx]==i)];
+end
 
 
 %% Redox control material indexes
@@ -176,33 +181,34 @@ for i=SYS.IDX.MAT.burn
     [SYS.IDX.burnZAI{[1 2],i}]=deal([]);
     [SYS.burnZAI{[1 2],i}]=deal(MAT(i).ZAI);
 end
-for i=SYS.IDX.MAT.decay
-    b=[];
-    for j=1:numel(REP)
-        if(REP(j).dstMatIdx==i|REP(j).srcMatIdx==i)
-            b=unique(vertcat(b,REP(j).elements));
-        end
-    end
-    j=0;
-    while(j<length(b))
-        j=j+1;
-        b=unique([b;MAT(i).ZAI(SYS.MTX.defaultDecay(:,MAT(i).ZAI==b(j))>0)],'stable');
-    end
-    b=sort(b);
-    b=MAT(1).ZAI;
-    A=SYS.MTX.defaultDecay;
-    [SYS.IDX.burnZAI{[1 2],i}]=deal(ismember(MAT(i).ZAI,b));
-    A(~SYS.IDX.burnZAI{2,i},:)=[];
-    A(:,~SYS.IDX.burnZAI{2,i})=[];
-    [SYS.burnZAI{[1 2],i}]=deal(b);
-    [SYS.MTX.burn{[1 2],i}]=deal(spalloc(numel(b),numel(b),1));
-    [SYS.MTX.decay{[1 2],i}]=deal(A);
-    [SYS.IDX.matZAI{[1 2],i}]=deal(repmat(i,numel(b),1));
-    clearvars b
-end
+% for i=SYS.IDX.MAT.decay
+%     b=[];
+%     for j=1:numel(REP)
+%         if(REP(j).dstMatIdx==i|REP(j).srcMatIdx==i)
+%             b=unique(vertcat(b,REP(j).elements));
+%         end
+%     end
+%     j=0;
+%     while(j<length(b))
+%         j=j+1;
+%         b=unique([b;MAT(i).ZAI(SYS.MTX.defaultDecay(:,MAT(i).ZAI==b(j))>0)],'stable');
+%     end
+%     b=sort(b);
+%     b=MAT(1).ZAI;
+%     A=SYS.MTX.defaultDecay;
+%     [SYS.IDX.burnZAI{[1 2],i}]=deal(ismember(MAT(i).ZAI,b));
+%     A(~SYS.IDX.burnZAI{2,i},:)=[];
+%     A(:,~SYS.IDX.burnZAI{2,i})=[];
+%     [SYS.burnZAI{[1 2],i}]=deal(b);
+%     [SYS.MTX.burn{[1 2],i}]=deal(spalloc(numel(b),numel(b),1));
+%     [SYS.MTX.decay{[1 2],i}]=deal(A);
+%     [SYS.IDX.matZAI{[1 2],i}]=deal(repmat(i,numel(b),1));
+%     clearvars b
+% end
 for i=SYS.IDX.REP.cont
     [SYS.MTX.rep{[1 2],i}]=deal([]);
 end
 [SYS.MTX.total{[1 2]}]=deal([]);
 
+end
 

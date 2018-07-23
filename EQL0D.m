@@ -46,7 +46,7 @@ try
     [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT,SYS); %%% Compute k-eff
     printK(SYS,'AB','C','EQL0D'); % print keff and kinf to file
     if(OPT.renormalize)
-      [MAT,SYS] = renormalizeBurnMatrices(MAT,SYS);  % renormalize burn matrices to new fission rate
+      [MAT,SYS] = renormalizeSystem(MAT,SYS);  % renormalize burn matrices to new fission rate
     end
     if(~isempty(SYS.IDX.REP.cont))
       SYS = createRepMatrices(MAT,REP,SYS); % create reprocessing matrices for continuous streams
@@ -61,7 +61,7 @@ try
       end
       
       if(OPT.renormalize)
-        [MAT,SYS] = renormalizeBurnMatrices(MAT,SYS); % renormalize burn matrices to new fission rate
+        [MAT,SYS] = renormalizeSystem(MAT,SYS); % renormalize burn matrices to new fission rate
         if(~isempty(SYS.IDX.REP.cont))
           SYS = createRepMatrices(MAT,REP,SYS); % create reprocessing matrices for continuous streams
         end

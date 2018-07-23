@@ -1,6 +1,11 @@
-function SYS = buildSystemMatrix(SYS)
+function SYS = buildSystemMatrix(MAT,SYS)
 %BUILDSYSTEMMATRIX Builds final burn-up matrix from all burn, decay and
 %reprocessing matrices
+
+SYS.MTX.burn={};
+for i=SYS.IDX.REP.matGroups
+
+end
 
 %%% Remove old matrix
 SYS.MTX.total(1)=[];
