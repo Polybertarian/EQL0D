@@ -1,19 +1,15 @@
-function SYS = createKeepMatrices(MAT,REP,SYS)
-%SYS = CREATEKEEPMATRICES(MAT,REP,SYS) prepares the burn-up, decay, and reprocessing matrices for
+function SYS = createKeepMatrix(MAT,REP,SYS)
+%SYS = CREATEKEEPMATRIX(MAT,REP,SYS) prepares the burn-up, decay, and reprocessing matrices for
 %the system using the materials vector MAT, reprocessing streams vector REP and system data structure SYS.
-
-%%% Remove old MTX+ create index and vector
-SYS.MTX.rep(1,:)=[];
-MAT(src).burnZAI=vertcat(SYS.MAT(src).burnZAI{2,:});
-matZAI=vertcat(SYS.IDX.matZAI{2,:});
-sz=length(MAT(src).burnZAI);
-
 % if(SYS.debugMode)
 %   fprintf(SYS.FID.log,'%s\n','*** CONT *** Adding continuous processing streams...');
 % end
 %
 % if(SYS.debugMode)
 %   fprintf(SYS.FID.log,'%s\n',['*** CONT *** Adding processing stream ' REP(k).name '...']);
+% end
+% if(SYS.debugMode)
+%   fprintf(SYS.FID.log,'%s\n','*** CONT *** Continuous processing streams added!');
 % end
 
 %%% Add continuous processing constants
@@ -61,12 +57,6 @@ for k=SYS.IDX.REP.contKeep
     feedNucInSrc=ismember(MAT(src).burnZAI,REP(k).elements)&nucInSrc&ismember(MAT(src).burnZAI,MAT(src).burnZAI(feedNucInDst));
     repMtx(feedNucInSrc,replNuc)=-MAT(dst).volume/MAT(src).volume*repMtx(feedNucInDst,replNuc);
   end
-  
-  SYS.MTX.rep{2,SYS.IDX.REP.cont==k}=sparse(repMtx);
-end
-
-if(SYS.debugMode)
-  fprintf(SYS.FID.log,'%s\n','*** CONT *** Continuous processing streams added!');
 end
 return
 end

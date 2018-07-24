@@ -94,6 +94,7 @@ classdef Mat < NuclearObject
           case 0
             obj.isCont=true;
             obj.isStr=true;
+            obj.burnIdx=ismember(obj.ZAI,isProduced(obj.ZAI));
         end
         obj.N=zeros(size(obj.ZAI));
         if(dens==0)%'sum' in serpent
@@ -318,7 +319,7 @@ classdef Mat < NuclearObject
       matName=obj.nuclideName;
       idxAct=isActinide(matZAI);
       idxFP=isFP(matZAI);
-      idxExist=find(isProduced(SYS.nuclearDataLibrary,matZAI));
+      idxExist=obj.burnIdx;
       matFiss=obj.fissRate;
       matCapt=obj.captRate;
       matN2n=obj.n2nRate;
@@ -435,10 +436,10 @@ classdef Mat < NuclearObject
       dN=obj.N(:,end)-obj.N(:,end-1);
     end
     function nBMtx = get.normBurnMtx(obj)
-      if(obj.isBurned)
+      if(obj.isInFlux)
         nBMtx = obj.burnMtx*obj.intFlux;
       else
-        nBMtx=[];
+        nBMtx=0.0*obj.decMtx;
       end
     end
     function obj=set.burnMtx(obj,burnMtx)

@@ -164,6 +164,8 @@ classdef Rep
                 else %%% non-void source & destination = find both
                     repMtx(sub2ind(size(repMtx),find(obj.srcNucIdx),find(obj.srcNucIdx)))=-obj.share*obj.rate;
                 end
+            else
+              repMtx=createKeepMatrices(;
             end
         end
         function obj=setIdx(obj,srcMatZAI,dstMatZAI)

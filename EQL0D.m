@@ -49,7 +49,7 @@ try
       [MAT,SYS] = renormalizeSystem(MAT,SYS);  % renormalize burn matrices to new fission rate
     end
     if(~isempty(SYS.IDX.REP.cont))
-      SYS = createRepMatrices(MAT,REP,SYS); % create reprocessing matrices for continuous streams
+      SYS = createKeepMatrices(MAT,REP,SYS); % create reprocessing matrices for continuous streams
     end
     SYS = buildSystemMatrix(SYS); % build global matrix
     save([SYS.Casename '.mat']);  % save to .mat file
@@ -63,7 +63,7 @@ try
       if(OPT.renormalize)
         [MAT,SYS] = renormalizeSystem(MAT,SYS); % renormalize burn matrices to new fission rate
         if(~isempty(SYS.IDX.REP.cont))
-          SYS = createRepMatrices(MAT,REP,SYS); % create reprocessing matrices for continuous streams
+          SYS = createKeepMatrices(MAT,REP,SYS); % create reprocessing matrices for continuous streams
         end
         SYS = buildSystemMatrix(SYS);  % build global matrix
       end
@@ -79,7 +79,7 @@ try
           MAT(i).N(:,end+1)=SYS.prevN.BOC(:,i);
         end
         if(~isempty(SYS.IDX.REP.cont))
-          SYS = createRepMatrices(MAT,REP,SYS);
+          SYS = createKeepMatrices(MAT,REP,SYS);
         end
         SYS = buildSystemMatrix(SYS);
         [MAT,~] = updateRates(MAT,SYS);

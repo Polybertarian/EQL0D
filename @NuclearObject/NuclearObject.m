@@ -28,7 +28,10 @@ classdef NuclearObject
         [obj.ingToxicity,obj.inhToxicity]=ingAndInhTox(obj.ZAI);
         obj.hasNucData=hasXSData(obj.ZAI);
         obj.nuclideName=ZAI2Name(obj.ZAI);
-        obj.defDecMtx=sparse(DAT.decayMatrix);
+        defDecMtx=sparse(DAT.decayMatrix);
+        defDecMtx=defDecMtx(:,idx);
+        defDecMtx=defDecMtx(idx,:);
+        obj.defDecMtx=defDecMtx;
       else
         error('Nuclear data library not found.')
       end
