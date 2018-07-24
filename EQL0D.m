@@ -48,10 +48,7 @@ try
     if(OPT.renormalize)
       [MAT,SYS] = renormalizeSystem(MAT,SYS);  % renormalize burn matrices to new fission rate
     end
-    if(~isempty(SYS.IDX.REP.cont))
-      SYS = createKeepMatrices(MAT,REP,SYS); % create reprocessing matrices for continuous streams
-    end
-    SYS = buildSystemMatrix(SYS); % build global matrix
+    SYS = buildSystemMatrices(MAT,REP,SYS); % build global matrix
     save([SYS.Casename '.mat']);  % save to .mat file
     while(~SYS.stopInner) %%% Inner loop
       SYS.inCntr=SYS.inCntr+1; SYS.prevFIMA=[MAT(SYS.IDX.MAT.burn).FIMA];
@@ -62,10 +59,7 @@ try
       
       if(OPT.renormalize)
         [MAT,SYS] = renormalizeSystem(MAT,SYS); % renormalize burn matrices to new fission rate
-        if(~isempty(SYS.IDX.REP.cont))
-          SYS = createKeepMatrices(MAT,REP,SYS); % create reprocessing matrices for continuous streams
-        end
-        SYS = buildSystemMatrix(SYS);  % build global matrix
+        SYS = buildSystemMatrices(MAT,REP,SYS);  % build global matrix
       end
       
       [MAT,SYS]=burnCycle(MAT,OPT,REP,SYS);  % deplete materials and perform batch operations
@@ -81,7 +75,7 @@ try
         if(~isempty(SYS.IDX.REP.cont))
           SYS = createKeepMatrices(MAT,REP,SYS);
         end
-        SYS = buildSystemMatrix(SYS);
+        SYS = buildSystemMatrices(MAT,REP,SYS);
         [MAT,~] = updateRates(MAT,SYS);
         if(~SYS.debugMode)
           saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS);

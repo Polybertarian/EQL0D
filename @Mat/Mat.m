@@ -2,14 +2,13 @@ classdef Mat < NuclearObject
   %MAT Material for EQL0D
   properties
     name
-    N               % Number of atoms per nuclide (1e24 units)
+    N                % Number of atoms per nuclide (1e24 units)
     volume
     intFlux=0.0
-    mFissXS %%% Cross-sections
+    mFissXS          % Cross-sections
     mCaptXS
     mN2nXS
     mN3nXS
-    burnIdx
     burnMtx
     streams
   end
@@ -19,7 +18,6 @@ classdef Mat < NuclearObject
     isInFlux=false;  % is the material in the neutron flux?
     isStr=false;     % is the material involved in Streams?
     isCont=false;    % is the material continuously processed?
-    
   end
   properties (Dependent = true, SetAccess = private)
     %%% Initial values
@@ -94,7 +92,6 @@ classdef Mat < NuclearObject
           case 0
             obj.isCont=true;
             obj.isStr=true;
-            obj.burnIdx=ismember(obj.ZAI,isProduced(obj.ZAI));
         end
         obj.N=zeros(size(obj.ZAI));
         if(dens==0)%'sum' in serpent
@@ -267,11 +264,13 @@ classdef Mat < NuclearObject
       suffix=[num2str(obj.temp/100,'%02d') 'c'];
       switch matWriteStyle
         case 'dec'
-          fprintf(fid,'%s\n',['mat ' obj.name ' sum burn 1 vol ' num2str(obj.volume,'%.16E') ' fix ' obj.name ' 300']);
+          fprintf(fid,'%s\n',['mat ' obj.name ' sum burn 1 vol ' num2str(obj.volume,'%.16E') ' fix ' ...
+            obj.name ' 300']);
           nucIdx=find(~ismember(obj.ZAI,[1:1:111]*1E4)&obj.N(:,end)>0.0)'; %avoid X-nat nuclides
           suffix='';
         case 'fix'
-          fprintf(fid,'%s\n',['mat ' obj.name ' sum burn 1 vol ' num2str(obj.volume,'%.16E') ' fix ' suffix ' ' num2str(obj.temp)]);
+          fprintf(fid,'%s\n',['mat ' obj.name ' sum burn 1 vol ' num2str(obj.volume,'%.16E') ' fix ' ...
+            suffix ' ' num2str(obj.temp)]);
           nucIdx=find(ones(size(obj.ZAI)))';
           suffix=['.' num2str(obj.temp/100,'%02d') 'c'];
         case 'nofix'
@@ -344,11 +343,9 @@ classdef Mat < NuclearObject
       printFmt.content=['%-9s%-9u' repmat('%-13.5E',1,11) '\n'];
       printFmt.line='%s\n';
       printContent=struct('header',[],'line',[]);
-      printContent.header={{'Nuclide','ZAI','Atomic dens.','Tot. atoms',...
-        'Molar frac.','Mass dens.','Tot. mass','Activity','Dec. heat',...
-        'Toxicity','Capture','Fissions','(n,2n)'},{'','Units','[/b.cm^3]',...
-        '[atoms]','[mol%]','[g/cm^3]','[kg]','[Bq]','[MW]','[Sv]','[/s]',...
-        '[/s]','[/s]'}};
+      printContent.header={{'Nuclide','ZAI','Atomic dens.','Tot. atoms','Molar frac.','Mass dens.',...
+        'Tot. mass','Activity','Dec. heat','Toxicity','Capture','Fissions','(n,2n)'},{'','Units',...
+        '[/b.cm^3]','[atoms]','[mol%]','[g/cm^3]','[kg]','[Bq]','[MW]','[Sv]','[/s]','[/s]','[/s]'}};
       printContent.line=repmat('_',1,15*11);
       fprintf(fid,printFmt.line,printContent.line);
       fprintf(fid,printFmt.header,printContent.header{1}{:});
