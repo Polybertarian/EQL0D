@@ -20,11 +20,8 @@ if(~all(exst))
 end
 
 %%% Remove oldest step data
-SYS.MTX.decay(1,:)=[]; SYS.MTX.burn(1,:)=[];
-SYS.IDX.burnZAI(1,:)=[]; SYS.IDX.matZAI(1,:)=[];
 SYS.RR.notInMat(1)=[]; SYS.RR.inMat(1)=[];
 SYS.RR.NU(1)=[]; SYS.RR.LEAK(1)=[];
-SYS.burnZAI(1,:)=[];
 
 %%% Get integral fluxes
 run([SYS.Casename '_det0.m']);
@@ -33,11 +30,17 @@ for i=SYS.IDX.MAT.inFlux
 end
 SYS.intFlux=sum([MAT(SYS.IDX.MAT.inFlux).intFlux]);
 
+%%% Read data for burnable materials
+for i=SYS.IDX.MAT.burn
+  MAT(i)=MAT(i).loadBurnMatrix;
+end
+
 %%% Get one-group XS/Nubar/Serpent k-eff/inf
 run([SYS.Casename '_res.m']);
 idxUni=find(all(ismember(GC_UNIVERSE_NAME,'0'),2));
 idxUni=idxUni(1);
-SYS.RR.NU{2}=NUBAR(idxUni,1); SYS.RR.LEAK{2} =ABS_KINF(idxUni,1)/ABS_KEFF(idxUni,1);
+SYS.RR.NU{2}=NUBAR(idxUni,1); 
+SYS.RR.LEAK{2} =ABS_KINF(idxUni,1)/ABS_KEFF(idxUni,1);
 SYS.KEFF.Serpent(end+1)=ABS_KEFF(idxUni,1); 
 SYS.KINF.Serpent(end+1)=ABS_KINF(idxUni,1);
 SYS.tgtFissRate=TOT_FISSRATE(idxUni,1);
@@ -72,10 +75,7 @@ RR=RR./repmat(NPhi,1,4); % create cross-sections using integral flux and nuclide
 RR(isnan(RR)|isinf(RR))=0.0;
 SYS.RR.inMat{2}=struct('capt',RR(:,1),'fiss',RR(:,2),'n2n',RR(:,3),'n3n',RR(:,4));
 
-%%% Read data for burnable materials
-for i=SYS.IDX.MAT.burn
-  MAT(i)=MAT(i).loadBurnMatrix;
-end
+[MAT,~] = updateRates(MAT,SYS);
 
 return
 end

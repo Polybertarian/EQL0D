@@ -456,8 +456,6 @@ classdef Mat < NuclearObject
     end
     function decMtx=get.decMtx(obj)
       decMtx=obj.defDecMtx;
-      decMtx(:,~obj.burnIdx)=[];
-      decMtx(~obj.burnIdx,:)=[];
     end
     
   end

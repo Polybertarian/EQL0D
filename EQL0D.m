@@ -24,7 +24,7 @@ try
     end
     if(~SYS.debugMode||SYS.ouCntr==1)
       [MAT,SYS] = loadSerpentData(MAT,SYS); %%% Read Serpent outputs
-      [MAT,~] = updateRates(MAT,SYS); % update reaction rates in materials
+      %[MAT,~] = updateRates(MAT,SYS); % update reaction rates in materials
       if(~SYS.debugMode)
         if(SYS.ouCntr==1)
           SYS.ouCntr=0;
