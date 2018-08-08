@@ -1,5 +1,5 @@
-function keepMtx = createKeepMatrix(REP,totalMtx,srcMat,dstMat)
-%KeepMtx = CREATEKEEPMATRIX(MAT,REP) prepares the 'keep'-type reprocessing
+function keepMtx = createKeepMatrix(repStream,srcMat,dstMat,totalMtx,burnMat)
+%keepMtx = CREATEKEEPMATRIX(MAT,REP) prepares the 'keep'-type reprocessing
 %matrices
 % if(SYS.debugMode)
 %   fprintf(SYS.FID.log,'%s\n','*** CONT *** Adding continuous processing streams...');
@@ -12,49 +12,58 @@ function keepMtx = createKeepMatrix(REP,totalMtx,srcMat,dstMat)
 %   fprintf(SYS.FID.log,'%s\n','*** CONT *** Continuous processing streams added!');
 % end
 
-if(ismember(REP.mode,{'keepAFPM','keepAM','keepTotM'}))
+if(ismember(repStream.mode,{'keepAFPM','keepAM','keepTotM'}))
   mode='mass';
-elseif(ismember(REP.mode,{'keepAFPA','keepAA','keepTotA'}))
+elseif(ismember(repStream.mode,{'keepAFPA','keepAA','keepTotA'}))
   mode='atoms';
 end
 
-switch REP.mode
+dstMatIdx=find(burnMat==repStream.dstMatIdx);
+switch repStream.mode
   case {'keepAM','keepAA'}
-    replNuc=isActinide(srcMat.burnZAI);
+    nuclToBeRepl=isActinide(dstMat.burnZAI); 
   case {'keepAFPM','keepAFPA'}
-    replNuc=(isFP(srcMat.burnZAI)|isActinide(srcMat.burnZAI));
+    nuclToBeRepl=(isFP(dstMat.burnZAI)|isActinide(dstMat.burnZAI));
   case {'keepTotM','keepTotA'}
-    replNuc=true(size(srcMat.burnZAI));
+    nuclToBeRepl=true(size(dstMat.burnZAI));
 end
-nucInDst=(matZAI==dst); % nuclides in destination mat
-feedNucInDst=ismember(srcMat.burnZAI,REP.elements)&nucInDst; % feed nuclides in destination mat
-replNucInDst=replNuc&nucInDst; % replaced nuclides in destination mat
+nuclToBeReplDst=dstMatIdx(nuclToBeRepl);
+feedNuc=ismember(dstMat.burnZAI,repStream.elements); % feed nuclides in destination mat
+feedNucInDst=dstMatIdx(feedNuc);
 
 % share between feed nuclides
-if(REP.srcMatIdx~=0)
+if repStream.srcMatIdx~=0 
+  srcMatIdx=find(burnMat==RepSteam.srcMatIdx);
+  feedNuc=ismember(srcMat.burnZAI,repStream.elements);
+  feedNucInSrc=srcMatIdx(feedNuc);
   switch mode
     case 'mass'
-      share=srcMat.massDens(ismember(srcMat.ZAI,srcMat.burnZAI(feedNucInDst))); %share taken from source material
+      share=srcMat.massDens(ismember(srcMat.burnZAI,repStream.elements)); %share taken from source material
     case 'atoms'
-      share=srcMat.atDens(ismember(srcMat.ZAI,srcMat.burnZAI(feedNucInDst)));
+      share=srcMat.atDens(ismember(srcMat.burnZAI,repStream.elements));
   end
-  if(sum(share)==0)
-    share=REP.share;
+  if sum(share)==0 
+    share=repStream.share;
   end
 else
-  share=REP.share;
+  share=repStream.share;
 end
 share=share/sum(share);
 
 keepMtx=0.0*totalMtx; % empty matrix of the right size
 switch mode
   case 'mass'
-    mFeedNuc=dstMat.atomicMass(ismember(dstMat.ZAI,srcMat.burnZAI(feedNucInDst))); % masses of feed nuclides
-    mReplNuc=dstMat.atomicMass(ismember(dstMat.ZAI,srcMat.burnZAI(replNuc&nucInDst))); % masses of replaced nuclides
-    keepMtx(feedNucInDst,replNuc)=-share*(sum(totalMtx(replNucInDst,replNuc).*...
-      repmat(mReplNuc,1,nnz(replNuc)))./sum((mFeedNuc.*share)));
+    mFeedNuc=repStream.dstNucMass; % masses of feed nuclides
+    mReplNuc=dstMat.atomicMass(nuclToBeRepl); % masses of replaced nuclides
+    keepMtx(feedNucInDst,nuclToBeRepl)=-share*(sum(totalMtx(nuclToBeReplDst,nuclToBeRepl).*...
+      repmat(mReplNuc,1,nnz(nuclToBeRepl)))./sum((mFeedNuc.*share)));
   case 'atoms'
-    keepMtx(feedNucInDst,replNuc)=-share*sum(totalMtx(replNucInDst,replNuc));
+    keepMtx(feedNucInDst,nuclToBeRepl)=-share*sum(totalMtx(nuclToBeReplDst,nuclToBeRepl));
+end
+
+if ~isempty(srcMat)
+  keepMtx(feedNucInSrc,nuclToBeRepl)=-(MAT(REP(k).srcMatIdx).volume/MAT(REP(k).dstMatIdx).volume)*...
+  keepMtx(feedNucInDst,nuclToBeRepl);
 end
 
 return

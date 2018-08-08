@@ -66,16 +66,15 @@ else
   SYS.nowTime=0.0;
   SYS.tStep=[];
   [SYS.RR.notInMat{1}]=deal(struct('fiss',[],'capt',[],'n2n',[],'n3n',[]));
-  [SYS.RR.inMat{1}]=deal(struct('fiss',zeros(size(DAT.ZAI0)),'capt',zeros(size(DAT.ZAI0)),...
-    'n2n',zeros(size(DAT.ZAI0)),'n3n',zeros(size(DAT.ZAI0))));
+  SYS.RR.notInMat{2}=SYS.RR.notInMat{1};
+  tmpVec=zeros(size(MAT(1).ZAI));
+  [SYS.RR.inMat{1}]=deal(struct('fiss',tmpVec,'capt',tmpVec,'n2n',tmpVec,'n3n',tmpVec));
+  SYS.RR.inMat{2}=SYS.RR.inMat{1};
   SYS.KEFF.EQL0D=[];  SYS.KEFF.Serpent=[];
   SYS.KINF.EQL0D=[];  SYS.KINF.Serpent=[];
   SYS.RR.NU=cell(2,1);
   SYS.RR.LEAK=cell(2,1);
-  for i=1:length(MAT)
-  MAT(i).defDecMtx=sparse(DAT.decayMatrix(isProduced(DAT.libraryName,DAT.ZAI0),isProduced(DAT.libraryName,DAT.ZAI0)));
-  end
-  if(OPT.PCC)
+  if OPT.PCC 
     OPT.renormalize=false;
   end
   

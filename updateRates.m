@@ -15,7 +15,8 @@ for i=SYS.IDX.MAT.inFlux
   MAT(i).mN3nXS =coeffs(1)*SYS.RR.inMat{1}.n3n +coeffs(2)*SYS.RR.inMat{2}.n3n;
 end
 
-MTX=coeffs(1)*SYS.MTX.total{1}+coeffs(2)*SYS.MTX.total{2}; %%% Interpolate and solve
+MTX=[];
+%MTX=coeffs(1)*SYS.MTX.total{1}+coeffs(2)*SYS.MTX.total{2}; %%% Interpolate and solve
 
 return
 

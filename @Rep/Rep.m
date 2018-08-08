@@ -6,9 +6,11 @@ classdef Rep
         srcMat
         srcMatIdx=[];
         srcNucIdx=[];
+        srcNucMass=[];
         dstMat
         dstMatIdx=[];
         dstNucIdx=[];
+        dstNucMass=[];
         elements
         elementsNames
         share

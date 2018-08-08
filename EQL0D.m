@@ -24,7 +24,6 @@ try
     end
     if(~SYS.debugMode||SYS.ouCntr==1)
       [MAT,SYS] = loadSerpentData(MAT,SYS); %%% Read Serpent outputs
-      %[MAT,~] = updateRates(MAT,SYS); % update reaction rates in materials
       if(~SYS.debugMode)
         if(SYS.ouCntr==1)
           SYS.ouCntr=0;
@@ -57,11 +56,6 @@ try
         SYS.prevN.BOC=[SYS.prevN.BOC MAT(i).N(:,end)]; %%% Store compositions from previous loop
       end
       
-      if(OPT.renormalize)
-        [MAT,SYS] = renormalizeSystem(MAT,SYS); % renormalize burn matrices to new fission rate
-        SYS = buildSystemMatrices(MAT,REP,SYS);  % build global matrix
-      end
-      
       [MAT,SYS]=burnCycle(MAT,OPT,REP,SYS);  % deplete materials and perform batch operations
       
       if(OPT.PCC&&~SYS.debugMode) %Corrector step
@@ -76,7 +70,6 @@ try
           SYS = createKeepMatrices(MAT,REP,SYS);
         end
         SYS = buildSystemMatrices(MAT,REP,SYS);
-        [MAT,~] = updateRates(MAT,SYS);
         if(~SYS.debugMode)
           saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS);
           printK(SYS,'AB','P','Serpent');

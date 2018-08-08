@@ -10,7 +10,8 @@ classdef Mat
         mN2nXS
         mN3nXS
         burnMtx
-        streams
+        burnIdx
+        streams=struct('cont',[],'batch',[]);
     end
     properties (SetAccess = immutable)
         atomicMass
@@ -23,7 +24,6 @@ classdef Mat
         hasNucData
         nuclideName
         defDecMtx
-        burnIdx
         temp;            % Temperature (for Serpent)
         isBurned=false;  % is the material being depleted?
         isInFlux=false;  % is the material in the neutron flux?
@@ -89,6 +89,7 @@ classdef Mat
                 defDecMtx=defDecMtx(:,obj.burnIdx);
                 defDecMtx=defDecMtx(obj.burnIdx,:);
                 obj.defDecMtx=defDecMtx;
+                obj.burnIdx=ismember(obj.ZAI,obj.ZAI);
             else
                 error('Nuclear data library not found.')
             end
@@ -347,7 +348,8 @@ classdef Mat
             matName=obj.nuclideName;
             idxAct=isActinide(matZAI);
             idxFP=isFP(matZAI);
-            idxExist=obj.burnIdx;
+            idxExist=find(obj.burnIdx);
+            idxAFP=idxFP|idxAct;
             matFiss=obj.fissRate;
             matCapt=obj.captRate;
             matN2n=obj.n2nRate;
@@ -388,7 +390,11 @@ classdef Mat
                 sum(matN(idxAct)),sum(matComp(idxAct)),sum(matMDens(idxAct)),sum(matM(idxAct)),...
                 sum(matA(idxAct)),sum(matH(idxAct)),sum(matTox(idxAct)),sum(matCapt(idxAct)),...
                 sum(matFiss(idxAct)),sum(matN2n(idxAct)));
-            fprintf(fid,['%-10s%-8s' repmat('%-13.5E',1,11) '\n'],'Total','',sum(matADens),...
+            fprintf(fid,['%-10s%-8s' repmat('%-13.5E',1,11) '\n'],'A+FPs','Z>20',sum(matADens(idxAFP)),...
+                sum(matN(idxAFP)),sum(matComp(idxAFP)),sum(matMDens(idxAFP)),sum(matM(idxAFP)),...
+                sum(matA(idxAFP)),sum(matH(idxAFP)),sum(matTox(idxAFP)),sum(matCapt(idxAFP)),...
+                sum(matFiss(idxAFP)),sum(matN2n(idxAFP)));
+            fprintf(fid,['%-10s%-8s' repmat('%-13.5E',1,11) '\n'],'Total','All',sum(matADens),...
                 sum(matN),sum(matComp),sum(matMDens),sum(matM),...
                 sum(matA),sum(matH),sum(matTox),sum(matCapt),...
                 sum(matFiss),sum(matN2n));
