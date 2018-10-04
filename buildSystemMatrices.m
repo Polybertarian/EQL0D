@@ -40,9 +40,15 @@ for i=1:length(SYS.IDX.REP.matGroups)
         end
       end
       SYS.MTX.total{2,i}=SYS.MTX.total{2,i}+globalRepMtx;
+      if(any(any(isnan(SYS.MTX.total{2,i}))))
+        error(['Error while building total matrix of Material Group {' ...
+          num2str(SYS.IDX.REP.matGroups{i}) '}. NaN values detected!']);
+      end
     end
   end
 end
+
+
 
 return
 end

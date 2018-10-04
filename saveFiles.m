@@ -2,7 +2,7 @@ function [] = saveFiles(matNames,keepFiles,SYS)
 % SAVEFILES(matNames,keepFiles,SYS) moves Serpent outputs to be saved to corresponding folder and deletes
 % others
 
-if(keepFiles)
+if(~isempty(keepFiles))
     if(~SYS.PCC.active)
         dirName=['Cycle' num2str(SYS.ouCntr-1,'%03d')];
     else
@@ -20,17 +20,30 @@ if(keepFiles)
     
     %%% move serpent output files to corresponding folder
     caseFiles={'_res.m','_arr0.m','_dep.m','_det0.m','.out'};
-    for ext=caseFiles
+    for ext=caseFiles(~ismember(caseFiles,keepFiles))
+        if(exist([SYS.Casename ext{1}],'file')==2)
+            delete([SYS.Casename ext{1}]);
+        end
+    end
+    for ext=caseFiles(ismember(caseFiles,keepFiles))
         if(exist([SYS.Casename ext{1}],'file')==2)
             movefile([SYS.Casename ext{1}],dirName);
         end
     end
     for j=1:length(matNames)
         if(exist(['depmtx_' matNames{j} '0.m'],'file')==2)
+          if(ismember('depmtx_',keepFiles))
             movefile(['depmtx_' matNames{j} '0.m'],dirName);
+          else
+            delete(['depmtx_' matNames{j} '0.m']);
+          end
         end
         if(exist([matNames{j} '.serp.bak'],'file')==2)
+          if(ismember('.bak',keepFiles))
             movefile([matNames{j} '.serp.bak'],dirName);
+          else
+            delete([matNames{j} '.serp.bak']);
+          end
         end
     end
 else

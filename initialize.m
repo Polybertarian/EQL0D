@@ -2,6 +2,8 @@ function [MAT,OPT,REP,SYS] = initialize(SYS)
 %[MAT,OPT,REP,SYS] = INITIALIZE(SYS) regroups all steps to parse the user input and initialize
 %the initial variables of EQL0D
 
+global FID
+
 stdFields={'nCores','debugMode','verboseMode','printAndQuit','restartCalc','restartCalc','resetCounters'};
 for i=find(~isfield(SYS,stdFields))
   SYS.(stdFields{i})=false;
@@ -9,23 +11,7 @@ end
 
 if(SYS.restartCalc)
   load([SYS.Casename '.mat']);
-  [SYS.FID.log,errmsg]=fopen([SYS.Casename '.log'],'at');
-  if(~isempty(errmsg))
-    error(errmsg)
-  end
-  [SYS.FID.keff,errmsg]=fopen('keff.txt','at');
-  
-  if(OPT.reactControl)
-    switch OPT.REA.mode
-      case {'replace','addMass'}
-        SYS.FID.react=fopen('reactivity.txt','at');
-      case 'addVolume'
-        [SYS.FID.volume,errmsg]=fopen('volume.txt','at');
-    end
-  end
-  if(~isempty(errmsg))
-    error(errmsg)
-  end
+  openLogs(SYS.Casename,true,SYS.REA)
 else
   run('defaultConfig.m'); %%% Default config
   if(exist([SYS.Casename '.m'],'file')==2)
@@ -33,10 +19,7 @@ else
   else
     error(['Cannot find configuration file ' SYS.Casename '.m !'])
   end
-  [SYS.FID.log,errmsg]=fopen([SYS.Casename '.log'],'wt');
-  if(~isempty(errmsg))
-    error(errmsg)
-  end
+  
   if(SYS.resetCounters)
     tmp=load([SYS.Casename '.mat'],'MAT');
     for i=find([MAT.isCont]&~[MAT.isStr])
@@ -60,11 +43,8 @@ else
   end
   
   %%% Initialization of various variables
-  SYS.ouCntr=0;
-  SYS.inCntr=0;
-  SYS.stopOuter=false;
-  SYS.nowTime=0.0;
-  SYS.tStep=[];
+  SYS.ouCntr=0;  SYS.inCntr=0;
+  SYS.stopOuter=false;  SYS.nowTime=0.0;  SYS.tStep=[];
   [SYS.RR.notInMat{1}]=deal(struct('fiss',[],'capt',[],'n2n',[],'n3n',[]));
   SYS.RR.notInMat{2}=SYS.RR.notInMat{1};
   tmpVec=zeros(size(MAT(1).ZAI));
@@ -74,7 +54,7 @@ else
   SYS.KINF.EQL0D=[];  SYS.KINF.Serpent=[];
   SYS.RR.NU=cell(2,1);
   SYS.RR.LEAK=cell(2,1);
-  if OPT.PCC 
+  if OPT.PCC
     OPT.renormalize=false;
   end
   
@@ -89,6 +69,7 @@ else
   else
     %%% Parse all data
     [MAT,OPT,REP,SYS] = parseInput(MAT,OPT,REP,SYS);
+    openLogs(SYS.Casename,false,SYS.REA)
     for i=SYS.IDX.MAT.burn
       MAT(i).write(OPT.matWriteStyle);
     end
@@ -98,47 +79,6 @@ else
       elseif(OPT.printCycles&&~OPT.printSteps)
         MAT(i).printMaterial(SYS,'EoC');
       end
-    end
-  end
-  
-  %%% Neutron balance outputs
-  [SYS.FID.keff,~]=fopen('keff.txt','w');
-  fprintf(SYS.FID.keff,'%-7s %-3s %-5s %-4s %-3s %-12s %-9s %-9s\n',...
-    'Source','PCC','Cycle','Step','Rep','Time','k-inf','k-eff');
-  
-  %%% Reactivity control outputs
-  if(OPT.reactControl)
-    switch OPT.REA.mode
-      case {'addMass','replace'}
-        SYS.FID.react=fopen('reactivity.txt','w');
-        name{1}=MAT(SYS.IDX.REA.target).name;
-        if(~isempty(SYS.IDX.REA.feed))
-          name{2}=MAT(SYS.IDX.REA.feed).name;
-        else
-          name{2}=[];
-        end
-        fprintf(SYS.FID.react,'%-22s','Time');
-        if(strcmp(OPT.REA.mode,'addMass')&&~isempty(SYS.IDX.REA.feed))
-          elementsTarget=unique([SYS.IDX.REA.targetNucUp;SYS.IDX.REA.targetNucDo]);
-          fprintf(SYS.FID.react,['%-' num2str(13*numel(elementsTarget)) 's'],name{1});
-        elseif(strcmp(OPT.REA.mode,'replace'))
-          elementsTarget=unique([SYS.IDX.REA.targetNucRepl;SYS.IDX.REA.targetNucUp;SYS.IDX.REA.targetNucDo]);
-          fprintf(SYS.FID.react,['%-' num2str(13*numel(elementsTarget)) 's'],name{1});
-        end
-        if(~isempty(SYS.IDX.REA.feed))
-          fprintf(SYS.FID.react,['%-' num2str(13*numel(elementsTarget)) 's'],name{2});
-        end
-        fprintf(SYS.FID.react,'\n');
-        fprintf(SYS.FID.react,'%-7s%-6s%-9s','Cycle','Step','EFPD');
-        names{1}=MAT(SYS.IDX.REA.target).nuclideName(elementsTarget);
-        fprintf(SYS.FID.react,repmat('%-13s',1,numel(names{1})),names{1}{:});
-        if(~isempty(SYS.IDX.REA.feed))
-          fprintf(SYS.FID.react,repmat('%-13s',1,numel(names{1})),names{1}{:});
-        end
-        fprintf(SYS.FID.react,'\n');
-      case 'addVolume'
-        [SYS.FID.volume,~]=fopen('volume.txt','w');
-        fprintf(SYS.FID.volume,'%-7s%-6s%-9s%-12s\n','Cycle','Step','EFPD','Add. Vol. [cm^3]');
     end
   end
   
@@ -165,9 +105,9 @@ else
     fclose(fID);
   end
 end
-clearvars -except OPT SYS DAT MAT REP
+clearvars -except OPT SYS DAT MAT REP FID
 save([SYS.Casename '.mat']);
-fprintf(SYS.FID.log,'%s\n','**** EQL0D **** Procedure initialized.');
+fprintf(FID.log,'%s\n','**** EQL0D **** Procedure initialized.');
 
 return
 end

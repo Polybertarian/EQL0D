@@ -3,6 +3,7 @@ function [] = EQL0D(SYS)
 %outer and inner loops
 
 try
+  global FID
   [MAT,OPT,REP,SYS] = initialize(SYS); %%% Initialize or restart from .mat file
   
   %% Outer Loop / Cycles
@@ -38,7 +39,7 @@ try
         if(SYS.ouCntr==0)
           SYS.ouCntr=1;
         end
-        saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS);  %%% Move files to folder
+        saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.filesToKeep,SYS);  %%% Move files to folder
         printK(SYS,'AB','C','Serpent'); % print keff and kinf to file
       end
     end
@@ -71,7 +72,7 @@ try
         end
         SYS = buildSystemMatrices(MAT,REP,SYS);
         if(~SYS.debugMode)
-          saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS);
+          saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.filesToKeep,SYS);
           printK(SYS,'AB','P','Serpent');
         end
         [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT,SYS);
@@ -116,13 +117,13 @@ try
       end
       if(~SYS.debugMode)
         SYS.ouCntr=SYS.ouCntr+1;
-        saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS);
+        saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.filesToKeep,SYS);
       end
   end
   save([SYS.Casename '.mat']);
-  fprintf(SYS.FID.log,'%s\n','**** EQL0D **** Procedure finished.');
-  for file=fields(SYS.FID)
-    fclose(SYS.FID.(file{1}));
+  fprintf(FID.log,'%s\n','**** EQL0D **** Procedure finished.');
+  for file=fields(FID)
+    fclose(FID.(file{1}));
   end
   if(OPT.writeMail)
     unix(['echo "...in ' pwd ' !" | mail -s "EQL0D calculation finished!" $LOGNAME'])

@@ -2,6 +2,8 @@ function [MAT,SYS] = renormalizeSystem(MAT,SYS)
 %RENORMALIZESYSTEM Takes burnup matrices in the system and renormalizes the
 %flux-dependant rates by renormFactor (previously calculated)
 
+global FID
+
 %%% Compare current rate to target
 currentRate=sum(SYS.RR.notInMat{2}.fiss);
 for i=SYS.IDX.MAT.inFlux
@@ -9,11 +11,11 @@ for i=SYS.IDX.MAT.inFlux
 end
 
 if(SYS.verboseMode)
-    fprintf(SYS.FID.log,'%s\n',['** RENORM ** Current integral flux: ' num2str([SYS.intFlux],'%E')]);
+    fprintf(FID.log,'%s\n',['** RENORM ** Current integral flux: ' num2str([SYS.intFlux],'%E')]);
 end
 SYS.renormFactor=SYS.tgtFissRate./currentRate;
 %if(SYS.verboseMode)
-    fprintf(SYS.FID.log,'%s\n',['** RENORM ** Current fission rate: ' num2str(currentRate,'%E') ...
+    fprintf(FID.log,'%s\n',['** RENORM ** Current fission rate: ' num2str(currentRate,'%E') ...
         ', expected: ' num2str(SYS.tgtFissRate,'%E') ', factor: ' num2str(SYS.renormFactor)]);
 %end
 if(SYS.renormFactor<0)
@@ -38,7 +40,7 @@ for i=SYS.IDX.MAT.inFlux
 end
 
 if(SYS.verboseMode)
-    fprintf(SYS.FID.log,'%s\n',['** RENORM ** New fission rate: ' num2str(currentRate,'%E')]);
+    fprintf(FID.log,'%s\n',['** RENORM ** New fission rate: ' num2str(currentRate,'%E')]);
 end
 
 return
