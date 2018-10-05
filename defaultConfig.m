@@ -1,5 +1,5 @@
 %%% Default values
-OPT.serpentPath='nice -n 10 runsss /afs/psi.ch/project/fast_lrs/workspace/COD/SERP/Serpent2/EQL0D/2.1.26/sss2';
+OPT.serpentPath='sss2';
 OPT.cycleLength=365;
 OPT.nCycles=9;
 OPT.nSteps=[50 2000];
