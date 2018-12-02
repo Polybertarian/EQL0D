@@ -1,5 +1,11 @@
 function [MAT,OPT,REP,SYS] = parseInput(MAT,OPT,REP,SYS)
 %[MAT,OPT,REP,SYS] = PARSEINPUT(MAT,OPT,REP,SYS) parses the input data
+
+if(SYS.debugMode) %force keeping files in debug mode
+    OPT.keepFiles=true;
+end
+
+
 % Adapt vectors (Cycle length, etc.)
 if length(OPT.cycleLength)<OPT.nCycles  % repeat last value in cycleLength vector to match nCycles
   OPT.cycleLength=[OPT.cycleLength repmat(OPT.cycleLength(end),1,OPT.nCycles-length(OPT.cycleLength))];
@@ -138,7 +144,7 @@ end
 
 %%% material groups
 SYS.IDX.REP.matGroups={};
-i=SYS.IDX.MAT.cont;
+i=unique([SYS.IDX.MAT.burn SYS.IDX.MAT.cont]);
 while ~isempty(i)
   SYS.IDX.REP.matGroups{end+1}=i(1);
   for j=SYS.IDX.REP.cont

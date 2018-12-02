@@ -33,7 +33,7 @@ feedNucInDst=dstMatIdx(feedNuc);
 
 % share between feed nuclides
 if repStream.srcMatIdx~=0 
-  srcMatIdx=find(burnMat==RepSteam.srcMatIdx);
+  srcMatIdx=find(burnMat==repStream.srcMatIdx);
   feedNuc=ismember(srcMat.burnZAI,repStream.elements);
   feedNucInSrc=srcMatIdx(feedNuc);
   switch mode
@@ -62,8 +62,7 @@ switch mode
 end
 
 if ~isempty(srcMat)
-  keepMtx(feedNucInSrc,nuclToBeRepl)=-(MAT(REP(k).srcMatIdx).volume/MAT(REP(k).dstMatIdx).volume)*...
-  keepMtx(feedNucInDst,nuclToBeRepl);
+  keepMtx(feedNucInSrc,nuclToBeRepl)=-srcMat.volume/dstMat.volume*keepMtx(feedNucInDst,nuclToBeRepl);
 end
 
 return

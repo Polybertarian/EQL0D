@@ -9,7 +9,7 @@ classdef Mat
         mCaptXS
         mN2nXS
         mN3nXS
-        burnMtx
+        burnMtx={[],[],[]};
         burnIdx
         streams=struct('cont',[],'batch',[]);
     end
@@ -61,7 +61,6 @@ classdef Mat
         totActMass       % total Actinide mass
         totMass          % total Mass
         %%%%
-        normBurnMtx
         burnZAI
         decMtx
         %%%% Other
@@ -112,14 +111,24 @@ classdef Mat
                 obj.name=name;
                 obj.volume=vol;
                 obj.temp=temp;
+                if(~isstr(type))
+                    if(type==0)
+                        type='decay';
+                    elseif(type==1)
+                        type='burned';
+                    elseif(type==2)
+                        type='inFlux';
+                    end
+                end
                 switch type
-                    case 1
+                    case 'burned'
+                        disp('lol')
                         obj.isBurned=true;
                         obj.isInFlux=true;
                         obj.isCont=true;
-                    case 2
+                    case 'inFlux'
                         obj.isInFlux=true;
-                    case 0
+                    case 'decay'
                         obj.isCont=true;
                         obj.isStr=true;
                 end
@@ -467,15 +476,18 @@ classdef Mat
         function dN=lastNChange(obj)
             dN=obj.N(:,end)-obj.N(:,end-1);
         end
-        function nBMtx = get.normBurnMtx(obj)
+        function nBMtx = normBurnMtx(obj,coeffs)
             if(obj.isInFlux)
-                nBMtx = obj.burnMtx*obj.intFlux;
+                nBMtx=obj.burnMtx{3}*coeffs(3);
+                for i=1:2
+                    if ~isempty(obj.burnMtx{i})
+                        nBMtx=nBMtx+obj.burnMtx{i}*coeffs(i);
+                    end
+                end
+                nBMtx = nBMtx*obj.intFlux;
             else
                 nBMtx=0.0*obj.decMtx;
             end
-        end
-        function obj=set.burnMtx(obj,burnMtx)
-            obj.burnMtx=burnMtx;
         end
         function burnZAI=get.burnZAI(obj)
             burnZAI=obj.ZAI(obj.burnIdx);
@@ -487,7 +499,8 @@ classdef Mat
             idx=find(ismember(ZAI,[-1 10 666]));
             A(:,idx)=[]; A(idx,:)=[]; ZAI(idx)=[];
             obj.burnIdx=ismember(obj.ZAI,ZAI);
-            obj.burnMtx=(A-obj.defDecMtx)/obj.intFlux;
+            obj.burnMtx(1)=[];
+            obj.burnMtx{3}=(A-obj.defDecMtx)/obj.intFlux;
         end
         function decMtx=get.decMtx(obj)
             decMtx=obj.defDecMtx;
