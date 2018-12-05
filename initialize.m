@@ -2,6 +2,8 @@ function [MAT,OPT,REP,SYS] = initialize(SYS)
 %[MAT,OPT,REP,SYS] = INITIALIZE(SYS) regroups all steps to parse the user input and initialize
 %the initial variables of EQL0D
 
+global FID
+
 stdFields={'nCores','debugMode','verboseMode','printAndQuit','restartCalc','restartCalc','resetCounters'};
 for i=find(~isfield(SYS,stdFields))
     SYS.(stdFields{i})=false;
@@ -195,9 +197,9 @@ else
         fclose(fID);
     end
 end
-clearvars -except OPT SYS DAT MAT REP
+clearvars -except OPT SYS DAT MAT REP FID
 save([SYS.Casename '.mat']);
-fprintf(SYS.FID.log,'%s\n','**** EQL0D **** Procedure initialized.');
+fprintf(FID.log,'%s\n','**** EQL0D **** Procedure initialized.');
 
 return
 end

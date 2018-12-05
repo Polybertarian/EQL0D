@@ -36,7 +36,6 @@ currentRate=sum(SYS.RR.notInMat{2}.fiss);
 for i=SYS.IDX.MAT.inFlux
     currentRate=currentRate+sum(MAT(i).fissRate);
 end
-
 return
 end
 

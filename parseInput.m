@@ -16,18 +16,21 @@ end
 
 %% Reactivity control
 if(OPT.reactControl)
+  SYS.REA=OPT.REA;
+  SYS.REA.reactControl=true;
   if ~iscolumn(OPT.REA.upFraction)
-    OPT.REA.upFraction=OPT.REA.upFraction';
+    SYS.REA.upFraction=OPT.REA.upFraction';
   end
   if ~iscolumn(OPT.REA.downFraction)
-    OPT.REA.downFraction=OPT.REA.downFraction';
+    SYS.REA.downFraction=OPT.REA.downFraction';
   end
   if ~iscolumn(OPT.REA.replFraction)
-    OPT.REA.replFraction=OPT.REA.replFraction';
+    SYS.REA.replFraction=OPT.REA.replFraction';
   end
   
   SYS.IDX.REA.target=find(strcmp({MAT.name},OPT.REA.targetMat));
   if ~isempty(OPT.REA.feedMat)
+    SYS.REA.feedMat=OPT.REA.feedMat;
     SYS.IDX.REA.feed=find(strcmp({MAT.name},OPT.REA.feedMat));
     if strcmp(OPT.REA.mode,'addVolume')
       SYS.IDX.feedNuc=MAT(SYS.IDX.REA.feed).find(OPT.REA.upNuclides);
@@ -40,24 +43,32 @@ if(OPT.reactControl)
     end
   end
   if strcmp(OPT.REA.mode,'addVolume')
+    SYS.REA.mode='addVolume';
     SYS.IDX.targetNuc=MAT(SYS.IDX.REA.target).find(OPT.REA.upNuclides);
   else
     SYS.IDX.REA.targetNucUp=MAT(SYS.IDX.REA.target).find(OPT.REA.upNuclides);
     SYS.IDX.REA.targetNucDo=MAT(SYS.IDX.REA.target).find(OPT.REA.downNuclides);
     if ismember(OPT.REA.mode,{'replace'})
+      SYS.REA.mode='replace';
       SYS.IDX.REA.targetNucRepl=MAT(SYS.IDX.REA.target).find(OPT.REA.replNuclides);
       if any(OPT.REA.replNuclides<999)
-        OPT.REA.replFraction=[];
+        SYS.REA.replFraction=[];
       end
     end
   end
   if any(OPT.REA.upNuclides<999)
-    OPT.REA.upFraction=[];
+    SYS.REA.upFraction=[];
   end
   if any(OPT.REA.downNuclides<999)
-    OPT.REA.downFraction=[];
+    SYS.REA.downFraction=[];
   end
   SYS.reactAdditions=[];
+  SYS.REA.upNuclides=MAT(SYS.IDX.REA.target).ZAI(SYS.IDX.REA.targetNucUp);
+  SYS.REA.downNuclides=MAT(SYS.IDX.REA.target).ZAI(SYS.IDX.REA.targetNucDo);
+  SYS.REA.replNuclides=MAT(SYS.IDX.REA.target).ZAI(SYS.IDX.REA.targetNucRepl);
+else
+  SYS.IDX.REA=[];
+  SYS.REA.reactControl=false;
 end
 
 %% Reprocessing

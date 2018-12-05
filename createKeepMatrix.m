@@ -2,15 +2,17 @@ function keepMtx = createKeepMatrix(repStream,srcMat,dstMat,totalMtx,burnMat)
 %keepMtx = CREATEKEEPMATRIX(MAT,REP) prepares the 'keep'-type reprocessing
 %matrices
 % if(SYS.debugMode)
-%   fprintf(SYS.FID.log,'%s\n','*** CONT *** Adding continuous processing streams...');
+%   fprintf(FID.log,'%s\n','*** CONT *** Adding continuous processing streams...');
 % end
 %
 % if(SYS.debugMode)
-%   fprintf(SYS.FID.log,'%s\n',['*** CONT *** Adding processing stream ' REP.name '...']);
+%   fprintf(FID.log,'%s\n',['*** CONT *** Adding processing stream ' REP.name '...']);
 % end
 % if(SYS.debugMode)
-%   fprintf(SYS.FID.log,'%s\n','*** CONT *** Continuous processing streams added!');
+%   fprintf(FID.log,'%s\n','*** CONT *** Continuous processing streams added!');
 % end
+
+%global FID
 
 if(ismember(repStream.mode,{'keepAFPM','keepAM','keepTotM'}))
   mode='mass';

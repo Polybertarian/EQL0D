@@ -508,4 +508,5 @@ classdef Mat
             decMtx(~obj.burnIdx,:)=[];
         end
     end
+  end
 end
