@@ -122,7 +122,6 @@ classdef Mat
                 end
                 switch type
                     case 'burned'
-                        disp('lol')
                         obj.isBurned=true;
                         obj.isInFlux=true;
                         obj.isCont=true;
