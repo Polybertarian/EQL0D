@@ -18,7 +18,7 @@ else
     [FID.keff,errmsg]=fopen('keff.txt','w');
     fprintf(FID.keff,'%-7s %-3s %-5s %-4s %-3s %-12s %-9s %-9s\n',...
         'Source','PCC','Cycle','Step','Rep','Time','k-inf','k-eff');
-    if(REA.reactControl)
+    if ~isempty(REA)
         switch REA.mode
             case {'addMass','replace'}
                 FID.react=fopen('reactivity.txt','w');

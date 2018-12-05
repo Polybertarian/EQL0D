@@ -7,18 +7,17 @@ for i=find(~isfield(SYS,stdFields))
     SYS.(stdFields{i})=false;
 end
 
-
 if(SYS.restartCalc)
     load([SYS.Casename '.mat']);
     openLogs(SYS.Casename,true,OPT.REA);
 else
-    run('defaultConfig.m'); %%% Default config
+    run('defaultConfig.m'); % Default config
     if(exist([SYS.Casename '.m'],'file')==2)
         run([SYS.Casename '.m']);
     else
         error(['Cannot find configuration file ' SYS.Casename '.m !'])
     end
-   
+    
     if(SYS.resetCounters)
         tmp=load([SYS.Casename '.mat'],'MAT');
         for i=find([MAT.isCont]&~[MAT.isStr])
@@ -26,8 +25,7 @@ else
         end
     end
     
-    %%% load isotope list and properties
-    if(exist('DAT','var')~=1)
+    if(exist('DAT','var')~=1) % load isotope list and properties
         warning('Library undefined! Loading default...')
         load([OPT.defaultDataLibrary '.mat'],DAT)
     end
@@ -41,12 +39,8 @@ else
         warning('No reprocessing streams defined!')
     end
     
-    %%% Initialization of various variables
-    SYS.ouCntr=0;
-    SYS.inCntr=0;
-    SYS.stopOuter=false;
-    SYS.nowTime=0.0;
-    SYS.tStep=[];
+    SYS.ouCntr=0; SYS.inCntr=0; SYS.stopOuter=false; % Initialization of various variables
+    SYS.nowTime=0.0; SYS.tStep=[];
     [SYS.RR.notInMat{1}]=deal(struct('fiss',[],'capt',[],'n2n',[],'n3n',[]));
     SYS.RR.notInMat{2}=SYS.RR.notInMat{1};   SYS.RR.notInMat{3}=SYS.RR.notInMat{1};
     tmpVec=zeros(size(MAT(1).ZAI));
@@ -59,9 +53,11 @@ else
     if OPT.PCC
         OPT.renormalize=false;
     end
-    
-    %%% Write material compositions for Serpent
-    if(SYS.printAndQuit)
+    if ~OPT.reactControl
+       OPT.REA=[]; 
+    end
+   
+    if(SYS.printAndQuit) % Write material compositions for Serpent
         for i=find([MAT.isBurned])
             MAT(i).write('');
             MAT(i).printMaterial(SYS,'EoC');
@@ -73,8 +69,7 @@ else
         if(exist('REP','var')==0)
             REP=[];
         end
-        %%% Parse all data
-        [MAT,OPT,REP,SYS] = parseInput(MAT,OPT,REP,SYS);
+        [MAT,OPT,REP,SYS] = parseInput(MAT,OPT,REP,SYS);  % Parse all data
         for i=SYS.IDX.MAT.burn
             MAT(i).write(OPT.matWriteStyle);
         end
@@ -87,52 +82,46 @@ else
         end
     end
     
-    %%% Check presence of necessary input parameters in Serpent file
-    %[~,isAbsent]=unix(['grep -c "set depmtx 1" ' SYS.Casename]);
-    %if(str2double(isAbsent)==0)
-    %  [fID,~]=fopen(SYS.Casename,'a');
-    %  fprintf(fID,'\n%s\n','set depmtx 1 1');
-    %  fclose(fID);
-    %end
-    [~,isAbsent]=unix(['grep -c "set arr 1" ' SYS.Casename]);
-    if(str2double(isAbsent)==0)
+    isAbsent=[]; % Check presence of necessary input parameters in Serpent file
+    %[~,isAbsent{end+1}]=unix(['grep -c "set depmtx 1" ' SYS.Casename]);
+    [~,isAbsent{end+1}]=unix(['grep -c "set arr 1" ' SYS.Casename]);
+    [~,isAbsent{end+1}]=unix(['grep -c "det intFlux" ' SYS.Casename]);
+    [~,isAbsent{end+1}]=unix(['grep -c "det intFiss" ' SYS.Casename]);
+    [~,isAbsent{end+1}]=unix(['grep -c "det intProd" ' SYS.Casename]);
+    [~,isAbsent{end+1}]=unix(['grep -c "det intCapt" ' SYS.Casename]);
+    isAbsent=logical(str2double(isAbsent));
+    
+    if(any(isAbsent))
         [fID,~]=fopen(SYS.Casename,'a');
-        fprintf(fID,'\n%s\n','set arr 1 0');
-        fclose(fID);
-    end
-    [~,isAbsent]=unix(['grep -c "det intFlux" ' SYS.Casename]);
-    if(str2double(isAbsent)==0)
-        [fID,~]=fopen(SYS.Casename,'a');
-        fprintf(fID,'\n%s','det intFlux ');
-        for i=SYS.IDX.MAT.inFlux
-            fprintf(fID,'%s',['dm ' MAT(i).name ' ']);
+        % if(isAbsent(1))
+        % fprintf(fID,'\n%s\n','set depmtx 1 1'); 
+        % end
+        if(isAbsent(1))
+            fprintf(fID,'\n%s\n','set arr 1 0');
         end
-        fclose(fID);
-    end
-    [~,isAbsent]=unix(['grep -c "det intFiss" ' SYS.Casename]);
-    if(str2double(isAbsent)==0)
-        [fID,~]=fopen(SYS.Casename,'a');
-        fprintf(fID,'\n%s','det intFiss dr -6 void ');
-        for i=SYS.IDX.MAT.inFlux
-            fprintf(fID,'%s',['dm ' MAT(i).name ' ']);
+        if(isAbsent(2))
+            fprintf(fID,'\n%s','det intFlux ');
+            for i=SYS.IDX.MAT.inFlux
+                fprintf(fID,'%s',['dm ' MAT(i).name ' ']);
+            end
         end
-        fclose(fID);
-    end
-    [~,isAbsent]=unix(['grep -c "det intProd" ' SYS.Casename]);
-    if(str2double(isAbsent)==0)
-        [fID,~]=fopen(SYS.Casename,'a');
-        fprintf(fID,'\n%s','det intProd dr -7 void ');
-        for i=SYS.IDX.MAT.inFlux
-            fprintf(fID,'%s',['dm ' MAT(i).name ' ']);
+        if(isAbsent(3))
+            fprintf(fID,'\n%s','det intFiss dr -6 void ');
+            for i=SYS.IDX.MAT.inFlux
+                fprintf(fID,'%s',['dm ' MAT(i).name ' ']);
+            end
         end
-        fclose(fID);
-    end
-    [~,isAbsent]=unix(['grep -c "det intCapt" ' SYS.Casename]);
-    if(str2double(isAbsent)==0)
-        [fID,~]=fopen(SYS.Casename,'a');
-        fprintf(fID,'\n%s','det intCapt dr -2 void ');
-        for i=SYS.IDX.MAT.inFlux
-            fprintf(fID,'%s',['dm ' MAT(i).name ' ']);
+        if(isAbsent(4))
+            fprintf(fID,'\n%s','det intProd dr -7 void ');
+            for i=SYS.IDX.MAT.inFlux
+                fprintf(fID,'%s',['dm ' MAT(i).name ' ']);
+            end
+        end
+        if(isAbsent(5))
+            fprintf(fID,'\n%s','det intCapt dr -2 void ');
+            for i=SYS.IDX.MAT.inFlux
+                fprintf(fID,'%s',['dm ' MAT(i).name ' ']);
+            end
         end
         fclose(fID);
     end
