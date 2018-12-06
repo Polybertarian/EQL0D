@@ -9,7 +9,7 @@ end
 
 if(SYS.restartCalc)
     load([SYS.Casename '.mat']);
-    openLogs(SYS.Casename,true,OPT.REA);
+    openLogs(SYS.Casename,true,SYS.REA);
 else
     run('defaultConfig.m'); % Default config
     if(exist([SYS.Casename '.m'],'file')==2)
@@ -53,9 +53,6 @@ else
     if OPT.PCC
         OPT.renormalize=false;
     end
-    if ~OPT.reactControl
-       OPT.REA=[]; 
-    end
    
     if(SYS.printAndQuit) % Write material compositions for Serpent
         for i=find([MAT.isBurned])
@@ -81,7 +78,7 @@ else
         end
     end
     
-    openLogs(SYS.Casename,false,OPT.REA);
+    openLogs(SYS.Casename,false,SYS.REA);
     
     isAbsent=[]; % Check presence of necessary input parameters in Serpent file
     %[~,isAbsent{end+1}]=unix(['grep -c "set depmtx 1" ' SYS.Casename]);
