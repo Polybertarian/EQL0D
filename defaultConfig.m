@@ -1,5 +1,4 @@
 %%% Default values
-OPT.serpentPath='sss2';
 OPT.cycleLength=365;
 OPT.nCycles=9;
 OPT.nSteps=[50 2000];

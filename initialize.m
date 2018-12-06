@@ -13,6 +13,7 @@ if(SYS.restartCalc)
     openLogs(SYS.Casename,true,SYS.REA);
 else
     run('defaultConfig.m'); % Default config
+    run('userPrefs.m'); % User preferences
     if(exist([SYS.Casename '.m'],'file')==2)
         run([SYS.Casename '.m']);
     else

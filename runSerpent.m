@@ -9,7 +9,7 @@ else
 end
 
 if(status~=0)
-    error(['Error: SSS simulation aborted\n' errmsg]);
+    error(['Error: SSS simulation aborted \n' errmsg]);
 else
     fprintf(FID.log,'%s\n','*** SERPENT *** Serpent run finished!');
 end
