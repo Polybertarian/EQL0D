@@ -65,7 +65,6 @@ else
         save([SYS.Casename '.mat']);
         exit(0)
     else
-        openLogs(SYS.Casename,false,OPT.REA);
         if(exist('REP','var')==0)
             REP=[];
         end
@@ -81,6 +80,8 @@ else
             end
         end
     end
+    
+    openLogs(SYS.Casename,false,OPT.REA);
     
     isAbsent=[]; % Check presence of necessary input parameters in Serpent file
     %[~,isAbsent{end+1}]=unix(['grep -c "set depmtx 1" ' SYS.Casename]);
