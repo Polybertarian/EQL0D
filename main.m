@@ -1,6 +1,7 @@
 function main(SYS)
 %main(SYS) is the main function of the EQL0D procedure, containing the
 %outer and inner loops
+global FID
 
 try
     [MAT,OPT,REP,SYS] = initialize(SYS); %%% Initialize or restart from .mat file
@@ -20,7 +21,7 @@ try
         end
         if(~SYS.debugMode)
             modifyInput(SYS.Casename,'dep',OPT.cycleLength(SYS.ouCntr)); %%% Adapt depletion time/burnup in Serpent
-            runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores,SYS.FID.log); % run serpent
+            runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores,FID.log); % run serpent
         end
         if(~SYS.debugMode||SYS.ouCntr==1)
             [MAT,SYS] = loadSerpentData(MAT,SYS); %%% Read Serpent outputs
@@ -61,7 +62,7 @@ try
             
             if(OPT.PCC&&~SYS.debugMode) %Corrector step
                 SYS.PCC.corrector=true; SYS.PCC.nSteps=OPT.nSteps(SYS.ouCntr);
-                runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores,SYS.FID.log); %%% Run Serpent/Read outputs
+                runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores,FID.log); %%% Run Serpent/Read outputs
                 [MAT,SYS] = loadSerpentData(MAT,SYS);
                 SYS.nowTime(end+1)=SYS.nowTime(end)-SYS.tStep(end)*OPT.nSteps(SYS.ouCntr)/(24.0*3600.0);
                 for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
@@ -93,7 +94,7 @@ try
     
     %% Last step / Equilibrium results
     if(~SYS.debugMode)
-        runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores,SYS.FID.log);
+        runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores,FID.log);
     end
     [MAT,SYS] = loadSerpentData(MAT,SYS);
     switch OPT.iterMode
@@ -114,9 +115,9 @@ try
             saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS.Casename,SYS.ouCntr,~SYS.PCC.corrector&SYS.PCC.active);
     end
     save([SYS.Casename '.mat']);
-    fprintf(SYS.FID.log,'%s\n','**** EQL0D **** Procedure finished.');
-    for file=fields(SYS.FID)
-        fclose(SYS.FID.(file{1}));
+    fprintf(FID.log,'%s\n','**** EQL0D **** Procedure finished.');
+    for file=fields(FID)
+        fclose(FID.(file{1}));
     end
     if(OPT.writeMail)
         unix(['echo "...in ' pwd ' !" | mail -s "EQL0D calculation finished!" $LOGNAME'])

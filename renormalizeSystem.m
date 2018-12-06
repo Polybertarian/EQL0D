@@ -1,6 +1,7 @@
 function [MAT,SYS] = renormalizeSystem(MAT,SYS)
 %RENORMALIZESYSTEM Takes burnup matrices in the system and renormalizes the
 %flux-dependant rates by renormFactor (previously calculated)
+global FID
 
 coeffs = interpCoeffs(SYS);
 
@@ -14,7 +15,7 @@ for i=SYS.IDX.MAT.inFlux
 end
 
 SYS.renormFactor=SYS.tgtFissRate./currentRate;
-    fprintf(SYS.FID.log,'%s\n',['** RENORM ** Current fission rate: ' num2str(currentRate,'%E') ...
+    fprintf(FID.log,'%s\n',['** RENORM ** Current fission rate: ' num2str(currentRate,'%E') ...
         ', expected: ' num2str(SYS.tgtFissRate,'%E') ', factor: ' num2str(SYS.renormFactor)]);
 if(SYS.renormFactor<0)
     error('Error: Renormalization factor negative! Something went wrong.')

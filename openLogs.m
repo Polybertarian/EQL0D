@@ -1,4 +1,4 @@
-function [] = openLogs(Casename,restartCalc,REA)
+function openLogs(Casename,restartCalc,REA)
 %OPENLOGS Opens log files for EQL0D
 global FID
 
