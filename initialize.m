@@ -88,7 +88,7 @@ else
     [~,isAbsent{end+1}]=unix(['grep -c "det intFiss" ' SYS.Casename]);
     [~,isAbsent{end+1}]=unix(['grep -c "det intProd" ' SYS.Casename]);
     [~,isAbsent{end+1}]=unix(['grep -c "det intCapt" ' SYS.Casename]);
-    isAbsent=logical(str2double(isAbsent));
+    isAbsent=~logical(str2double(isAbsent));
     
     if(any(isAbsent))
         [fID,~]=fopen(SYS.Casename,'a');
