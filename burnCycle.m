@@ -98,7 +98,7 @@ end
 
 %% Reactivity control
 if OPT.reactControl  %%% Adjust reactivity
-    [MAT,SYS] = reactivityControl(MAT,OPT.REA,SYS);
+    [MAT,SYS] = reactivityControl(MAT,SYS);
 end
 
 %% After Batch processing

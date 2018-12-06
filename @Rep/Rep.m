@@ -1,8 +1,5 @@
 classdef Rep
   %REP Reprocessing stream in EQL0D
-  
-  
-  
   properties
     name
     srcMat
@@ -146,9 +143,9 @@ classdef Rep
       end
       switch fillmode
         case 'atomic'
-          fprintf(FID.log,'%s\n',['*** BATCH *** Computed atomic defect: ' num2str(sum(mDefect)*1E24,'%E') ' atoms.']);
+          fprintf(FID.log,'%s\n',['** BATCH ** Computed atomic defect: ' num2str(sum(mDefect)*1E24,'%E') ' atoms.']);
         case 'mass'
-          fprintf(FID.log,'%s\n',['*** BATCH *** Computed mass defect: ' num2str(sum(mDefect)/1000) ' kg.']);
+          fprintf(FID.log,'%s\n',['** BATCH ** Computed mass defect: ' num2str(sum(mDefect)/1000) ' kg.']);
       end
       if(obj.srcMatIdx~=0)
         srcMAT.N(:,end+1)=srcMAT.N(:,end);
@@ -170,7 +167,7 @@ classdef Rep
         changeDst=zeros(length(find(obj.srcNucIdx)));
         dstMatName='void';
       end
-      fprintf(FID.log,'%s\n','*** BATCH *** Summary of changes: ');
+      fprintf(FID.log,'%s\n','** BATCH ** Summary of changes: ');
       fprintf(FID.log,'%8s\t\t%13s\t\t%13s\n','Nuc.',srcMatName,dstMatName);
       for i=1:length(changeDst)
         fprintf(FID.log,'%8s\t\t%+13E\t\t%+13E\n',nucNames{i},1E24*changeSrc(i),1E24*changeDst(i));
