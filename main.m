@@ -21,7 +21,7 @@ try
         end
         if(~SYS.debugMode)
             modifyInput(SYS.Casename,'dep',OPT.cycleLength(SYS.ouCntr)); %%% Adapt depletion time/burnup in Serpent
-            runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores,FID.log); % run serpent
+            runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores); % run serpent
         end
         if(~SYS.debugMode||SYS.ouCntr==1)
             [MAT,SYS] = loadSerpentData(MAT,SYS); %%% Read Serpent outputs
@@ -62,7 +62,7 @@ try
             
             if(OPT.PCC&&~SYS.debugMode) %Corrector step
                 SYS.PCC.corrector=true; SYS.PCC.nSteps=OPT.nSteps(SYS.ouCntr);
-                runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores,FID.log); %%% Run Serpent/Read outputs
+                runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores); %%% Run Serpent/Read outputs
                 [MAT,SYS] = loadSerpentData(MAT,SYS);
                 SYS.nowTime(end+1)=SYS.nowTime(end)-SYS.tStep(end)*OPT.nSteps(SYS.ouCntr)/(24.0*3600.0);
                 for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
@@ -94,7 +94,7 @@ try
     
     %% Last step / Equilibrium results
     if(~SYS.debugMode)
-        runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores,FID.log);
+        runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores);
     end
     [MAT,SYS] = loadSerpentData(MAT,SYS);
     switch OPT.iterMode
