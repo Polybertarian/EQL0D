@@ -60,7 +60,7 @@ end
 
 if OPT.printSteps&&OPT.printStepsBB
     for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
-        MAT(i).printMaterial(SYS,'BB'); %%% Print EOS composition
+        MAT(i).printMaterial(SYS.ouCntr,SYS.inCntr,SYS.nowTime,'BB'); %%% Print EOS composition
     end
 end
 
@@ -117,7 +117,7 @@ end
 %%% Print material composition to file
 if OPT.printSteps
     for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
-        MAT(i).printMaterial(SYS,'AB');
+        MAT(i).printMaterial(SYS.ouCntr,SYS.inCntr,SYS.nowTime,'AB');
     end
 end
 parfor i=SYS.IDX.MAT.burn

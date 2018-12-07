@@ -20,7 +20,7 @@ try
             SYS.oldN=[SYS.oldN MAT(i).N(:,end)]; %%% Store compositions from previous loop
         end
         if(~SYS.debugMode)
-            modifyInput(SYS.Casename,'dep',OPT.cycleLength(SYS.ouCntr)); %%% Adapt depletion time/burnup in Serpent
+            modifySerpentInput(SYS.Casename,'dep',OPT.cycleLength(SYS.ouCntr)); %%% Adapt depletion time/burnup in Serpent
             runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores); % run serpent
         end
         if(~SYS.debugMode||SYS.ouCntr==1)
@@ -31,9 +31,9 @@ try
                 end
                 for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
                     if(OPT.printSteps)
-                        MAT(i).printMaterial(SYS,'AB'); % write material composition to txt file
+                        MAT(i).printMaterial(SYS.ouCntr,SYS.inCntr,SYS.nowTime,'AB'); % write material composition to txt file
                     elseif(OPT.printCycles&&~OPT.printSteps)
-                        MAT(i).printMaterial(SYS,'EoC'); % write material composition to txt file
+                        MAT(i).printMaterial(SYS.ouCntr,SYS.inCntr,SYS.nowTime,'EoC'); % write material composition to txt file
                     end
                 end
                 if(SYS.ouCntr==0)
@@ -86,7 +86,7 @@ try
         end
         if(OPT.printCycles&&~OPT.printSteps)
             for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
-                MAT(i).printMaterial(SYS,'EoC'); %%% Print compositions at EoC
+                MAT(i).printMaterial(SYS.ouCntr,SYS.inCntr,SYS.nowTime,'EoC'); %%% Print compositions at EoC
             end
         end
         SYS=testConvergence(MAT,OPT,SYS,'outer'); %%% stop outer loop?
@@ -100,15 +100,15 @@ try
     switch OPT.iterMode
         case 'equilibrium'
             for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
-                MAT(i).printMaterial(SYS,'EQL_AB');
+                MAT(i).printMaterial(SYS.ouCntr,SYS.inCntr,SYS.nowTime,'EQL_AB');
                 mat=MAT(i); mat.N(:,end+1)=SYS.prevN.EOC(:,i);
-                mat.printMaterial(SYS,'EQL_BB');
+                mat.printMaterial(SYS.ouCntr,SYS.inCntr,SYS.nowTime,'EQL_BB');
             end
             neutronBalance(MAT,SYS)
         case 'steps'
             if(OPT.printSteps)
                 for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
-                    MAT(i).printMaterial(SYS,'EoC');
+                    MAT(i).printMaterial(SYS.ouCntr,SYS.inCntr,SYS.nowTime,'EoC');
                 end
             end
             SYS.ouCntr=SYS.ouCntr+1;

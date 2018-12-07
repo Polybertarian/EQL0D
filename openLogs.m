@@ -8,7 +8,7 @@ if(restartCalc)
     if(REA.reactControl)
         switch REA.mode
             case {'replace','addMass'}
-                FID.react=fopen('reactivity.txt','at');
+                [FID.react,errmsg]=fopen('reactivity.txt','at');
             case 'addVolume'
                 [FID.volume,errmsg]=fopen('volume.txt','at');
         end
@@ -16,8 +16,7 @@ if(restartCalc)
 else
     [FID.log,errmsg]=fopen([Casename '.log'],'wt');
     [FID.keff,errmsg]=fopen('keff.txt','w');
-    fprintf(FID.keff,'%-7s %-3s %-5s %-4s %-3s %-12s %-9s %-9s\n',...
-        'Source','PCC','Cycle','Step','Rep','Time','k-inf','k-eff');
+    fprintf(FID.keff,'%-7s %-3s %-5s %-4s %-3s %-12s %-9s %-9s\n','Source','PCC','Cycle','Step','Rep','Time','k-inf','k-eff');
     if ~isempty(REA)
         switch REA.mode
             case {'addMass','replace'}
@@ -44,7 +43,7 @@ else
                 fprintf(FID.react,'\n');
             case 'addVolume'
                 [FID.volume,~]=fopen('volume.txt','w');
-                fprintf(FID.volume,'%-7s%-6s%-9s%-12s\n','Cycle','Step','EFPD','Add. Vol. [cm^3]');
+                fprintf(FID.volume,'%-7s%-6s%-9s%-12s\n','Cycle','Step','EFPD','Added Volume [cm^3]');
         end
     end
 end

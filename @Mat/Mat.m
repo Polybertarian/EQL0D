@@ -329,8 +329,8 @@ classdef Mat
             end
             status=fclose(fid);
         end
-        function status = printMaterial(obj,SYS,date)
-            switch date
+        function status = printMaterial(obj,ouCntr,inCtr,time,style)
+            switch style
                 case 'BB'
                     suffix=['c' num2str(SYS.ouCntr,'%03d') '_s' num2str(SYS.inCntr+1,'%03d') '_BB'];
                 case 'AB'
@@ -338,7 +338,7 @@ classdef Mat
                 case 'EoC'
                     suffix=['c' num2str(SYS.ouCntr,'%03d') '_AB'];
                 otherwise
-                    suffix=date;
+                    suffix=style;
             end
             [fid,errmsg]=fopen([obj.name '_' suffix '.txt'],'wt'); %%% Open file
             if(~isempty(errmsg))
