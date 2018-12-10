@@ -83,8 +83,8 @@ try
     clearvars -except OPT SYS DAT MAT REP FID
     save([SYS.Casename '.mat']);
     fprintf(FID.log,'%s\n','**** EQL0D **** Procedure initialized.');
-catch
-    fprintf(FID.log,'%s\n','**** EQL0D **** Error during initialization!');
+catch ME
+    fprintf(FID.log,'%s\n',['**** EQL0D **** Error during initialization: ' ME.identifier]);
     exit(1);
 end
 
