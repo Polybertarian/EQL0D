@@ -1,5 +1,5 @@
-function [] = runSerpent(serpentPath,Casename,nCores)
-%RUNSERPENT Calls OPT.serpentPath with input fileName and nCores
+function runSerpent(serpentPath,Casename,nCores)
+%RUNSERPENT Calls serpentPath with input fileName and nCores
 global FID
 
 if(exist([Casename '.seed'],'file')==2)
@@ -9,7 +9,7 @@ else
 end
 
 if(status~=0)
-    error(['Error: SSS simulation aborted \n' errmsg]);
+    error('Serpent:CrashDuringRun',['Error: SSS simulation aborted \n' errmsg]);
 else
     fprintf(FID.log,'%s\n','*** SERPENT *** Serpent run finished!');
 end
