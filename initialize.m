@@ -84,7 +84,7 @@ try
     save([SYS.Casename '.mat']);
     fprintf(FID.log,'%s\n','**** EQL0D **** Procedure initialized.');
 catch ME
-    fprintf(FID.log,'%s\n',['**** EQL0D **** Error during initialization: ' ME.identifier]);
+    fprintf(FID.log,'%s\n',['**** EQL0D **** Error during initialization: ' ME.identifier ' \n ' ME.message]);
     exit(1);
 end
 
