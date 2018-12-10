@@ -6,7 +6,7 @@ global FID
 try
     if SYS.restartCalc
         load([SYS.Casename '.mat']);
-        [FID.log,errmsg]=fopen([Casename '.log'],'at');
+        [FID.log,errmsg]=fopen([SYS.Casename '.log'],'at');
         openLogs(true,SYS.REA); %re-open logs
         fprintf(FID.log,'%s\n','**** EQL0D **** Procedure re-started.');
     else
@@ -14,7 +14,7 @@ try
         for i=find(~isfield(SYS,stdFields))
             SYS.(stdFields{i})=false;
         end
-        [FID.log,errmsg]=fopen([Casename '.log'],'wt');
+        [FID.log,errmsg]=fopen([SYS.Casename '.log'],'wt');
         fprintf(FID.log,'%s\n','**** EQL0D **** Initializing procedure...');
         run('defaultConfig.m'); % Default config
         run('userPrefs.m'); % User preferences
