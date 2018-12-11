@@ -4,16 +4,16 @@ function [MAT,OPT,REP,SYS] = initialize(SYS)
 global FID
 
 try
+    stdFields={'nCores','debugMode','verboseMode','printAndQuit','restartCalc','restartCalc','resetCounters'};
+    for i=find(~isfield(SYS,stdFields))
+        SYS.(stdFields{i})=false;
+    end
     if SYS.restartCalc
         load([SYS.Casename '.mat']);
         [FID.log,errmsg]=fopen([SYS.Casename '.log'],'at');
         openLogs(true,SYS.REA); %re-open logs
         fprintf(FID.log,'%s\n','**** EQL0D **** Procedure re-started.');
     else
-        stdFields={'nCores','debugMode','verboseMode','printAndQuit','restartCalc','restartCalc','resetCounters'};
-        for i=find(~isfield(SYS,stdFields))
-            SYS.(stdFields{i})=false;
-        end
         [FID.log,errmsg]=fopen([SYS.Casename '.log'],'wt');
         fprintf(FID.log,'%s\n','**** EQL0D **** Initializing procedure...');
         run('defaultConfig.m'); % Default config
@@ -84,8 +84,10 @@ try
     save([SYS.Casename '.mat']);
     fprintf(FID.log,'%s\n','**** EQL0D **** Procedure initialized.');
 catch ME
-    fprintf(FID.log,'%s\n',['**** EQL0D **** Error during initialization: ' getreport(ME)]);
-    exit(1);
+    fprintf(FID.log,'%s\n',['**** EQL0D **** Error during initialization: ' getReport(ME)]);
+    if usejava('jvm') && ~feature('ShowFigureWindows')
+        exit(1);
+    end
 end
 
 return

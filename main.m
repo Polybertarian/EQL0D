@@ -1,6 +1,5 @@
 function main(SYS)
-%main(SYS) is the main function of the EQL0D procedure, containing the
-%outer and inner loops
+%main(SYS) is the main function of the EQL0D procedure
 global FID
 
 try
@@ -39,7 +38,7 @@ try
                 if(SYS.ouCntr==0)
                     SYS.ouCntr=1;
                 end
-                saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS.Casename,SYS.ouCntr,~SYS.PCC.corrector&SYS.PCC.active);  
+                saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS.Casename,SYS.ouCntr,~SYS.PCC.corrector&SYS.PCC.active);
                 %%% Move files to folder
                 printK(SYS,'AB','C','Serpent'); % print keff and kinf to file
             end
@@ -127,6 +126,8 @@ catch exception %%% error handling
     fprintf('%s\n',getReport(exception,'extended'));
     save([SYS.Casename '_err.mat'])
     [~,~]=unix(['echo "...in ' pwd ' !" | mail -s "EQL0D crashed!" $LOGNAME']);
-    %exit(1)
+    if usejava('jvm') && ~feature('ShowFigureWindows')
+        exit(1)
+    end
 end
 end

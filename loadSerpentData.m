@@ -16,7 +16,7 @@ for i=SYS.IDX.MAT.burn
   exst(end+1)=(exist(['depmtx_' MAT(i).name '0.m'],'file')==2);
 end
 if(~all(exst))
-  error('Error: Serpent outputs not found!')
+  error('EQL0D:SerpentOutputsNotFound','Error: Serpent outputs not found!')
 end
 
 %%% Remove oldest step data
