@@ -1,12 +1,17 @@
 function [MAT,OPT,REP,SYS] = parseInput(MAT,OPT,REP,SYS)
 %[MAT,OPT,REP,SYS] = PARSEINPUT(MAT,OPT,REP,SYS) parses the input data
 
+global FID
+
 if SYS.debugMode  %force keeping files in debug mode
     OPT.keepFiles=true;
 end
 
 if OPT.PCC
+    fprintf(FID.log,'%s\n','**** PCC **** Predictor-Corrector is ON.');
     OPT.renormalize=false;
+else
+    fprintf(FID.log,'%s\n','**** PCC **** Predictor-Corrector is OFF.');
 end
 
 % Adapt vectors (Cycle length, etc.)
@@ -19,6 +24,7 @@ end
 
 %% Reactivity control
 if OPT.reactControl 
+    fprintf(FID.log,'%s\n','**** REACT **** Reactivity control is ON.');
     SYS.REA=OPT.REA;
     SYS.REA.reactControl=true;
     if ~iscolumn(OPT.REA.upFraction)
@@ -70,6 +76,7 @@ if OPT.reactControl
     SYS.REA.downNuclides=MAT(SYS.IDX.REA.target).ZAI(SYS.IDX.REA.targetNucDo);
     SYS.REA.replNuclides=MAT(SYS.IDX.REA.target).ZAI(SYS.IDX.REA.targetNucRepl);
 else
+    fprintf(FID.log,'%s\n','**** REACT **** Reactivity control is OFF.');
     SYS.IDX.REA=[];
     SYS.REA.reactControl=false;
 end
@@ -184,6 +191,7 @@ end
 
 %% Redox control material indexes
 if OPT.redoxControl
+    fprintf(FID.log,'%s\n','**** REDOX **** Redox control is ON.');
     SYS.IDX.redoxMat=find(strcmp({MAT.name},OPT.REDOX.materials));
     SYS.IDX.redoxHalide={MAT(SYS.IDX.redoxMat).mainHalide};
     if isfield(OPT.REDOX,'changeElement')
@@ -198,6 +206,8 @@ if OPT.redoxControl
             SYS.IDX.redoxNuc{i}=MAT(1).find(OPT.REDOX.replaceWith);
         end
     end
+else
+    fprintf(FID.log,'%s\n','**** REDOX **** Redox control is OFF.');
 end
 
 %% Adapt things for materials outside of the flux
