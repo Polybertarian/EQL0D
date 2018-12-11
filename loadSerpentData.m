@@ -40,7 +40,7 @@ for i=SYS.IDX.MAT.inFlux
     end
 end
 SYS.intFlux=sum([MAT(SYS.IDX.MAT.inFlux).intFlux]);
-SYS.tgtFissRate=sum(SYS.RR.intFiss);
+SYS.tgtFissRate=sum(SYS.RR(3).intFiss);
 
 %%% Read data for burnable materials
 for i=SYS.IDX.MAT.burn
