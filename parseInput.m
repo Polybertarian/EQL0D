@@ -26,7 +26,7 @@ end
 if OPT.reactControl
     fprintf(FID.log,'%s\n','**** REACT **** Reactivity control is ON.');
     SYS.REA=OPT.REA;
-    SYS.REA.reactControl=true;
+    SYS.reactControl=true;
     if ~iscolumn(OPT.REA.upFraction)
         SYS.REA.upFraction=OPT.REA.upFraction';
     end
@@ -84,7 +84,8 @@ if OPT.reactControl
 else
     fprintf(FID.log,'%s\n','**** REACT **** Reactivity control is OFF.');
     SYS.IDX.REA=[];
-    SYS.REA.reactControl=false;
+    SYS.REA=[];
+    SYS.reactControl=false;
 end
 
 %% Reprocessing
