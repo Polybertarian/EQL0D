@@ -52,12 +52,10 @@ try
         
         SYS.ouCntr=0; SYS.inCntr=0; SYS.stopOuter=false;  SYS.nowTime=0.0; SYS.tStep=[];
         tmpVec=zeros(size(MAT(1).ZAI));
-        SYS.RR=struct('inMat',{struct('fiss',tmpVec,'capt',tmpVec,'n2n',tmpVec,'n3n',tmpVec)},...
-            'notInMat',{struct('fiss',[],'capt',[],'n2n',[],'n3n',[])},...
-            'NU',zeros(3,1),'LEAK',zeros(3,1),'devFiss',zeros(3,1),'devCapt',zeros(3,1),...
-            'KEFF',struct('EQL0D',[],'Serpent',[]),'KINF',struct('EQL0D',[],'Serpent',[]));
-        SYS.RR.notInMat{2}=SYS.RR.notInMat{1};   SYS.RR.notInMat{3}=SYS.RR.notInMat{1};
-        SYS.RR.inMat{2}=SYS.RR.inMat{1};  SYS.RR.inMat{3}=SYS.RR.inMat{1};
+        SYS.RR=repelem(struct('inMat',struct('fiss',tmpVec,'capt',tmpVec,'n2n',tmpVec,'n3n',tmpVec),...
+            'notInMat',struct('fiss',[],'capt',[],'n2n',[],'n3n',[]),...
+            'NU',zeros(1),'LEAK',zeros(1),'devFiss',zeros(1),'devCapt',zeros(1)),3,1);
+        SYS.KEFF=struct('EQL0D',[],'Serpent',[]);SYS.KINF=struct('EQL0D',[],'Serpent',[]);
         
         if SYS.resetCounters
             tmp=load([SYS.Casename '.mat'],'MAT');

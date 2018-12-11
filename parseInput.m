@@ -23,7 +23,7 @@ if length(OPT.nSteps)<OPT.nCycles   % repeat last value in nSteps vector to matc
 end
 
 %% Reactivity control
-if OPT.reactControl 
+if OPT.reactControl
     fprintf(FID.log,'%s\n','**** REACT **** Reactivity control is ON.');
     SYS.REA=OPT.REA;
     SYS.REA.reactControl=true;
@@ -38,9 +38,15 @@ if OPT.reactControl
     end
     
     SYS.IDX.REA.target=find(strcmp({MAT.name},OPT.REA.targetMat));
+    if isempty(SYS.IDX.REA.target)
+        error('EQL0D:ReactControlTargetMatNotFound',['Error: Reactivity control target material ''' OPT.REA.targetMat ''' not found!']);
+    end
     if ~isempty(OPT.REA.feedMat)
         SYS.REA.feedMat=OPT.REA.feedMat;
         SYS.IDX.REA.feed=find(strcmp({MAT.name},OPT.REA.feedMat));
+        if isempty(SYS.IDX.REA.feed)
+            error('EQL0D:ReactControlSourceMatNotFound',['Error: Reactivity control source material ''' OPT.REA.feedMat ''' not found!']);
+        end
         if strcmp(OPT.REA.mode,'addVolume')
             SYS.IDX.feedNuc=MAT(SYS.IDX.REA.feed).find(OPT.REA.upNuclides);
         else
@@ -88,9 +94,8 @@ if ~isempty(REP)
     for j=find(~ismember(matsNeeded,matsExisting))
         MAT(end+1)=Mat(matsNeeded{j},0,0,1e6,0,[],[]); % create dummy materials
     end
-    
-    %%% Look for continuous/batch reprocessing streams
-    REP=REP([find([REP.isCont]&~[REP.isKeep]) find([REP.isCont]&[REP.isKeep])...
+  
+    REP=REP([find([REP.isCont]&~[REP.isKeep]) find([REP.isCont]&[REP.isKeep])... % Look for continuous/batch reprocessing streams
         find([REP.isBatch]&~[REP.isKeep]) find([REP.isBatch]&[REP.isKeep])]);
     
     SYS.IDX.REP.cont =find([REP.isCont]);
@@ -114,7 +119,7 @@ if ~isempty(REP)
             end
         end
     end
-    for i=SYS.IDX.REP.batch %%% find nuclide positions affected by batch streams
+    for i=SYS.IDX.REP.batch % find nuclide positions affected by batch streams
         if isempty(REP(i).srcMatIdx)&&~isempty(REP(i).dstMatIdx)
             REP(i).srcNucIdx=false(size(MAT(REP(i).dstMatIdx).ZAI));
             REP(i).dstNucIdx=ismember(MAT(REP(i).dstMatIdx).ZAI,REP(i).elements);
@@ -128,13 +133,13 @@ if ~isempty(REP)
             error('Error: Source and/or Destination not recognized while processing')
         end
     end
-    for j=SYS.IDX.REP.batch %%% Convert to mass fraction for batch streams
+    for j=SYS.IDX.REP.batch % Convert to mass fraction for batch streams
         if ismember(REP(j).mode,{'keepTotM','keepAM','keepAFPM'})
             REP(j).share=REP(j).share.*MAT(REP(j).dstMatIdx).atomicMass(REP(j).dstNucIdx);
             REP(j).share=REP(j).share/sum(REP(j).share);
         end
     end
-    SYS.IDX.MAT.cont=find(ismember({MAT.name},unique({REP([REP.isCont]).srcMat REP([REP.isCont]).dstMat}))); %%% indexes refering to materials in flux
+    SYS.IDX.MAT.cont=find(ismember({MAT.name},unique({REP([REP.isCont]).srcMat REP([REP.isCont]).dstMat}))); % indexes refering to materials in flux
 else %no reprocessing
     SYS.IDX.REP.cont=[];
     SYS.IDX.REP.batch=[];

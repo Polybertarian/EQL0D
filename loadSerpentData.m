@@ -20,25 +20,23 @@ if(~all(exst))
 end
 
 %%% Remove oldest step data
-SYS.RR.notInMat(1)=[]; SYS.RR.inMat(1)=[];
-SYS.RR.NU(1,:)=[]; SYS.RR.LEAK(1)=[]; SYS.RR.LEAK(3)=0;
+SYS.RR(1)=[];
+SYS.RR(3)=struct('inMat',struct('fiss',tmpVec,'capt',tmpVec,'n2n',tmpVec,'n3n',tmpVec),...
+            'notInMat',struct('fiss',[],'capt',[],'n2n',[],'n3n',[]),...
+            'NU',zeros(1,numel(MAT)),'LEAK',zeros(1,numel(MAT)),'devFiss',zeros(1,numel(MAT)),'devCapt',zeros(1,numel(MAT)));
 %SYS.RR.intCapt(1,:)=[]; SYS.RR.intCapt(3,1:numel(MAT))=zeros(1,numel(MAT));
 %SYS.RR.intFiss(1,:)=[]; SYS.RR.intFiss(3,1:numel(MAT))=zeros(1,numel(MAT));
 %SYS.RR.intProd(1,:)=[]; SYS.RR.intProd(3,1:numel(MAT))=zeros(1,numel(MAT));
-SYS.RR.NU(3,1:numel(MAT))=zeros(1,numel(MAT));
-SYS.RR.devFiss(1,:)=[];SYS.RR.devCapt(1,:)=[];
-SYS.RR.devFiss(3,1:numel(MAT))=zeros(1,numel(MAT));
-SYS.RR.devCapt(3,1:numel(MAT))=zeros(1,numel(MAT));
 
 %%% Get integral fluxes
 run([SYS.Casename '_det0.m']);
 for i=SYS.IDX.MAT.inFlux
     MAT(i).intFlux=DETintFlux(i,11);
-    SYS.RR.intCapt(i)=DETintCapt(i,11);
-    SYS.RR.intFiss(i)=DETintFiss(i,11);
-    SYS.RR.intProd(i)=DETintProd(i,11);
-    if(SYS.RR.intFiss(i)~=0)
-        SYS.RR.NU(3,i)=SYS.RR.intProd(i)/SYS.RR.intFiss(i);
+    SYS.RR(3).intCapt(i)=DETintCapt(i,11);
+    SYS.RR(3).intFiss(i)=DETintFiss(i,11);
+    SYS.RR(3).intProd(i)=DETintProd(i,11);
+    if(SYS.RR(3).intFiss(i)~=0)
+        SYS.RR(3).NU(i)=SYS.RR(3).intProd(i)/SYS.RR(3).intFiss(i);
     end
 end
 SYS.intFlux=sum([MAT(SYS.IDX.MAT.inFlux).intFlux]);
@@ -53,7 +51,7 @@ end
 run([SYS.Casename '_res.m']);
 idxUni=find(ismember(GC_UNIVERSE_NAME,'0'),2);
 idxUni=idxUni(1);
-SYS.RR.LEAK(3) =ABS_KINF(idxUni,1)/ABS_KEFF(idxUni,1);
+SYS.RR(3).LEAK =ABS_KINF(idxUni,1)/ABS_KEFF(idxUni,1);  %leakage
 SYS.KEFF.Serpent(end+1)=ABS_KEFF(idxUni,1);
 SYS.KINF.Serpent(end+1)=ABS_KINF(idxUni,1);
 
@@ -70,7 +68,7 @@ for i=1:length(ZAI)
   rr_sorted(i,4)=sum(rr(rr(:,1)==ZAI(i)&ismember(rr(:,2),[17 25 42]),3));%(n,3n)
 end
 RROidx=~ismember(ZAI,MAT(1).ZAI); %not in Mat
-SYS.RR.notInMat{3}=struct('ZAI',num2cell([-1;ZAI(RROidx)]),'capt',num2cell([0;rr_sorted(RROidx,1)]),...
+SYS.RR(3).notInMat=struct('ZAI',num2cell([-1;ZAI(RROidx)]),'capt',num2cell([0;rr_sorted(RROidx,1)]),...
     'fiss',num2cell([0;rr_sorted(RROidx,2)]),'n2n',num2cell([0;rr_sorted(RROidx,3)]),...
     'n3n',num2cell([0;rr_sorted(RROidx,4)]));
 rr_sorted(RROidx,:)=[]; ZAI(RROidx)=[];
@@ -84,24 +82,19 @@ for i=SYS.IDX.MAT.inFlux
 end
 RR=RR./repmat(sum(NPhi,2),1,4); % create cross-sections using integral flux and nuclides densities
 RR(isnan(RR)|isinf(RR))=0.0;
-SYS.RR.inMat{3}=struct('capt',RR(:,1),'fiss',RR(:,2),'n2n',RR(:,3),'n3n',RR(:,4));
+SYS.RR(3).inMat=struct('capt',RR(:,1),'fiss',RR(:,2),'n2n',RR(:,3),'n3n',RR(:,4));
 
 
 for i=SYS.IDX.MAT.inFlux
-    SYS.RR.devFiss(3,i)=SYS.RR.intFiss(i)/sum(NPhi(:,i).*RR(:,2));
-    SYS.RR.devFiss(3,isnan(SYS.RR.devFiss(3,:)))=0.0;
-    SYS.RR.devCapt(3,i)=SYS.RR.intCapt(i)/sum(NPhi(:,i).*RR(:,1));
-    SYS.RR.devCapt(3,isnan(SYS.RR.devCapt(3,:)))=0.0;
+    SYS.RR(3).devFiss(i)=SYS.RR(3).intFiss(i)/sum(NPhi(:,i).*RR(:,2));
+    SYS.RR(3).devFiss(isnan(SYS.RR(3).devFiss))=0.0;
+    SYS.RR(3).devCapt(i)=SYS.RR(3).intCapt(i)/sum(NPhi(:,i).*RR(:,1));
+    SYS.RR(3).devCapt(isnan(SYS.RR(3).devCapt))=0.0;
 end
 
 MAT = updateRates(MAT,SYS);
 
 return
 end
-
-%sigma_1*phi1*N1+sigma_2*phi2*N2 = ftot
-%sigma_av = ftot/(phi1*N1+phi2*N2)
-%sigma_1 = F1/(phi1*N1)
-
 
 

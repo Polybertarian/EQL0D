@@ -6,9 +6,9 @@ global FID
 coeffs = interpCoeffs(SYS);
 
 %%% Compare current rate to target
-currentRate=sum(SYS.RR.notInMat{3}.fiss)*coeffs(3);
+currentRate=sum(SYS.RR(3).notInMat.fiss)*coeffs(3);
 for j=1:2
-    currentRate=currentRate+sum(SYS.RR.notInMat{j}.fiss)*coeffs(j);
+    currentRate=currentRate+sum(SYS.RR(j).notInMat.fiss)*coeffs(j);
 end
 for i=SYS.IDX.MAT.inFlux
     currentRate=currentRate+sum(MAT(i).fissRate);
@@ -26,14 +26,14 @@ for i=SYS.IDX.MAT.inFlux
 end
 
 %%% Change flux in non-included materials
-for i=1:length(SYS.RR.notInMat{2})
-    SYS.RR.notInMat{2}(i).fiss=SYS.renormFactor*SYS.RR.notInMat{2}(i).fiss;
-    SYS.RR.notInMat{2}(i).capt=SYS.renormFactor*SYS.RR.notInMat{2}(i).capt;
-    SYS.RR.notInMat{2}(i).n2n=SYS.renormFactor*SYS.RR.notInMat{2}(i).n2n;
-    SYS.RR.notInMat{2}(i).n3n=SYS.renormFactor*SYS.RR.notInMat{2}(i).n3n;
+for i=1:length(SYS.RR(2).notInMat)
+    SYS.RR(2).notInMat(i).fiss=SYS.renormFactor*SYS.RR(2).notInMat(i).fiss;
+    SYS.RR(2).notInMat(i).capt=SYS.renormFactor*SYS.RR(2).notInMat(i).capt;
+    SYS.RR(2).notInMat(i).n2n=SYS.renormFactor*SYS.RR(2).notInMat(i).n2n;
+    SYS.RR(2).notInMat(i).n3n=SYS.renormFactor*SYS.RR(2).notInMat(i).n3n;
 end
 
-currentRate=sum(SYS.RR.notInMat{2}.fiss);
+currentRate=sum(SYS.RR(3).notInMat.fiss);
 for i=SYS.IDX.MAT.inFlux
     currentRate=currentRate+sum(MAT(i).fissRate);
 end

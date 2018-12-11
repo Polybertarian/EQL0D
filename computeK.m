@@ -5,14 +5,14 @@ function [keff,kinf] = computeK(MAT,SYS)
 
 coeffs = interpCoeffs(SYS);
 
-nubar=coeffs(3)*SYS.RR.NU(3,:)+coeffs(2)*SYS.RR.NU(2,:)+coeffs(1)*SYS.RR.NU(1,:);
-leak=coeffs(1)*SYS.RR.LEAK(1)+coeffs(2)*1*SYS.RR.LEAK(2)+coeffs(3)*1*SYS.RR.LEAK(3);
+nubar=coeffs(3)*SYS.RR(3).NU+coeffs(2)*SYS.RR(2).NU+coeffs(1)*SYS.RR(1).NU;
+leak=coeffs(1)*SYS.RR(1).LEAK+coeffs(2)*SYS.RR(2).LEAK+coeffs(3)*SYS.RR(3).LEAK;
 
-fiss=sum([SYS.RR.notInMat{end}.fiss]); %%% usually 0 if all materials correctly input
+fiss=sum([SYS.RR(3).notInMat.fiss]); % usually 0 if all materials correctly input
 prod=0;
-capt=sum([SYS.RR.notInMat{end}.capt]);
-n2n =sum([SYS.RR.notInMat{end}.n2n]);
-n3n =sum([SYS.RR.notInMat{end}.n3n]);
+capt=sum([SYS.RR(3).notInMat.capt]);
+n2n =sum([SYS.RR(3).notInMat.n2n]);
+n3n =sum([SYS.RR(3).notInMat.n3n]);
 
 for i=SYS.IDX.MAT.inFlux
     fiss=fiss+sum(MAT(i).fissRate);
