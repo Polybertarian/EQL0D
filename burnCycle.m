@@ -46,7 +46,6 @@ else
     end
 end
 
-%% Before Batch Processing
 if strcmp(OPT.iterMode,'steps')||SYS.inCntr==1||floor(SYS.inCntr/10)==ceil(SYS.inCntr/10)&&~isempty(SYS.IDX.REP.batch)
     printStatus(MAT,SYS,prefix2,'EoS (BB)');            %%% Add status to log
 end
@@ -73,7 +72,7 @@ end
 if OPT.redoxControl  %%% Adjust redox
     for i=SYS.IDX.redoxMat
         [MAT(i),dN] = MAT(i).redoxControl(SYS.IDX.redoxHalide{i},SYS.IDX.redoxNuc{i},OPT.REDOX.replaceMode);
-        name = MAT(i).nuclideName(SYS.IDX.redoxHalide{i});
+        %name = MAT(i).nuclideName(SYS.IDX.redoxHalide{i});
         fprintf(FID.log,'%s\n',['** REDOX ** Excess of ' num2str(dN(1)*1E24,'%E') ' valence corrected.']);
     end
 end
@@ -124,4 +123,3 @@ parfor i=SYS.IDX.MAT.burn
     MAT(i).write(OPT.matWriteStyle); %%% Write compositions
 end
 end
-

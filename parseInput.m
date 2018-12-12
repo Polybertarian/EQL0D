@@ -8,10 +8,10 @@ if SYS.debugMode  %force keeping files in debug mode
 end
 
 if OPT.PCC
-    fprintf(FID.log,'%s\n','**** PCC **** Predictor-Corrector is ON.');
+    fprintf(FID.log,'%s\n','****  PCC  **** Predictor-Corrector is ON.');
     OPT.renormalize=false;
 else
-    fprintf(FID.log,'%s\n','**** PCC **** Predictor-Corrector is OFF.');
+    fprintf(FID.log,'%s\n','****  PCC  **** Predictor-Corrector is OFF.');
 end
 
 % Adapt vectors (Cycle length, etc.)
@@ -66,6 +66,7 @@ if OPT.reactControl
         if ismember(OPT.REA.mode,{'replace'})
             SYS.REA.mode='replace';
             SYS.IDX.REA.targetNucRepl=MAT(SYS.IDX.REA.target).find(OPT.REA.replNuclides);
+            SYS.REA.replNuclides=MAT(SYS.IDX.REA.target).ZAI(SYS.IDX.REA.targetNucRepl);
             if any(OPT.REA.replNuclides<999)
                 SYS.REA.replFraction=[];
             end
@@ -80,7 +81,6 @@ if OPT.reactControl
     SYS.reactAdditions=[];
     SYS.REA.upNuclides=MAT(SYS.IDX.REA.target).ZAI(SYS.IDX.REA.targetNucUp);
     SYS.REA.downNuclides=MAT(SYS.IDX.REA.target).ZAI(SYS.IDX.REA.targetNucDo);
-    SYS.REA.replNuclides=MAT(SYS.IDX.REA.target).ZAI(SYS.IDX.REA.targetNucRepl);
 else
     fprintf(FID.log,'%s\n','**** REACT **** Reactivity control is OFF.');
     SYS.IDX.REA=[];

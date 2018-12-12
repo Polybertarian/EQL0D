@@ -33,7 +33,7 @@ try
             exit(0)
         end
         
-        if exist('DAT','var')~=1 % load isotope list and properties
+        if exist('DAT','var')~=1 % Load isotope list and properties
             fprintf(FID.log,'%s\n',['**** EQL0D **** Library undefined! Loading default ''' OPT.defaultDataLibrary '''']);
             load([OPT.defaultDataLibrary '.mat'],DAT)
         end
@@ -51,12 +51,6 @@ try
         end
         
         SYS.ouCntr=0; SYS.inCntr=0; SYS.stopOuter=false;  SYS.nowTime=0.0; SYS.tStep=[];
-        tmpVec=zeros(size(MAT(1).ZAI));
-        SYS.RR=struct('inMat',struct('fiss',tmpVec,'capt',tmpVec,'n2n',tmpVec,'n3n',tmpVec),...
-            'notInMat',struct('fiss',zeros(1),'capt',zeros(1),'n2n',zeros(1),'n3n',zeros(1)),...
-            'NU',zeros(1),'LEAK',zeros(1),'devFiss',zeros(1),'devCapt',zeros(1));
-        SYS.KEFF=struct('EQL0D',[],'Serpent',[]);SYS.KINF=struct('EQL0D',[],'Serpent',[]);
-        SYS.RR(2)=SYS.RR(1);SYS.RR(3)=SYS.RR(2);
         
         if SYS.resetCounters
             tmp=load([SYS.Casename '.mat'],'MAT');
@@ -66,6 +60,13 @@ try
         end
         
         [MAT,OPT,REP,SYS] = parseInput(MAT,OPT,REP,SYS);  % Parse all data
+        tmpVec=zeros(size(MAT(1).ZAI)); tmpZero=zeros(1,numel(SYS.IDX.MAT.inFlux));
+        SYS.RR=struct('inMat',struct('fiss',tmpVec,'capt',tmpVec,'n2n',tmpVec,'n3n',tmpVec),...
+            'notInMat',struct('fiss',zeros(1),'capt',zeros(1),'n2n',zeros(1),'n3n',zeros(1)),...
+            'NU',tmpZero,'LEAK',zeros(1),'devFiss',tmpZero,'devCapt',tmpZero);
+        SYS.RR(2)=SYS.RR(1);SYS.RR(3)=SYS.RR(2);
+        SYS.KEFF=struct('EQL0D',[],'Serpent',[]);SYS.KINF=struct('EQL0D',[],'Serpent',[]);
+        
         openLogs(false,SYS.REA);
         for i=SYS.IDX.MAT.burn
             MAT(i).write(OPT.matWriteStyle);
@@ -82,11 +83,9 @@ try
     clearvars -except OPT SYS DAT MAT REP FID
     save([SYS.Casename '.mat']);
     fprintf(FID.log,'%s\n','**** EQL0D **** Procedure initialized.');
-catch ME
-    fprintf(FID.log,'%s\n',['**** EQL0D **** Error during initialization: ' getReport(ME)]);
-    if usejava('jvm') && ~feature('ShowFigureWindows')
-        exit(1);
-    end
+catch exception
+    fprintf(FID.log,'%s\n','**** EQL0D **** Error during initialization!');
+    rethrow(exception)
 end
 
 return

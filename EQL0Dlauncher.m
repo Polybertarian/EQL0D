@@ -1,26 +1,24 @@
 function EQL0Dlauncher(Cases,nCores,verbose,printNquit,restart,reset,debug)
-% Launcher for EQL0D, handles batch case launching 
+% Launcher for EQL0D, handles batch case launching
 SYS=struct('nCores',nCores,'verboseMode',logical(verbose),'printAndQuit',logical(printNquit),...
     'restartCalc',logical(restart),'resetCounters',logical(reset),'debugMode',logical(debug));
 format long
-warning('off','backtrace')
-warning('off','MATLAB:declareGlobalBeforeUse')
-warning('off','MATLAB:maxNumCompThreads:Deprecated')
-warning('off','MATLAB:nearlySingularMatrix')
+warning('off','backtrace'); warning('off','MATLAB:declareGlobalBeforeUse');
+warning('off','MATLAB:maxNumCompThreads:Deprecated'); warning('off','MATLAB:nearlySingularMatrix');
 
 for i=1:length(Cases)
-    if(exist(Cases{i},'file')==2)
+    if exist(Cases{i},'file')==2
         [PATH,FILE,EXT]=fileparts(Cases{i});
-        if(strcmp(EXT,'.m'))
+        if strcmp(EXT,'.m')
             EXT='';
         end
         SYS.Casename=[FILE EXT];
         if ~isempty(PATH)
             OLDDIR=cd(PATH);
         end
-        if(numel([dir('*_res*.m');dir('*_c*.txt');dir('*.log');dir('*.mat')])>0&~debug)
+        if numel([dir('*_res*.m');dir('*_c*.txt');dir('*.log');dir('*.mat')])>0&&~debug
             j=1;
-            while(numel(dir(['run' num2str(j,'%.2d')]))>0)
+            while numel(dir(['run' num2str(j,'%.2d')]))>0
                 j=j+1;
             end
             dirName=['run' num2str(j,'%.2d')];

@@ -6,7 +6,7 @@ function modifySerpentInput(inputName,paramName,paramValue)
 pos=1+ismac;
 
 if(exist(inputName,'file')==2)
-    [~,output]=unix(['grep -nr ''' paramName ' '' ' inputName]);
+    [status,output]=unix(['grep -nr ''' paramName ' '' ' inputName]);
     output=textscan(output,'%s','Delimiter',{' ',':'});
     line=output{1}(pos);
     switch paramName
@@ -17,11 +17,11 @@ if(exist(inputName,'file')==2)
         case 'det'
             isAbsent=[]; % Check presence of necessary input parameters in Serpent file
             %[~,isAbsent{end+1}]=unix(['grep -c "set depmtx 1" ' inputName]);
-            [~,isAbsent{end+1}]=unix(['grep -c "set arr 1" ' inputName]);
-            [~,isAbsent{end+1}]=unix(['grep -c "det intFlux" ' inputName]);
-            [~,isAbsent{end+1}]=unix(['grep -c "det intFiss" ' inputName]);
-            [~,isAbsent{end+1}]=unix(['grep -c "det intProd" ' inputName]);
-            [~,isAbsent{end+1}]=unix(['grep -c "det intCapt" ' inputName]);
+            [status,isAbsent{end+1}]=unix(['grep -c "set arr 1" ' inputName]);
+            [status,isAbsent{end+1}]=unix(['grep -c "det intFlux" ' inputName]);
+            [status,isAbsent{end+1}]=unix(['grep -c "det intFiss" ' inputName]);
+            [status,isAbsent{end+1}]=unix(['grep -c "det intProd" ' inputName]);
+            [status,isAbsent{end+1}]=unix(['grep -c "det intCapt" ' inputName]);
             isAbsent=~logical(str2double(isAbsent));
             
             if(any(isAbsent))

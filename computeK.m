@@ -1,7 +1,5 @@
 function [keff,kinf] = computeK(MAT,SYS)
-%[keff,kinf] = COMPUTEK(MAT,SYS) compute k-inf and k-eff using reaction rates from Serpent and compositions
-%from the MAT vector
-
+%[keff,kinf] = COMPUTEK(MAT,SYS) compute k-eff/inf
 
 coeffs = interpCoeffs(SYS);
 

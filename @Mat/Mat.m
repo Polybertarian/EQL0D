@@ -329,14 +329,14 @@ classdef Mat
             end
             status=fclose(fid);
         end
-        function status = printMaterial(obj,ouCntr,inCtr,time,style)
+        function status = printMaterial(obj,ouCntr,inCntr,time,style)
             switch style
                 case 'BB'
-                    suffix=['c' num2str(SYS.ouCntr,'%03d') '_s' num2str(SYS.inCntr+1,'%03d') '_BB'];
+                    suffix=['c' num2str(ouCntr,'%03d') '_s' num2str(inCntr+1,'%03d') '_BB'];
                 case 'AB'
-                    suffix=['c' num2str(SYS.ouCntr,'%03d') '_s' num2str(SYS.inCntr,'%03d') '_AB'];
+                    suffix=['c' num2str(ouCntr,'%03d') '_s' num2str(inCntr,'%03d') '_AB'];
                 case 'EoC'
-                    suffix=['c' num2str(SYS.ouCntr,'%03d') '_AB'];
+                    suffix=['c' num2str(ouCntr,'%03d') '_AB'];
                 otherwise
                     suffix=style;
             end
@@ -370,11 +370,11 @@ classdef Mat
             %%% Header
             if(obj.isBurned)
                 fprintf(fid,'%s\n',['Material ''' obj.name ''', volume ' num2str(obj.volume,'%.4G')...
-                    ' cm3, time ' num2str(SYS.nowTime(end),'%.4G') ' EFPD, burn-up '...
+                    ' cm3, time ' num2str(time,'%.4G') ' EFPD, burn-up '...
                     num2str(obj.FIMA,'%.3f') ' %FIMA or ' num2str(obj.FPFrac,'%.3f') ' %FP/(FP+A). ' denat]);
             else
                 fprintf(fid,'%s\n',['Material ''' obj.name ''', volume ' num2str(obj.volume,'%.4G')...
-                    ' cm3, time ' num2str(SYS.nowTime(end),'%.4G') ' EFPD.']);
+                    ' cm3, time ' num2str(time,'%.4G') ' EFPD.']);
             end
             
             printFmt=struct('header',[],'content',[],'line',[]);

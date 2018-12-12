@@ -38,15 +38,15 @@ try
                 if(SYS.ouCntr==0)
                     SYS.ouCntr=1;
                 end
+                % Move files to folder
                 saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS.Casename,SYS.ouCntr,~SYS.PCC.corrector&SYS.PCC.active);
-                %%% Move files to folder
-                printK(SYS,'AB','C','Serpent'); % print keff and kinf to file
+                printK(SYS,'AB','C','Serpent'); % Print keff and kinf to file
             end
         end
-        [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT,SYS); %%% Compute k-eff
-        printK(SYS,'AB','C','EQL0D'); % print keff and kinf to file
+        [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT,SYS); % Compute k-eff/inf
+        printK(SYS,'AB','C','EQL0D'); % Print keff and kinf to file
         if(OPT.renormalize)
-            [MAT,SYS] = renormalizeSystem(MAT,SYS);  % renormalize burn matrices to new fission rate
+            [MAT,SYS] = renormalizeSystem(MAT,SYS);  % Renormalize burn matrices to new fission rate
         end
         SYS = buildSystemMatrices(MAT,REP,SYS); % build global matrix
         save([SYS.Casename '.mat']);  % save to .mat file
@@ -122,10 +122,10 @@ try
         unix(['echo "...in ' pwd ' !" | mail -s "EQL0D calculation finished!" $LOGNAME'])
     end
     return
-catch exception %%% error handling
-    fprintf('%s\n',getReport(exception,'extended'));
+catch exception % error handling
+    fprintf(FID.log,'%s\n',getReport(exception,'extended'));
     save([SYS.Casename '_err.mat'])
-    [~,~]=unix(['echo "...in ' pwd ' !" | mail -s "EQL0D crashed!" $LOGNAME']);
+    %[~,~]=unix(['echo "...in ' pwd ' !" | mail -s "EQL0D crashed!" $LOGNAME']);
     if usejava('jvm') && ~feature('ShowFigureWindows')
         exit(1)
     end

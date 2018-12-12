@@ -17,7 +17,7 @@ end
 SYS.renormFactor=SYS.tgtFissRate./currentRate;
     fprintf(FID.log,'%s\n',['** RENORM ** Current fission rate: ' num2str(currentRate,'%E') ...
         ', expected: ' num2str(SYS.tgtFissRate,'%E') ', factor: ' num2str(SYS.renormFactor)]);
-if(SYS.renormFactor<0)
+if SYS.renormFactor<0
     error('Error: Renormalization factor negative! Something went wrong.')
 end
 SYS.intFlux=SYS.intFlux*SYS.renormFactor;
@@ -39,4 +39,3 @@ for i=SYS.IDX.MAT.inFlux
 end
 return
 end
-

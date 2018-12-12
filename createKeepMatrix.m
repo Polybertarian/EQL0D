@@ -1,29 +1,17 @@
 function keepMtx = createKeepMatrix(repStream,srcMat,dstMat,totalMtx,burnMat)
 %keepMtx = CREATEKEEPMATRIX(MAT,REP) prepares the 'keep'-type reprocessing
 %matrices
-% if(SYS.debugMode)
-%   fprintf(FID.log,'%s\n','*** CONT *** Adding continuous processing streams...');
-% end
-%
-% if(SYS.debugMode)
-%   fprintf(FID.log,'%s\n',['*** CONT *** Adding processing stream ' REP.name '...']);
-% end
-% if(SYS.debugMode)
-%   fprintf(FID.log,'%s\n','*** CONT *** Continuous processing streams added!');
-% end
 
-%global FID
-
-if(ismember(repStream.mode,{'keepAFPM','keepAM','keepTotM'}))
+if ismember(repStream.mode,{'keepAFPM','keepAM','keepTotM'})
   mode='mass';
-elseif(ismember(repStream.mode,{'keepAFPA','keepAA','keepTotA'}))
+elseif ismember(repStream.mode,{'keepAFPA','keepAA','keepTotA'})
   mode='atoms';
 end
 
 dstMatIdx=find(burnMat==repStream.dstMatIdx);
 switch repStream.mode
   case {'keepAM','keepAA'}
-    nuclToBeRepl=isActinide(dstMat.burnZAI); 
+    nuclToBeRepl=isActinide(dstMat.burnZAI);
   case {'keepAFPM','keepAFPA'}
     nuclToBeRepl=(isFP(dstMat.burnZAI)|isActinide(dstMat.burnZAI));
   case {'keepTotM','keepTotA'}
@@ -33,8 +21,7 @@ nuclToBeReplDst=dstMatIdx(nuclToBeRepl);
 feedNuc=ismember(dstMat.burnZAI,repStream.elements); % feed nuclides in destination mat
 feedNucInDst=dstMatIdx(feedNuc);
 
-% share between feed nuclides
-if repStream.srcMatIdx~=0 
+if repStream.srcMatIdx~=0  % share between feed nuclides
   srcMatIdx=find(burnMat==repStream.srcMatIdx);
   feedNuc=ismember(srcMat.burnZAI,repStream.elements);
   feedNucInSrc=srcMatIdx(feedNuc);
@@ -44,7 +31,7 @@ if repStream.srcMatIdx~=0
     case 'atoms'
       share=srcMat.atDens(ismember(srcMat.burnZAI,repStream.elements));
   end
-  if sum(share)==0 
+  if sum(share)==0
     share=repStream.share;
   end
 else
@@ -69,4 +56,3 @@ end
 
 return
 end
-
