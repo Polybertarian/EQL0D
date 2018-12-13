@@ -3,7 +3,7 @@ function [MAT,SYS] = reactivityControl(MAT,SYS)
     %selected nuclides in selected materials of the MAT vector according to
     %user options given in the OPT.REA vector
 
-    global FID
+    global FID 
 
     diff=1E5*(1/SYS.REA.targetKeff-1/SYS.KEFF.EQL0D(end)); % reactivity in pcm
 

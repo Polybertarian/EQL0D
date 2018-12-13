@@ -5,7 +5,7 @@ function [] = EQL0D(SYS)
 try
   global FID
   [MAT,OPT,REP,SYS] = initialize(SYS); %%% Initialize or restart from .mat file
-  
+
   %% Outer Loop / Cycles
   while(~SYS.stopOuter)
     SYS.ouCntr=SYS.ouCntr+1; SYS.inCntr=0;
@@ -56,9 +56,9 @@ try
       for i=1:length(MAT)
         SYS.prevN.BOC=[SYS.prevN.BOC MAT(i).N(:,end)]; %%% Store compositions from previous loop
       end
-      
+
       [MAT,SYS]=burnCycle(MAT,OPT,REP,SYS);  % deplete materials and perform batch operations
-      
+
       if(OPT.PCC&&~SYS.debugMode) %Corrector step
         SYS.PCC.corrector=true; SYS.PCC.nSteps=OPT.nSteps(SYS.ouCntr);
         runSerpent(OPT,SYS); %%% Run Serpent/Read outputs
@@ -77,7 +77,7 @@ try
         end
         [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT,SYS);
         printK(SYS,'AB','P','EQL0D');
-        
+
         while(SYS.inCntr<=OPT.nSteps(SYS.ouCntr)) %%% Burn system
           [MAT,SYS]=burnCycle(MAT,OPT,REP,SYS);
           SYS.inCntr=SYS.inCntr+1;
@@ -95,7 +95,7 @@ try
     end
     SYS=testConvergence(MAT,OPT,SYS,'outer'); %%% stop outer loop?
   end
-  
+
   %% Last step / Equilibrium results
   if(~SYS.debugMode)
     runSerpent(OPT,SYS);

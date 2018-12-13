@@ -1,8 +1,6 @@
 function [MAT,OPT,REP,SYS] = parseInput(MAT,OPT,REP,SYS)
 %[MAT,OPT,REP,SYS] = PARSEINPUT(MAT,OPT,REP,SYS) parses the input data
 
-global FID
-
 if SYS.debugMode  %force keeping files in debug mode
     OPT.keepFiles=true;
 end
@@ -36,7 +34,7 @@ if OPT.reactControl
     if ~iscolumn(OPT.REA.replFraction)
         SYS.REA.replFraction=OPT.REA.replFraction';
     end
-    
+
     SYS.IDX.REA.target=find(strcmp({MAT.name},OPT.REA.targetMat));
     if isempty(SYS.IDX.REA.target)
         error('EQL0D:ReactControlTargetMatNotFound',['Error: Reactivity control target material ''' OPT.REA.targetMat ''' not found!']);
@@ -95,10 +93,10 @@ if ~isempty(REP)
     for j=find(~ismember(matsNeeded,matsExisting))
         MAT(end+1)=Mat(matsNeeded{j},0,0,1e6,0,[],[]); % create dummy materials
     end
-  
+
     REP=REP([find([REP.isCont]&~[REP.isKeep]) find([REP.isCont]&[REP.isKeep])... % Look for continuous/batch reprocessing streams
         find([REP.isBatch]&~[REP.isKeep]) find([REP.isBatch]&[REP.isKeep])]);
-    
+
     SYS.IDX.REP.cont =find([REP.isCont]);
     SYS.IDX.REP.batch=find([REP.isBatch]);
     SYS.IDX.REP.keep =find([REP.isKeep]);
@@ -254,4 +252,3 @@ end
 [SYS.MTX.total{[1 2]}]=deal([]);
 
 end
-

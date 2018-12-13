@@ -1,7 +1,6 @@
 function [MAT,SYS] = renormalizeSystem(MAT,SYS)
 %RENORMALIZESYSTEM Takes burnup matrices in the system and renormalizes the
 %flux-dependant rates by renormFactor (previously calculated)
-global FID
 
 coeffs = interpCoeffs(SYS);
 

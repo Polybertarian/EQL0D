@@ -1,6 +1,5 @@
 function [MAT,SYS] = burnCycle(MAT,OPT,REP,SYS)
 %[MAT,SYS] = burnCycle(MAT,OPT,REP,SYS) depletes the materials in the System
-global FID
 
 if OPT.renormalize
     [MAT,SYS] = renormalizeSystem(MAT,SYS); % renormalize burn matrices to new fission rate

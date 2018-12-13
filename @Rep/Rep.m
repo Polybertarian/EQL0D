@@ -31,28 +31,28 @@ classdef Rep
       obj.name=name;
       obj.srcMat=srcMat;
       obj.dstMat=dstMat;
-      if(isempty(share))
+      if isempty(share)
         obj.share=ones(size(elements));
-      elseif(length(share)~=length(elements))
+      elseif length(share)~=length(elements)
         error('Error: share and elements vector length mismatch.');
       else
         obj.share=share;
       end
-      if(~iscolumn(obj.share))
+      if ~iscolumn(obj.share)
         obj.share=obj.share';
       end
-      if(~iscolumn(elements))
+      if ~iscolumn(elements)
         elements=elements';
       end
       obj.elementsNames=strjoin(ZAI2Name(elements)');
-      if(any(elements<111))
+      if any(elements<111)
         zailist=DAT.ZAI0(isProduced(DAT.libraryName,DAT.ZAI0));
         [idx1,idx2]=isElement(elements,zailist);
         obj.elements=zailist(idx1);
         obj.share=obj.share(idx2);
       else
         obj.elements=elements;
-        
+
       end
       switch type
         case {'cont','continuous'}
@@ -65,57 +65,56 @@ classdef Rep
           error('Error while setting REP: type not recognized!');
       end
       obj.frequency=1;
-      if(ischar(rate))
+      if ischar(rate)
         obj.rate=1;
-        if(ismember(rate,{'keep','keepAM','keepAFPM','keepTotM','keepAA','keepAFPM','keepTotA'}))
+        if ismember(rate,{'keep','keepAM','keepAFPM','keepTotM','keepAA','keepAFPM','keepTotA'})
           obj.mode=rate;
           obj.isKeep=true;
         else
           error(['Reprocessing stream mode ' rate ' of stream ' obj.name ' not recognized!']);
         end
-      elseif(isnumeric(rate))
+      elseif isnumeric(rate)
         obj.rate=rate;
         obj.mode='remove';
       end
     end
     function srcIdx = findSrc(obj,matList)
-      if(isempty(obj.srcMat))
+      if isempty(obj.srcMat)
         srcIdx=[];
       else
         srcIdx=find(ismember(matList,obj.srcMat));
       end
     end
     function dstIdx = findDst(obj,matList)
-      if(isempty(obj.dstMat))
+      if isempty(obj.dstMat)
         dstIdx=[];
       else
         dstIdx=find(ismember(matList,obj.dstMat));
       end
     end
     function obj = adaptElements(obj,ZAIList)
-      if(any(obj.elements<111))
+      if any(obj.elements<111)
         [idx1,idx2]=isElement(obj.elements,ZAIList);
         obj.elements=ZAIList(idx1);
         obj.share=obj.share(idx2);
       end
     end
     function [dstMAT,srcMAT] = batchProcessing(obj,dstMAT,srcMAT,tStep)
-      global FID
       %%% 1)determine isotopics, 2)determine total quantity, 3) make change
-      if(isempty(obj.srcMatIdx))
+      if isempty(obj.srcMatIdx)
         frac=obj.share./dstMAT.atomicMass(obj.dstNucIdx)/1.0E24;
       else
-        if(ismember(obj.mode,{'keepAFPM','keepAM','keepTotM'}))
+        if ismember(obj.mode,{'keepAFPM','keepAM','keepTotM'})
           frac=srcMAT.mFrac(obj.srcNucIdx)./srcMAT.atomicMass(obj.srcNucIdx)/1.0E24;
-        elseif(ismember(obj.mode,{'keepAFPA','keepAA','keepTotA'}))
+        elseif ismember(obj.mode,{'keepAFPA','keepAA','keepTotA'})
           frac=srcMAT.aFrac(obj.srcNucIdx);
         else
           frac=srcMAT.aFrac(obj.srcNucIdx);
         end
       end
-      if(ismember(obj.mode,{'keepAFPM','keepAM','keepTotM'}))
+      if ismember(obj.mode,{'keepAFPM','keepAM','keepTotM'})
         fillmode='mass';
-      elseif(ismember(obj.mode,{'keepAFPA','keepAA','keepTotA'}))
+      elseif ismember(obj.mode,{'keepAFPA','keepAA','keepTotA'})
         fillmode='atomic';
       else
         fillmode='atomic';
@@ -134,7 +133,7 @@ classdef Rep
         case 'keepAA'   %refill up to initial actinide nuclides
           mDefect=dstMAT.initTotActN-dstMAT.totActN;
         case 'remove'
-          if(obj.rate*tStep<1)
+          if obj.rate*tStep<1
             mDefect=obj.rate*tStep*srcMAT.N(obj.srcNucIdx,end); %not a mass
           else
             mDefect=srcMAT.N(obj.srcNucIdx,end); %not a mass
@@ -147,7 +146,7 @@ classdef Rep
         case 'mass'
           fprintf('%s\n',['** BATCH ** Computed mass defect: ' num2str(sum(mDefect)/1000) ' kg.']);
       end
-      if(obj.srcMatIdx~=0)
+      if obj.srcMatIdx~=0
         srcMAT.N(:,end+1)=srcMAT.N(:,end);
         srcMAT.N(obj.srcNucIdx,end)=srcMAT.N(obj.srcNucIdx,end)-frac.*mDefect;
         changeSrc=srcMAT.N(obj.srcNucIdx,end)-srcMAT.N(obj.srcNucIdx,end-1);
@@ -157,7 +156,7 @@ classdef Rep
         changeSrc=zeros(length(find(obj.dstNucIdx)));
         srcMatName='void';
       end
-      if(obj.dstMatIdx~=0)
+      if obj.dstMatIdx~=0
         dstMAT.N(:,end+1)=dstMAT.N(:,end);
         dstMAT.N(obj.dstNucIdx,end)=dstMAT.N(obj.dstNucIdx,end)+frac.*mDefect;
         changeDst=dstMAT.N(obj.dstNucIdx,end)-dstMAT.N(obj.dstNucIdx,end-1);
@@ -174,7 +173,7 @@ classdef Rep
       end
     end
     function T = get.cycleTime(obj)
-      if(strcmp(obj.mode,'remove'))
+      if strcmp(obj.mode,'remove')
         T=(1/obj.rate)/24/3600;
       else
         T=[];
@@ -190,23 +189,21 @@ classdef Rep
     end
     function repMtx=get.repMtx(obj)
       repMtx=spalloc(length(obj.srcNucIdx),length(obj.srcNucIdx),length(obj.elements));
-      if(~obj.isKeep)
-        if(isempty(obj.srcMatIdx)) %%% void source = find destination elements
+      if ~obj.isKeep
+        if isempty(obj.srcMatIdx) % void source = find destination elements
           repMtx(sub2ind(size(repMtx),find(obj.dstNucIdx),find(obj.dstNucIdx)))=+obj.share*obj.rate;
-        else %%% non-void source & destination = find both
+        else % non-void source & destination = find both
           repMtx(sub2ind(size(repMtx),find(obj.srcNucIdx),find(obj.srcNucIdx)))=-obj.share*obj.rate;
         end
       end
     end
     function obj=setIdx(obj,srcMatZAI,dstMatZAI)
-      if(~isempty(srcMatZAI))
+      if ~isempty(srcMatZAI)
         obj.srcNucIdx=ismember(srcMatZAI,obj.elements);
       end
-      if(~isempty(dstMatZAI))
+      if ~isempty(dstMatZAI)
         obj.dstNucIdx=ismember(dstMatZAI,obj.elements);
       end
     end
   end
-  
 end
-

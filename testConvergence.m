@@ -1,8 +1,6 @@
 function SYS = testConvergence(MAT,OPT,SYS,loop)
 %TESTCONVERGENCE tests convergence in loop of Mat composition based on convParam
 
-global FID
-
 switch OPT.iterMode
   case 'steps'
     if(strcmp(loop,'outer'))
@@ -41,7 +39,7 @@ switch OPT.iterMode
           case 'maxActRelDiff'
             idx=find(isActinide(MAT(i).ZAI)&MAT(i).atDens>OPT.CONV.(loop).cutoff);
         end
-        
+
         %%% Find reference composition
         switch loop
           case 'inner'
@@ -49,12 +47,12 @@ switch OPT.iterMode
           case 'outer'
             Nold=SYS.oldN(:,i);
         end
-        
+
         %%% Compute relative difference
         relDiff=abs((Nold(idx)-MAT(i).N(idx,end))./Nold(idx));
         relDiff(isnan(relDiff))=0;
         relDiff(isinf(relDiff))=0;
-        
+
         [diff,idx2]=max(relDiff);
         switch loop
           case 'inner'
@@ -73,7 +71,7 @@ switch OPT.iterMode
         else
           isConverged(i)=false;
         end
-        
+
       end
     else
       for i=SYS.IDX.MAT.burn
@@ -112,4 +110,3 @@ end
 
 return
 end
-

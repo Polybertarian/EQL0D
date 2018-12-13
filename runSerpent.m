@@ -1,6 +1,5 @@
 function runSerpent(serpentPath,Casename,nCores)
 %RUNSERPENT Calls serpentPath with input fileName and nCores
-global FID
 
 if(exist([Casename '.seed'],'file')==2)
     [status,errmsg]=unix([serpentPath ' -omp ' num2str(nCores) ' -replay ' Casename ' > sss2.log']);
@@ -15,4 +14,3 @@ else
 end
 return
 end
-
