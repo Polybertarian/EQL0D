@@ -92,18 +92,18 @@ classdef Mat
             else
                 error('Nuclear data library not found.')
             end
-            if(nargin > 0)
-                if(~iscolumn(zai))
+            if nargin > 0
+                if ~iscolumn(zai)
                     zai=zai';
                 end
-                if(~iscolumn(comp))
+                if ~iscolumn(comp)
                     comp=comp';
                 end
-                if(length(zai)~=length(comp))
+                if length(zai)~=length(comp)
                     error('Nuclide vector and composition vector length mismatch!')
                 end
                 idx=find(~ismember(zai,obj.ZAI));
-                if(~isempty(idx))
+                if ~isempty(idx)
                     error(['Nuclide(s) ' num2str(zai(idx)) ' not found in library.'])
                 end
                 [zai,idx]=sort(zai);
@@ -111,12 +111,12 @@ classdef Mat
                 obj.name=name;
                 obj.volume=vol;
                 obj.temp=temp;
-                if(~isstr(type))
-                    if(type==0)
+                if ~isstr(type)
+                    if type==0
                         type='decay';
-                    elseif(type==1)
+                    elseif type==1
                         type='burned';
-                    elseif(type==2)
+                    elseif type==2
                         type='inFlux';
                     end
                 end
@@ -132,20 +132,20 @@ classdef Mat
                         obj.isStr=true;
                 end
                 obj.N=zeros(size(obj.ZAI));
-                if(dens==0)%'sum' in serpent
-                    if(~all(comp<0))
+                if dens==0%'sum' in serpent
+                    if ~all(comp<0)
                         obj.N(ismember(obj.ZAI,zai))=obj.volume*comp;
-                    elseif(all(comp)==0||isempty(comp))
+                    elseif all(comp)==0||isempty(comp)
                         obj.N=zeros(size(obj.ZAI));
                     else
                         error('Error: Negative composition given with 0 density')
                     end
-                elseif(dens<0) %mass density given
-                    if(all(comp>0))
+                elseif dens<0) %mass density given
+                    if all(comp>0)
                         comp=comp/sum(comp);
                         obj.N(ismember(obj.ZAI,zai))=obj.volume*-dens*comp/...
                             sum(1e24*obj.atomicMass(ismember(obj.ZAI,zai)).*comp);
-                    elseif(all(comp<0))
+                    elseif all(comp<0)
                         comp=comp/sum(comp);
                         obj.N(ismember(obj.ZAI,zai))=comp*-dens*obj.volume/...
                             sum(1e24*obj.atomicMass(ismember(obj.ZAI,zai)));
@@ -153,10 +153,10 @@ classdef Mat
                         error('Error: Mixed positive and negative values in composition!')
                     end
                 else %atomic density given
-                    if(all(comp>0))
+                    if all(comp>0)
                         comp=comp/sum(comp);
                         obj.N(ismember(obj.ZAI,zai))=comp*dens*obj.volume;
-                    elseif(all(comp<0))
+                    elseif all(comp<0)
                         comp=comp/sum(comp);
                         tmp = comp./(1e24*obj.atomicMass);
                         obj.N(ismember(obj.ZAI,zai))=obj.volume*comp*dens.*tmp/sum(tmp);
@@ -266,12 +266,12 @@ classdef Mat
         function mainH=get.mainHalide(obj)
             idxF=obj.find(90190);
             idxCl=obj.find([170350 170370]);
-            if(obj.atDens(idxF)>sum(obj.atDens(idxCl)))
+            if obj.atDens(idxF)>sum(obj.atDens(idxCl))
                 mainH=idxF;
             else
-                if(obj.atDens(idxCl(1))==0)
+                if obj.atDens(idxCl(1))==0
                     mainH=idxCl(2);
-                elseif(obj.atDens(idxCl(2))==0)
+                elseif obj.atDens(idxCl(2))==0
                     mainH=idxCl(1);
                 else
                     mainH=idxCl;
@@ -291,12 +291,12 @@ classdef Mat
         function status = write(obj,matWriteStyle)
             fileName=[obj.name '.serp'];
             %Check if existing file & backup
-            if(exist(['./' fileName],'file')==2)
+            if exist(['./' fileName],'file')==2
                 movefile(fileName,[fileName '.bak'],'f')
             end
             %Open file
             [fid,errmsg]=fopen(['./' fileName],'w');
-            if(~isempty(errmsg))
+            if ~isempty(errmsg)
                 error(errmsg);
             end
             suffix=[num2str(obj.temp/100,'%02d') 'c'];
@@ -321,7 +321,7 @@ classdef Mat
                     suffix=['.' num2str(obj.temp/100,'%02d') 'c'];
             end
             for i=nucIdx
-                if(strcmp(matWriteStyle,'dec')||~hasSymbol(obj.ZAI(i)))
+                if strcmp(matWriteStyle,'dec')||~hasSymbol(obj.ZAI(i))
                     fprintf(fid,'%-13u%.16E\n',obj.ZAI(i),obj.atDens(i));
                 else
                     fprintf(fid,'%-13s%.16E\n',[char(obj.nuclideName(i)) suffix],obj.atDens(i));
@@ -341,7 +341,7 @@ classdef Mat
                     suffix=style;
             end
             [fid,errmsg]=fopen([obj.name '_' suffix '.txt'],'wt'); %%% Open file
-            if(~isempty(errmsg))
+            if ~isempty(errmsg)
                 error(errmsg)
             end
             matZAI=obj.ZAI;
@@ -362,13 +362,13 @@ classdef Mat
             matCapt=obj.captRate;
             matN2n=obj.n2nRate;
             matTox=obj.ingTox;
-            if(obj.isDenatured)
+            if obj.isDenatured
                 denat='U-Vector denatured.';
             else
                 denat='U-Vector NOT denatured.';
             end
             %%% Header
-            if(obj.isBurned)
+            if obj.isBurned
                 fprintf(fid,'%s\n',['Material ''' obj.name ''', volume ' num2str(obj.volume,'%.4G')...
                     ' cm3, time ' num2str(time,'%.4G') ' EFPD, burn-up '...
                     num2str(obj.FIMA,'%.3f') ' %FIMA or ' num2str(obj.FPFrac,'%.3f') ' %FP/(FP+A). ' denat]);
@@ -437,7 +437,7 @@ classdef Mat
         end
         %%% Methods
         function idx = find(obj,ZAI)
-            if(all(ZAI<1000))
+            if all(ZAI<1000)
                 idx=find(isElement(ZAI,obj.ZAI));
             else
                 idx=find(ismember(obj.ZAI,ZAI));
@@ -456,7 +456,7 @@ classdef Mat
         end
         function [obj,sol] = redoxControl(obj,halideIdx,nucIdx,mode)
             excess=sum(obj.oxState.*obj.N(:,end));
-            if(excess~=0)
+            if excess~=0
                 alpha_halide=obj.N(halideIdx,end)/sum(obj.N(halideIdx,end));
                 alpha_target=obj.N(nucIdx,end)/sum(obj.N(nucIdx,end));
                 switch mode
@@ -476,7 +476,7 @@ classdef Mat
             dN=obj.N(:,end)-obj.N(:,end-1);
         end
         function nBMtx = normBurnMtx(obj,coeffs)
-            if(obj.isInFlux)
+            if obj.isInFlux
                 nBMtx=obj.burnMtx{3}*coeffs(3);
                 for i=1:2
                     if ~isempty(obj.burnMtx{i})
