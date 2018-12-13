@@ -376,7 +376,7 @@ classdef Mat
                 fprintf(fid,'%s\n',['Material ''' obj.name ''', volume ' num2str(obj.volume,'%.4G')...
                     ' cm3, time ' num2str(time,'%.4G') ' EFPD.']);
             end
-            
+
             printFmt=struct('header',[],'content',[],'line',[]);
             printFmt.header=['%-9s%-9s' repmat('%-13s',1,11) '\n'];
             printFmt.content=['%-9s%-9u' repmat('%-13.5E',1,11) '\n'];
@@ -407,7 +407,7 @@ classdef Mat
                 sum(matA),sum(matH),sum(matTox),sum(matCapt),...
                 sum(matFiss),sum(matN2n));
             fprintf(fid,printFmt.line,printContent.line);
-            
+
             %%% Nuclide data
             for k=idxExist'
                 fprintf(fid,printFmt.content,char(matName{k}),matZAI(k),matADens(k),matN(k),...
