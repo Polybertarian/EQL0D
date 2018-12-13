@@ -73,24 +73,24 @@ if OPT.redoxControl  %%% Adjust redox
     for i=SYS.IDX.redoxMat
         [MAT(i),dN] = MAT(i).redoxControl(SYS.IDX.redoxHalide{i},SYS.IDX.redoxNuc{i},OPT.REDOX.replaceMode);
         %name = MAT(i).nuclideName(SYS.IDX.redoxHalide{i});
-        fprintf(FID.log,'%s\n',['** REDOX ** Excess of ' num2str(dN(1)*1E24,'%E') ' valence corrected.']);
+        fprintf('%s\n',['** REDOX ** Excess of ' num2str(dN(1)*1E24,'%E') ' valence corrected.']);
     end
 end
 
 %% Batch processes
 if ~isempty(SYS.IDX.REP.batch)  %%% Batchwise EoS processes
     if SYS.verboseMode
-        fprintf(FID.log,'%s\n','** BATCH ** Performing batch processing steps...');
+        fprintf('%s\n','** BATCH ** Performing batch processing steps...');
     end
     for r=SYS.IDX.REP.batch %%% Loop on batch processing streams
         if SYS.verboseMode
-            fprintf(FID.log,'%s\n',['** BATCH ** Performing processing step ' REP(r).name '...']);
+            fprintf('%s\n',['** BATCH ** Performing processing step ' REP(r).name '...']);
         end
         [MAT(REP(r).dstMatIdx),MAT(REP(r).srcMatIdx)] = REP(r).batchProcessing(MAT(REP(r).dstMatIdx),...
             MAT(REP(r).srcMatIdx),SYS.tStep(end));
     end
     if SYS.verboseMode
-        fprintf(FID.log,'%s\n','** BATCH ** Batch processing steps finished!');
+        fprintf('%s\n','** BATCH ** Batch processing steps finished!');
     end
 end
 [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)] = computeK(MAT,SYS); %%% Compute k-eff

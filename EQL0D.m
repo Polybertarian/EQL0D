@@ -121,7 +121,7 @@ try
       end
   end
   save([SYS.Casename '.mat']);
-  fprintf(FID.log,'%s\n','**** EQL0D **** Procedure finished.');
+  fprintf('%s\n','**** EQL0D **** Procedure finished.');
   for file=fields(FID)
     fclose(FID.(file{1}));
   end

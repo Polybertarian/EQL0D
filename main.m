@@ -114,7 +114,7 @@ try
             saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS.Casename,SYS.ouCntr,~SYS.PCC.corrector&SYS.PCC.active);
     end
     save([SYS.Casename '.mat']);
-    fprintf(FID.log,'%s\n','**** EQL0D **** Procedure finished.');
+    fprintf('%s\n','**** EQL0D **** Procedure finished.');
     for file=fields(FID)
         fclose(FID.(file{1}));
     end
@@ -123,7 +123,7 @@ try
     end
     return
 catch exception % error handling
-    fprintf(FID.log,'%s\n',getReport(exception,'extended'));
+    fprintf('%s\n',getReport(exception,'extended'));
     save([SYS.Casename '_err.mat'])
     %[~,~]=unix(['echo "...in ' pwd ' !" | mail -s "EQL0D crashed!" $LOGNAME']);
     if usejava('jvm') && ~feature('ShowFigureWindows')

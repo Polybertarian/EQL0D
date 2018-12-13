@@ -12,10 +12,10 @@ try
         load([SYS.Casename '.mat']);
         [FID.log,errmsg]=fopen([SYS.Casename '.log'],'at');
         openLogs(true,SYS.REA); %re-open logs
-        fprintf(FID.log,'%s\n','**** EQL0D **** Procedure re-started.');
+        fprintf('%s\n','**** EQL0D **** Procedure re-started.');
     else
         [FID.log,errmsg]=fopen([SYS.Casename '.log'],'wt');
-        fprintf(FID.log,'%s\n','**** EQL0D **** Initializing procedure...');
+        fprintf('%s\n','**** EQL0D **** Initializing procedure...');
         run('defaultConfig.m'); % Default config
         run('userPrefs.m'); % User preferences
         if exist([SYS.Casename '.m'],'file')==2
@@ -34,7 +34,7 @@ try
         end
         
         if exist('DAT','var')~=1 % Load isotope list and properties
-            fprintf(FID.log,'%s\n',['**** EQL0D **** Library undefined! Loading default ''' OPT.defaultDataLibrary '''']);
+            fprintf('%s\n',['**** EQL0D **** Library undefined! Loading default ''' OPT.defaultDataLibrary '''']);
             load([OPT.defaultDataLibrary '.mat'],DAT)
         end
         SYS.nuclearDataLibrary=DAT.libraryName;
@@ -44,10 +44,10 @@ try
             error('EQLOD:MATVectorEmpty','Error: MAT vector empty!')
         end
         if ~exist('REP','var')
-            fprintf(FID.log,'%s\n','**** EQL0D **** Warning: No reprocessing streams defined!');
+            fprintf('%s\n','**** EQL0D **** Warning: No reprocessing streams defined!');
             REP=[];
         elseif isempty(REP)
-            fprintf(FID.log,'%s\n','**** EQL0D **** Warning: REP vector empty. No reprocessing streams defined!');
+            fprintf('%s\n','**** EQL0D **** Warning: REP vector empty. No reprocessing streams defined!');
         end
         
         SYS.ouCntr=0; SYS.inCntr=0; SYS.stopOuter=false;  SYS.nowTime=0.0; SYS.tStep=[];
@@ -82,9 +82,9 @@ try
     end
     clearvars -except OPT SYS DAT MAT REP FID
     save([SYS.Casename '.mat']);
-    fprintf(FID.log,'%s\n','**** EQL0D **** Procedure initialized.');
+    fprintf('%s\n','**** EQL0D **** Procedure initialized.');
 catch exception
-    fprintf(FID.log,'%s\n','**** EQL0D **** Error during initialization!');
+    fprintf('%s\n','**** EQL0D **** Error during initialization!');
     rethrow(exception)
 end
 

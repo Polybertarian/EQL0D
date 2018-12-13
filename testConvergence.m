@@ -16,7 +16,7 @@ switch OPT.iterMode
     if(strcmp(loop,'outer'))
       if(SYS.ouCntr>=OPT.nCycles)
         SYS.stopOuter=true;
-        fprintf(FID.log,'%s\n','*** OUTER CONVERGENCE *** maximum iterations reached!');
+        fprintf('%s\n','*** OUTER CONVERGENCE *** maximum iterations reached!');
         return
       elseif(SYS.ouCntr==1)
         SYS.stopOuter=false;
@@ -25,7 +25,7 @@ switch OPT.iterMode
     else
       if(SYS.inCntr>=OPT.nSteps(SYS.ouCntr))
         SYS.stopInner=true;
-        fprintf(FID.log,'%s\n','** INNER CONVERGENCE ** maximum iterations reached!');
+        fprintf('%s\n','** INNER CONVERGENCE ** maximum iterations reached!');
         return
       end
     end
@@ -59,12 +59,12 @@ switch OPT.iterMode
         switch loop
           case 'inner'
             if(floor(SYS.inCntr/20)==ceil(SYS.inCntr/20))
-              fprintf(FID.log,'%s\n',['** INNER CONVERGENCE ** outer ' num2str(SYS.ouCntr) ' inner ' ...
+              fprintf('%s\n',['** INNER CONVERGENCE ** outer ' num2str(SYS.ouCntr) ' inner ' ...
                 num2str(SYS.inCntr) ': ' OPT.CONV.(loop).criterion ' in ' MAT(i).name ' for ' ...
                 char(ZAI2Name(MAT(i).ZAI(idx(idx2)))) ': ' num2str(diff,'%.3G')]);
             end
           case 'outer'
-            fprintf(FID.log,'%s\n',['*** OUTER CONVERGENCE *** outer ' num2str(SYS.ouCntr) ': ' ...
+            fprintf('%s\n',['*** OUTER CONVERGENCE *** outer ' num2str(SYS.ouCntr) ': ' ...
               OPT.CONV.(loop).criterion ' in ' MAT(i).name ' for ' char(ZAI2Name(MAT(i).ZAI(idx(idx2)))) ': ' ...
               num2str(diff,'%.3G')]);
         end
@@ -99,13 +99,13 @@ switch loop
   case 'inner'
     if(all(isConverged))
       SYS.stopInner=true;
-      fprintf(FID.log,'%s\n',['** INNER CONVERGENCE ** ' loop ' loop of outer iteration ' ...
+      fprintf('%s\n',['** INNER CONVERGENCE ** ' loop ' loop of outer iteration ' ...
         num2str(SYS.ouCntr) ' converged after ' num2str(SYS.inCntr) ' iterations!']);
     end
   case 'outer'
     if(all(isConverged))
       SYS.stopOuter=true;
-      fprintf(FID.log,'%s\n',['*** OUTER CONVERGENCE *** ' loop ' loop converged after ' ...
+      fprintf('%s\n',['*** OUTER CONVERGENCE *** ' loop ' loop converged after ' ...
         num2str(SYS.ouCntr) ' iterations!']);
     end
 end

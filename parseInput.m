@@ -8,10 +8,10 @@ if SYS.debugMode  %force keeping files in debug mode
 end
 
 if OPT.PCC
-    fprintf(FID.log,'%s\n','****  PCC  **** Predictor-Corrector is ON.');
+    fprintf('%s\n','****  PCC  **** Predictor-Corrector is ON.');
     OPT.renormalize=false;
 else
-    fprintf(FID.log,'%s\n','****  PCC  **** Predictor-Corrector is OFF.');
+    fprintf('%s\n','****  PCC  **** Predictor-Corrector is OFF.');
 end
 
 % Adapt vectors (Cycle length, etc.)
@@ -24,7 +24,7 @@ end
 
 %% Reactivity control
 if OPT.reactControl
-    fprintf(FID.log,'%s\n','**** REACT **** Reactivity control is ON.');
+    fprintf('%s\n','**** REACT **** Reactivity control is ON.');
     SYS.REA=OPT.REA;
     SYS.reactControl=true;
     if ~iscolumn(OPT.REA.upFraction)
@@ -82,7 +82,7 @@ if OPT.reactControl
     SYS.REA.upNuclides=MAT(SYS.IDX.REA.target).ZAI(SYS.IDX.REA.targetNucUp);
     SYS.REA.downNuclides=MAT(SYS.IDX.REA.target).ZAI(SYS.IDX.REA.targetNucDo);
 else
-    fprintf(FID.log,'%s\n','**** REACT **** Reactivity control is OFF.');
+    fprintf('%s\n','**** REACT **** Reactivity control is OFF.');
     SYS.IDX.REA=[];
     SYS.REA=[];
     SYS.reactControl=false;
@@ -197,7 +197,7 @@ end
 
 %% Redox control material indexes
 if OPT.redoxControl
-    fprintf(FID.log,'%s\n','**** REDOX **** Redox control is ON.');
+    fprintf('%s\n','**** REDOX **** Redox control is ON.');
     SYS.IDX.redoxMat=find(strcmp({MAT.name},OPT.REDOX.materials));
     SYS.IDX.redoxHalide={MAT(SYS.IDX.redoxMat).mainHalide};
     if isfield(OPT.REDOX,'changeElement')
@@ -213,7 +213,7 @@ if OPT.redoxControl
         end
     end
 else
-    fprintf(FID.log,'%s\n','**** REDOX **** Redox control is OFF.');
+    fprintf('%s\n','**** REDOX **** Redox control is OFF.');
 end
 
 %% Adapt things for materials outside of the flux

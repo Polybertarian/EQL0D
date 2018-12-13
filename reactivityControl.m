@@ -20,7 +20,7 @@ function [MAT,SYS] = reactivityControl(MAT,SYS)
         if ~isempty(SYS.REA.feedMat)
             saveFeed=MAT(SYS.IDX.REA.feed).N(:,end);
         end
-        fprintf(FID.log,'%s\n',['** REACT ** k-eff: ' num2str(SYS.KEFF.EQL0D(end)) ' > tol. limit, searching...']);
+        fprintf('%s\n',['** REACT ** k-eff: ' num2str(SYS.KEFF.EQL0D(end)) ' > tol. limit, searching...']);
 
         switch SYS.REA.mode
         case {'replace','addMass'}
@@ -102,7 +102,7 @@ function [MAT,SYS] = reactivityControl(MAT,SYS)
                 [keff,~]=computeK(MAT,SYS);
                 diff(end+1)=1e5*(1/keff-1/SYS.REA.targetKeff);
                 if SYS.verboseMode
-                    fprintf(FID.log,'%s\n',['** REACT ** Current k-eff: ' num2str(SYS.KEFF.EQL0D(end))]);
+                    fprintf('%s\n',['** REACT ** Current k-eff: ' num2str(SYS.KEFF.EQL0D(end))]);
                 end
             end
             if diff(1)>0
@@ -144,10 +144,10 @@ function [MAT,SYS] = reactivityControl(MAT,SYS)
                 SYS.REA.replFraction=[];
             end
             if abs(changeUp)==1
-                fprintf(FID.log,'%s\n','** REACT ** Max. composition change reached!');
+                fprintf('%s\n','** REACT ** Max. composition change reached!');
             end
             if ~SYS.PCC.active||SYS.PCC.corrector
-                fprintf(FID.log,'%s\n',['** REACT ** Time: ' num2str(SYS.nowTime(end))...
+                fprintf('%s\n',['** REACT ** Time: ' num2str(SYS.nowTime(end))...
                 ' EFPD Change: ' num2str(sum(NChange/1000.0),'%8.6G') ' kg.']);
                 fprintf(FID.react,'%-7.3d%-6.3d%-9G',SYS.ouCntr,SYS.inCntr,SYS.nowTime(end));
                 fprintf(FID.react,[repmat('%-13.6G',1,numel(SYS.reactAdditions)) '\n'],SYS.reactAdditions);
@@ -189,7 +189,7 @@ function [MAT,SYS] = reactivityControl(MAT,SYS)
             MAT(SYS.IDX.REA.feed).N(SYS.IDX.feedNuc,end)=...
             MAT(SYS.IDX.REA.feed).N(SYS.IDX.feedNuc,end)-addVolume(end)*MAT(SYS.IDX.REA.feed).atDens(SYS.IDX.feedNuc);
             if SYS.verboseMode
-                fprintf(FID.log,'%s\n',['** REACT ** Current k-eff: ' num2str(SYS.KEFF.EQL0D(end))]);
+                fprintf('%s\n',['** REACT ** Current k-eff: ' num2str(SYS.KEFF.EQL0D(end))]);
             end
             if ~SYS.PCC.active||SYS.PCC.corrector
                 MAT(SYS.IDX.REA.feed).volume=MAT(SYS.IDX.REA.feed).volume-addVolume(end);
@@ -197,12 +197,12 @@ function [MAT,SYS] = reactivityControl(MAT,SYS)
             end
         end
         if j>=SYS.REA.maxIter
-            fprintf(FID.log,'%s\n','** REACT ** Max. # iterations reached!');
+            fprintf('%s\n','** REACT ** Max. # iterations reached!');
         else
-            fprintf(FID.log,'%s\n',['** REACT ** k-eff: ' num2str(SYS.KEFF.EQL0D(end)) ', stopping... ']);
+            fprintf('%s\n',['** REACT ** k-eff: ' num2str(SYS.KEFF.EQL0D(end)) ', stopping... ']);
         end
     else
-        fprintf(FID.log,'%s\n',['** REACT ** k-eff: ' num2str(SYS.KEFF.EQL0D(end)) ' < tol. limit, no search.']);
+        fprintf('%s\n',['** REACT ** k-eff: ' num2str(SYS.KEFF.EQL0D(end)) ' < tol. limit, no search.']);
     end
     return
 end
