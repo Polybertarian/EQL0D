@@ -140,7 +140,7 @@ classdef Mat
                     else
                         error('Error: Negative composition given with 0 density')
                     end
-                elseif dens<0) %mass density given
+                elseif dens<0 %mass density given
                     if all(comp>0)
                         comp=comp/sum(comp);
                         obj.N(ismember(obj.ZAI,zai))=obj.volume*-dens*comp/...
