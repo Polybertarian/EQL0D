@@ -8,26 +8,26 @@ try
 
   %% Outer Loop / Cycles
   while(~SYS.stopOuter)
-    SYS.ouCntr=SYS.ouCntr+1; SYS.inCntr=0;
+    SYS.RUN.ouCntr=SYS.RUN.ouCntr+1; SYS.RUN.inCntr=0;
     if(strcmp(OPT.iterMode,'equilibrium'))
-      SYS.tStep(end+1)=OPT.cycleLength(SYS.ouCntr)*24.0*3600.0;
+      SYS.RUN.tStep(end+1)=OPT.cycleLength(SYS.RUN.ouCntr)*24.0*3600.0;
     elseif(strcmp(OPT.iterMode,'steps'))
-      SYS.tStep(end+1)=OPT.cycleLength(SYS.ouCntr)*24.0*3600.0/OPT.nSteps(SYS.ouCntr);
+      SYS.RUN.tStep(end+1)=OPT.cycleLength(SYS.RUN.ouCntr)*24.0*3600.0/OPT.nSteps(SYS.RUN.ouCntr);
     end
-    SYS.stopInner=false; SYS.PCC.active=OPT.PCC; SYS.PCC.corrector=false;SYS.oldFIMA=[MAT.FIMA];
+    SYS.stopInner=false; SYS.RUN.PCC.active=OPT.PCC; SYS.RUN.PCC.corrector=false;SYS.oldFIMA=[MAT.FIMA];
     SYS.oldN=[];
     for i=1:length(MAT)
       SYS.oldN=[SYS.oldN MAT(i).N(:,end)]; %%% Store compositions from previous loop
     end
     if(~SYS.debugMode)
-      modifyInput(SYS.Casename,'dep',OPT.cycleLength(SYS.ouCntr)); %%% Adapt depletion time/burnup in Serpent
+      modifyInput(SYS.Casename,'dep',OPT.cycleLength(SYS.RUN.ouCntr)); %%% Adapt depletion time/burnup in Serpent
       runSerpent(OPT,SYS); % run serpent
     end
-    if(~SYS.debugMode||SYS.ouCntr==1)
+    if(~SYS.debugMode||SYS.RUN.ouCntr==1)
       [MAT,SYS] = loadSerpentData(MAT,SYS); %%% Read Serpent outputs
       if(~SYS.debugMode)
-        if(SYS.ouCntr==1)
-          SYS.ouCntr=0;
+        if(SYS.RUN.ouCntr==1)
+          SYS.RUN.ouCntr=0;
         end
         for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
           if(OPT.printSteps)
@@ -36,14 +36,14 @@ try
             MAT(i).printMaterial(SYS,'EoC'); % write material composition to txt file
           end
         end
-        if(SYS.ouCntr==0)
-          SYS.ouCntr=1;
+        if(SYS.RUN.ouCntr==0)
+          SYS.RUN.ouCntr=1;
         end
         saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.filesToKeep,SYS);  %%% Move files to folder
         printK(SYS,'AB','C','Serpent'); % print keff and kinf to file
       end
     end
-    [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT,SYS); %%% Compute k-eff
+    [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS,SYS.RR); %%% Compute k-eff
     printK(SYS,'AB','C','EQL0D'); % print keff and kinf to file
     if(OPT.renormalize)
       [MAT,SYS] = renormalizeSystem(MAT,SYS);  % renormalize burn matrices to new fission rate
@@ -51,7 +51,7 @@ try
     SYS = buildSystemMatrices(MAT,REP,SYS); % build global matrix
     save([SYS.Casename '.mat']);  % save to .mat file
     while(~SYS.stopInner) %%% Inner loop
-      SYS.inCntr=SYS.inCntr+1; SYS.prevFIMA=[MAT(SYS.IDX.MAT.burn).FIMA];
+      SYS.RUN.inCntr=SYS.RUN.inCntr+1; SYS.prevFIMA=[MAT(SYS.IDX.MAT.burn).FIMA];
       SYS.prevN.BOC=[];
       for i=1:length(MAT)
         SYS.prevN.BOC=[SYS.prevN.BOC MAT(i).N(:,end)]; %%% Store compositions from previous loop
@@ -60,10 +60,10 @@ try
       [MAT,SYS]=burnCycle(MAT,OPT,REP,SYS);  % deplete materials and perform batch operations
 
       if(OPT.PCC&&~SYS.debugMode) %Corrector step
-        SYS.PCC.corrector=true; SYS.PCC.nSteps=OPT.nSteps(SYS.ouCntr);
+        SYS.RUN.PCC.corrector=true; SYS.RUN.PCC.nSteps=OPT.nSteps(SYS.RUN.ouCntr);
         runSerpent(OPT,SYS); %%% Run Serpent/Read outputs
         [MAT,SYS] = loadSerpentData(MAT,SYS);
-        SYS.nowTime(end+1)=SYS.nowTime(end)-SYS.tStep(end)*OPT.nSteps(SYS.ouCntr)/(24.0*3600.0);
+        SYS.RUN.nowTime(end+1)=SYS.RUN.nowTime(end)-SYS.RUN.tStep(end)*OPT.nSteps(SYS.RUN.ouCntr)/(24.0*3600.0);
         for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
           MAT(i).N(:,end+1)=SYS.prevN.BOC(:,i);
         end
@@ -75,14 +75,14 @@ try
           saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.filesToKeep,SYS);
           printK(SYS,'AB','P','Serpent');
         end
-        [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT,SYS);
+        [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS,SYS.RR);
         printK(SYS,'AB','P','EQL0D');
 
-        while(SYS.inCntr<=OPT.nSteps(SYS.ouCntr)) %%% Burn system
+        while(SYS.RUN.inCntr<=OPT.nSteps(SYS.RUN.ouCntr)) %%% Burn system
           [MAT,SYS]=burnCycle(MAT,OPT,REP,SYS);
-          SYS.inCntr=SYS.inCntr+1;
+          SYS.RUN.inCntr=SYS.RUN.inCntr+1;
         end
-        SYS.PCC.corrector=false; SYS.stopInner=true;
+        SYS.RUN.PCC.corrector=false; SYS.stopInner=true;
       else
         SYS=testConvergence(MAT,OPT,SYS,'inner');
       end
@@ -116,7 +116,7 @@ try
         end
       end
       if(~SYS.debugMode)
-        SYS.ouCntr=SYS.ouCntr+1;
+        SYS.RUN.ouCntr=SYS.RUN.ouCntr+1;
         saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.filesToKeep,SYS);
       end
   end

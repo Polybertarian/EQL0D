@@ -47,7 +47,7 @@ try
             fprintf('%s\n','**** EQL0D **** Warning: REP vector empty. No reprocessing streams defined!');
         end
 
-        SYS.ouCntr=0; SYS.inCntr=0; SYS.stopOuter=false;  SYS.nowTime=0.0; SYS.tStep=[];
+        SYS.RUN.ouCntr=0; SYS.RUN.inCntr=0; SYS.stopOuter=false;  SYS.RUN.nowTime=0.0; SYS.RUN.tStep=[];
 
         if SYS.resetCounters
             tmp=load([SYS.Casename '.mat'],'MAT');
@@ -70,9 +70,9 @@ try
         end
         for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
             if OPT.printSteps
-                MAT(i).printMaterial(SYS.ouCntr,SYS.inCntr,SYS.nowTime,'AB');
+                MAT(i).printMaterial(SYS.RUN.ouCntr,SYS.RUN.inCntr,SYS.RUN.nowTime,'AB');
             elseif OPT.printCycles&&~OPT.printSteps
-                MAT(i).printMaterial(SYS.ouCntr,SYS.inCntr,SYS.nowTime,'EoC');
+                MAT(i).printMaterial(SYS.RUN.ouCntr,SYS.RUN.inCntr,SYS.RUN.nowTime,'EoC');
             end
         end
         modifySerpentInput(SYS.Casename,'det',[])
