@@ -2,7 +2,7 @@ function SYS = buildSystemMatrices(MAT,REP,SYS)
 %BUILDSYSTEMMATRICES Builds final burn-up matrix from all burn, decay and
 %reprocessing matrices
 
-coeffs = interpCoeffs(SYS);
+coeffs = interpCoeffs(SYS.RUN);
 SYS.MTX.total(1,:)=[];
 for i=1:length(SYS.IDX.REP.matGroups)
     SYS.MTX.total{2,i}=[];

@@ -49,7 +49,7 @@ if strcmp(OPT.iterMode,'steps')||SYS.RUN.inCntr==1||floor(SYS.RUN.inCntr/10)==ce
     printStatus(MAT(SYS.IDX.MAT.burn),SYS.RUN,prefix2,'EoS (BB)');            % Add status to log
 end
 
-[SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS,SYS.RR); % Compute k-eff
+[SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RUN,SYS.RR); % Compute k-eff
 printK(SYS,'BB',prefix,'EQL0D');
 
 if OPT.renormalize
@@ -92,7 +92,7 @@ if ~isempty(SYS.IDX.REP.batch)  % Batchwise EoS processes
         fprintf('%s\n','** BATCH ** Batch processing steps finished!');
     end
 end
-[SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)] = computeK(MAT(SYS.IDX.MAT.inFlux),SYS,SYS.RR); % Compute k-eff
+[SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)] = computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RUN,SYS.RR); % Compute k-eff
 
 %% Reactivity control
 if OPT.reactControl  % Adjust reactivity
@@ -104,7 +104,7 @@ if strcmp(OPT.iterMode,'steps')||SYS.RUN.inCntr==1||floor(SYS.RUN.inCntr/10)==ce
     printStatus(MAT(SYS.IDX.MAT.burn),SYS.RUN,prefix2,'EoS (AB)');  % Add status to log
 end
 if SYS.RUN.inCntr<OPT.nSteps(SYS.RUN.ouCntr)
-    [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS,SYS.RR); % Compute k-eff
+    [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RUN,SYS.RR); % Compute k-eff
     printK(SYS,'AB',prefix,'EQL0D');
 end
 

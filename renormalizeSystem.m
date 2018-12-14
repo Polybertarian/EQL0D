@@ -2,7 +2,7 @@ function [MAT,SYS] = renormalizeSystem(MAT,SYS)
 %RENORMALIZESYSTEM Takes burnup matrices in the system and renormalizes the
 %flux-dependant rates by renormFactor (previously calculated)
 
-coeffs = interpCoeffs(SYS);
+coeffs = interpCoeffs(SYS.RUN);
 
 %%% Compare current rate to target
 currentRate=sum(SYS.RR(3).notInMat.fiss)*coeffs(3);
