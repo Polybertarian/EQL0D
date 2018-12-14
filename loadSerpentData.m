@@ -14,7 +14,7 @@ exst=[exist([SYS.Casename '_arr0.m'],'file')==2,... % Check for Serpent output f
 for i=SYS.IDX.MAT.burn
     exst(end+1)=(exist(['depmtx_' MAT(i).name '0.m'],'file')==2);
 end
-if(~all(exst))
+if ~all(exst)
     error('EQL0D:SerpentOutputsNotFound','Error: Serpent outputs not found!')
 end
 
@@ -29,7 +29,7 @@ for i=SYS.IDX.MAT.inFlux
     SYS.RR(3).intCapt(i)=DETintCapt(i,11);
     SYS.RR(3).intFiss(i)=DETintFiss(i,11);
     SYS.RR(3).intProd(i)=DETintProd(i,11);
-    if(SYS.RR(3).intFiss(i)~=0)
+    if SYS.RR(3).intFiss(i)~=0
         SYS.RR(3).NU(i)=SYS.RR(3).intProd(i)/SYS.RR(3).intFiss(i);
     end
 end
@@ -88,5 +88,3 @@ MAT = updateRates(MAT,SYS);
 
 return
 end
-
-

@@ -1,4 +1,4 @@
-function [] = neutronBalance(MAT,SYS)
+function neutronBalance(MAT,SYS)
 %NEUTRONBALANCE computes neutron balance for the system
 
 matZAI=MAT(1).ZAI;

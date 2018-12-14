@@ -46,7 +46,7 @@ else
 end
 
 if strcmp(OPT.iterMode,'steps')||SYS.RUN.inCntr==1||floor(SYS.RUN.inCntr/10)==ceil(SYS.RUN.inCntr/10)&&~isempty(SYS.IDX.REP.batch)
-    printStatus(MAT,SYS,prefix2,'EoS (BB)');            % Add status to log
+    printStatus(MAT(SYS.IDX.MAT.burn),SYS.RUN,prefix2,'EoS (BB)');            % Add status to log
 end
 
 [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS,SYS.RR); % Compute k-eff
@@ -101,7 +101,7 @@ end
 
 %% After Batch processing
 if strcmp(OPT.iterMode,'steps')||SYS.RUN.inCntr==1||floor(SYS.RUN.inCntr/10)==ceil(SYS.RUN.inCntr/10)
-    printStatus(MAT,SYS,prefix2,'EoS (AB)');  % Add status to log
+    printStatus(MAT(SYS.IDX.MAT.burn),SYS.RUN,prefix2,'EoS (AB)');  % Add status to log
 end
 if SYS.RUN.inCntr<OPT.nSteps(SYS.RUN.ouCntr)
     [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS,SYS.RR); % Compute k-eff

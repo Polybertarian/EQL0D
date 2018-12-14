@@ -179,7 +179,7 @@ classdef Rep
         T=[];
       end
     end
-    function [] = disp(obj)
+    function disp(obj)
       table({obj.srcMat}',{obj.dstMat}',{obj.elementsNames}',{obj.cycleTime}',{obj.mode}',{obj.type}',...
         'VariableNames',{'Source','Destination','Elements','Cycletime','Mode','Type'},...
         'RowNames',{obj.name}')

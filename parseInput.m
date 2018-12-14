@@ -230,7 +230,7 @@ end
 %         end
 %     end
 %     j=0;
-%     while(j<length(b))
+%     while j<length(b)
 %         j=j+1;
 %         b=unique([b;MAT(i).ZAI(SYS.MTX.defaultDecay(:,MAT(i).ZAI==b(j))>0)],'stable');
 %     end
