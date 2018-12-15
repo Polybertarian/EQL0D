@@ -3,7 +3,7 @@ function [fluxMAT,RR] = renormalizeSystem(fluxMAT,notInMatRR,targetFissRate)
 %flux-dependant rates by renormFactor (previously calculated)
 
 currentRate=sum(notInMatRR.fiss);
-for i=1:numel(fluxMat)%SYS.IDX.MAT.inFlux
+for i=1:numel(fluxMAT)%SYS.IDX.MAT.inFlux
     currentRate=currentRate+sum(fluxMAT(i).fissRate);
 end
 
@@ -14,7 +14,7 @@ if renormFactor<0
     error('Error: Renormalization factor negative! Something went wrong.')
 end
 
-for i=1:numel(fluxMat)%SYS.IDX.MAT.inFlux
+for i=1:numel(fluxMAT)%SYS.IDX.MAT.inFlux
     fluxMAT(i).intFlux=fluxMAT(i).intFlux*renormFactor;
 end
 
