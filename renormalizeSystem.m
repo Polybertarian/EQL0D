@@ -1,4 +1,4 @@
-function [fluxMAT,RR] = renormalizeSystem(fluxMAT,notInMatRR,targetFissRate)
+function [fluxMAT,notInMatRR] = renormalizeSystem(fluxMAT,notInMatRR,targetFissRate)
 %RENORMALIZESYSTEM Takes burnup matrices in the system and renormalizes the
 %flux-dependant rates by renormFactor (previously calculated)
 

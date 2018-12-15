@@ -96,7 +96,7 @@ function [MAT,SYS] = reactivityControl(MAT,SYS,REA,IDX)
                         MAT(IDX.feed).N(IDX.feedNucRepl,end)=MAT(IDX.feed).N(IDX.feedNucRepl,end)+NChangeRepl;
                     end
                 end
-                [MAT(SYS.IDX.MAT.inFlux),SYS.RR] = renormalizeSystem(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.tgtFissRate)
+                [MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat] = renormalizeSystem(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.tgtFissRate)
                 [keff,~]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.NUBAR,SYS.LEAK);
                 reactDiff(j+1)=1e5*(1/keff-1/REA.targetKeff);
                 fprintf('%s\n',['** REACT ** Current k-eff: ' num2str(SYS.KEFF.EQL0D(end))]);
