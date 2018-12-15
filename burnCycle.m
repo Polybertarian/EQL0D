@@ -2,7 +2,7 @@ function [MAT,SYS] = burnCycle(MAT,OPT,REP,SYS)
 %[MAT,SYS] = burnCycle(MAT,OPT,REP,SYS) depletes the materials in the System
 
 if OPT.renormalize
-    [MAT(SYS.IDX.MAT.inFlux),SYS.RR] = renormalizeSystem(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.tgtFissRate); % Renormalize burn matrices to new fission rate
+    [MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat] = renormalizeSystem(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.tgtFissRate); % Renormalize burn matrices to new fission rate
     SYS = buildSystemMatrices(MAT,REP,SYS); % Build global matrix
 end
 
@@ -53,7 +53,7 @@ end
 printK(SYS,'BB',prefix,'EQL0D');
 
 if OPT.renormalize
-    [MAT(SYS.IDX.MAT.inFlux),SYS.RR] = renormalizeSystem(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.tgtFissRate);
+    [MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat] = renormalizeSystem(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.tgtFissRate);
 end
 
 if OPT.printSteps&&OPT.printStepsBB
@@ -109,7 +109,7 @@ if SYS.RUN.inCntr<OPT.nSteps(SYS.RUN.ouCntr)
 end
 
 if OPT.renormalize
-    [MAT(SYS.IDX.MAT.inFlux),SYS.RR] = renormalizeSystem(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.tgtFissRate);
+    [MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat] = renormalizeSystem(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.tgtFissRate);
 end
 
 %%% Print material composition to file
