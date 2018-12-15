@@ -44,7 +44,7 @@ try
                 printK(SYS,'AB','C','Serpent'); % Print keff and kinf to file
             end
         end
-        [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RUN,SYS.RR); % Compute k-eff/inf
+        [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.NUBAR,SYS.LEAK); % Compute k-eff/inf
         printK(SYS,'AB','C','EQL0D'); % Print keff and kinf to file
         if OPT.renormalize
             [MAT,SYS] = renormalizeSystem(MAT,SYS);  % Renormalize burn matrices to new fission rate
@@ -71,7 +71,7 @@ try
                 SYS = buildSystemMatrices(MAT,REP,SYS);
                 saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS.Casename,SYS.RUN.ouCntr,~SYS.RUN.PCC.corrector&SYS.RUN.PCC.active);
                 printK(SYS,'AB','P','Serpent');
-                [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RUN,SYS.RR);
+                [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.NUBAR,SYS.LEAK);
                 printK(SYS,'AB','P','EQL0D');
 
                 while SYS.RUN.inCntr<=OPT.nSteps(SYS.RUN.ouCntr) %%% Burn system

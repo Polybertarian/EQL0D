@@ -84,7 +84,7 @@ for i=SYS.IDX.MAT.inFlux
     SYS.RR(3).devCapt(isnan(SYS.RR(3).devCapt)) = 0.0;
 end
 
-MAT(SYS.IDX.MAT.inFlux)=updateRates(MAT(SYS.IDX.MAT.inFlux),SYS.RUN,SYS.RR);
+[MAT(SYS.IDX.MAT.inFlux),SYS.NUBAR,SYS.LEAK]=updateRates(MAT(SYS.IDX.MAT.inFlux),SYS.RUN,SYS.RR);
 
 return
 end

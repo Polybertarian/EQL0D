@@ -40,7 +40,7 @@ function EQL0D(SYS)
                     printK(SYS,'AB','C','Serpent'); % print keff and kinf to file
                 end
             end
-            [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RUN,SYS.RR); %%% Compute k-eff
+            [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.NUBAR,SYS.LEAK); %%% Compute k-eff
             printK(SYS,'AB','C','EQL0D'); % print keff and kinf to file
             if OPT.renormalize
                 [MAT,SYS] = renormalizeSystem(MAT,SYS);  % renormalize burn matrices to new fission rate
@@ -72,7 +72,7 @@ function EQL0D(SYS)
                         saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.filesToKeep,SYS);
                         printK(SYS,'AB','P','Serpent');
                     end
-                    [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RUN,SYS.RR);
+                    [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.NUBAR,SYS.LEAK);
                     printK(SYS,'AB','P','EQL0D');
 
                     while SYS.RUN.inCntr<=OPT.nSteps(SYS.RUN.ouCntr) %%% Burn system
