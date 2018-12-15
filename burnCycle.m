@@ -34,10 +34,10 @@ for j=1:length(SYS.IDX.REP.matGroups)
 end
 
 if SYS.RUN.PCC.corrector
-    prefix='C'; prefix2='CORRECTOR';
+    prefix='C'; prefix2='CORR ';
     SYS.RUN.nowTime(end+1)=SYS.RUN.nowTime(end)+SYS.RUN.tStep(end)/(24.0*3600.0);
 else
-    prefix='P'; prefix2='PREDICTOR';
+    prefix='P'; prefix2='PRED ';
     if SYS.RUN.PCC.active
         SYS.RUN.nowTime(end+1)=SYS.RUN.nowTime(end)+SYS.RUN.tStep(end)*OPT.nSteps(SYS.RUN.ouCntr)/(24.0*3600.0); % in EFPD
     else

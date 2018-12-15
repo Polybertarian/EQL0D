@@ -62,15 +62,15 @@ function [MAT,SYS] = reactivityControl(MAT,SYS,REA,IDX)
                         MAT(IDX.feed).N(:,end)=saveFeed;
                     end
                     if j==REA.maxIter
-                        changeUp(j+1)=changeUp(max(find(abs(reactDiff)==min(abs(reactDiff)),1,'first')));
+                        changeUp(j+1)=changeUp(max(find(abs(reactDiff)==min(abs(reactDiff)),1,'first')))
                     else
                         changeUp(j+1)=max([min([(changeUp(j-1)*reactDiff(j)-changeUp(j)*reactDiff(j-1))/...
-                        (reactDiff(j)-reactDiff(j-1)) maxBound]),minBound]);
+                        (reactDiff(j)-reactDiff(j-1)) maxBound]),minBound])
                     end
                 end
                 NChange=0;
                 if reactDiff(1)>0
-                    NChange=changeUp(j)*MAT(IDX.target).N(IDX.targetNucDo,end);
+                    NChange=changeUp(j+1)*MAT(IDX.target).N(IDX.targetNucDo,end);
                     MAT(IDX.target).N(IDX.targetNucDo,end)=MAT(IDX.target).N(IDX.targetNucDo,end)+NChange;
                     if strcmp(REA.mode,'replace')
                         NChangeRepl=REA.replFraction.*sum(NChange.*MAT(IDX.target).atomicMass(IDX.targetNucDo))...
@@ -78,7 +78,7 @@ function [MAT,SYS] = reactivityControl(MAT,SYS,REA,IDX)
                         MAT(IDX.target).N(IDX.targetNucRepl,end)=MAT(IDX.target).N(IDX.targetNucRepl,end)-NChangeRepl;
                     end
                 elseif reactDiff(1)<0
-                    NChange=changeUp(j)*MAT(IDX.feed).N(IDX.feedNucUp,end);
+                    NChange=changeUp(j+1)*MAT(IDX.feed).N(IDX.feedNucUp,end);
                     MAT(IDX.target).N(IDX.targetNucUp,end)=MAT(IDX.target).N(IDX.targetNucUp,end)+NChange;
                     if strcmp(REA.mode,'replace')
                         NChangeRepl=REA.replFraction.*sum(NChange.*MAT(IDX.feed).atomicMass(IDX.feedNucUp))...
@@ -96,7 +96,7 @@ function [MAT,SYS] = reactivityControl(MAT,SYS,REA,IDX)
                         MAT(IDX.feed).N(IDX.feedNucRepl,end)=MAT(IDX.feed).N(IDX.feedNucRepl,end)+NChangeRepl;
                     end
                 end
-                [MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat] = renormalizeSystem(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.tgtFissRate)
+                [MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat] = renormalizeSystem(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.tgtFissRate);
                 [keff,~]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.NUBAR,SYS.LEAK);
                 reactDiff(j+1)=1e5*(1/keff-1/REA.targetKeff);
                 fprintf('%s\n',['** REACT ** Current k-eff: ' num2str(SYS.KEFF.EQL0D(end))]);
