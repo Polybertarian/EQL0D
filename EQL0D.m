@@ -43,7 +43,7 @@ function EQL0D(SYS)
             [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.NUBAR,SYS.LEAK); %%% Compute k-eff
             printK(SYS,'AB','C','EQL0D'); % print keff and kinf to file
             if OPT.renormalize
-                [MAT,SYS] = renormalizeSystem(MAT,SYS);  % renormalize burn matrices to new fission rate
+                [MAT(SYS.IDX.MAT.inFlux),SYS.RR] = renormalizeSystem(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.tgtFissRate);  % renormalize burn matrices to new fission rate
             end
             SYS = buildSystemMatrices(MAT,REP,SYS); % build global matrix
             save([SYS.Casename '.mat']);  % save to .mat file
