@@ -35,39 +35,17 @@ if OPT.reactControl
         SYS.REA.replFraction=OPT.REA.replFraction';
     end
 
-    SYS.IDX.REA.target=find(strcmp({MAT.name},OPT.REA.targetMat));
-    if isempty(SYS.IDX.REA.target)
+    SYS.IDX.REA.targetMat=find(strcmp({MAT.name},OPT.REA.targetMat));
+    SYS.IDX.REA.upNucl=MAT(SYS.IDX.REA.targetMat).find(OPT.REA.upNuclides);
+    SYS.IDX.REA.downNucl=MAT(SYS.IDX.REA.targetMat).find(OPT.REA.downNuclides);
+    SYS.IDX.REA.replNuc=MAT(SYS.IDX.REA.targetMat).find(OPT.REA.replNuclides);
+    if isempty(SYS.IDX.REA.targetMat)
         error('EQL0D:ReactControlTargetMatNotFound',['Error: Reactivity control target material ''' OPT.REA.targetMat ''' not found!']);
     end
     if ~isempty(OPT.REA.feedMat)
-        SYS.REA.feedMat=OPT.REA.feedMat;
-        SYS.IDX.REA.feed=find(strcmp({MAT.name},OPT.REA.feedMat));
-        if isempty(SYS.IDX.REA.feed)
+        SYS.IDX.REA.feedMatMat=find(strcmp({MAT.name},OPT.REA.feedMat));
+        if isempty(SYS.IDX.REA.feedMat)
             error('EQL0D:ReactControlSourceMatNotFound',['Error: Reactivity control source material ''' OPT.REA.feedMat ''' not found!']);
-        end
-        if strcmp(OPT.REA.mode,'addVolume')
-            SYS.IDX.feedNuc=MAT(SYS.IDX.REA.feed).find(OPT.REA.upNuclides);
-        else
-            SYS.IDX.REA.feedNucUp=MAT(SYS.IDX.REA.feed).find(OPT.REA.upNuclides);
-            SYS.IDX.REA.feedNucDo=MAT(SYS.IDX.REA.feed).find(OPT.REA.downNuclides);
-            if ismember(OPT.REA.mode,{'replace'})
-                SYS.IDX.REA.feedNucRepl=MAT(SYS.IDX.REA.feed).find(OPT.REA.replNuclides);
-            end
-        end
-    end
-    if strcmp(OPT.REA.mode,'addVolume')
-        SYS.REA.mode='addVolume';
-        SYS.IDX.targetNuc=MAT(SYS.IDX.REA.target).find(OPT.REA.upNuclides);
-    else
-        SYS.IDX.REA.targetNucUp=MAT(SYS.IDX.REA.target).find(OPT.REA.upNuclides);
-        SYS.IDX.REA.targetNucDo=MAT(SYS.IDX.REA.target).find(OPT.REA.downNuclides);
-        if ismember(OPT.REA.mode,{'replace'})
-            SYS.REA.mode='replace';
-            SYS.IDX.REA.targetNucRepl=MAT(SYS.IDX.REA.target).find(OPT.REA.replNuclides);
-            SYS.REA.replNuclides=MAT(SYS.IDX.REA.target).ZAI(SYS.IDX.REA.targetNucRepl);
-            if any(OPT.REA.replNuclides<999)
-                SYS.REA.replFraction=[];
-            end
         end
     end
     if any(OPT.REA.upNuclides<999)
@@ -77,8 +55,8 @@ if OPT.reactControl
         SYS.REA.downFraction=[];
     end
     SYS.reactAdditions=[];
-    SYS.REA.upNuclides=MAT(SYS.IDX.REA.target).ZAI(SYS.IDX.REA.targetNucUp);
-    SYS.REA.downNuclides=MAT(SYS.IDX.REA.target).ZAI(SYS.IDX.REA.targetNucDo);
+    SYS.REA.upNuclides=MAT(SYS.IDX.REA.targetMat).ZAI(SYS.IDX.REA.upNucl);
+    SYS.REA.downNuclides=MAT(SYS.IDX.REA.targetMat).ZAI(SYS.IDX.REA.downNucl);
 else
     fprintf('%s\n','**** REACT **** Reactivity control is OFF.');
     SYS.IDX.REA=[];

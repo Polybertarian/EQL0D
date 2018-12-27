@@ -76,6 +76,7 @@ if OPT.redoxControl  % Adjust redox
     end
 end
 
+MAT(3).avMass(1590)
 %% Batch processes
 if ~isempty(SYS.IDX.REP.batch)  % Batchwise EoS processes
     if SYS.verboseMode
@@ -93,6 +94,8 @@ if ~isempty(SYS.IDX.REP.batch)  % Batchwise EoS processes
     end
 end
 [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)] = computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.NUBAR,SYS.LEAK); % Compute k-eff
+
+MAT(3).avMass(1590)
 
 %% Reactivity control
 if OPT.reactControl  % Adjust reactivity

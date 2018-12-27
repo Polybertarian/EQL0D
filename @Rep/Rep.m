@@ -180,9 +180,10 @@ classdef Rep
       end
     end
     function disp(obj)
-      table({obj.srcMat}',{obj.dstMat}',{obj.elementsNames}',{obj.cycleTime}',{obj.mode}',{obj.type}',...
+      T=table({obj.srcMat}',{obj.dstMat}',{obj.elementsNames}',{obj.cycleTime}',{obj.mode}',{obj.type}',...
         'VariableNames',{'Source','Destination','Elements','Cycletime','Mode','Type'},...
-        'RowNames',{obj.name}')
+        'RowNames',{obj.name}');
+        disp(T)
     end
     function usesMat=usesMat(obj,matName)
       usesMat=strcmp(obj.srcMat,matName)|strcmp(obj.dstMat,matName);

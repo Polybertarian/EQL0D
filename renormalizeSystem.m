@@ -8,7 +8,7 @@ for i=1:numel(fluxMAT)%SYS.IDX.MAT.inFlux
 end
 
 renormFactor=targetFissRate./currentRate; % Compare current rate to target
-fprintf('%s\n',['** NORM  ** Current fission rate: ' num2str(currentRate,'%E') ...
+fprintf('%s\n',['  ** NORM  **   Current fission rate: ' num2str(currentRate,'%E') ...
     ', expected: ' num2str(targetFissRate,'%E') ', factor: ' num2str(renormFactor)]);
 if renormFactor<0
     error('Error: Renormalization factor negative! Something went wrong.')

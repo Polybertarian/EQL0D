@@ -111,7 +111,7 @@ classdef Mat
                 obj.name=name;
                 obj.volume=vol;
                 obj.temp=temp;
-                if ~isstr(type)
+                if ~ischar(type)
                     if type==0
                         type='decay';
                     elseif type==1
@@ -172,7 +172,6 @@ classdef Mat
                 obj.name='fuel';
                 obj.volume=1;
                 obj.temp=900;
-                obj.oldN=[];
                 obj.N=zeros(size(obj.ZAI));
             end
         end
@@ -282,7 +281,11 @@ classdef Mat
             FPMass=obj.massDens(isFP(obj.ZAI));
         end
         function FIMA=get.FIMA(obj)
-            FIMA=100.0*(obj.initTotActMass-obj.totActMass)/obj.initTotActMass;
+            if obj.initTotActMass==0.0
+                FIMA=0.0;
+            else
+                FIMA=100.0*(obj.initTotActMass-obj.totActMass)/obj.initTotActMass;
+            end
         end
         function FPFrac=get.FPFrac(obj)
             FPFrac=100.0*obj.totFPMass/(obj.totFPMass+obj.totActMass);
@@ -304,7 +307,7 @@ classdef Mat
                 case 'dec'
                     fprintf(fid,'%s\n',['mat ' obj.name ' sum burn 1 vol ' num2str(obj.volume,'%.16E') ' fix ' ...
                         obj.name ' 300']);
-                    nucIdx=find(~ismember(obj.ZAI,[1:1:111]*1E4)&obj.N(:,end)>0.0)'; %avoid X-nat nuclides
+                    nucIdx=find(~ismember(obj.ZAI,1:1:111*1E4)&obj.N(:,end)>0.0)'; %avoid X-nat nuclides
                     suffix='';
                 case 'fix'
                     fprintf(fid,'%s\n',['mat ' obj.name ' sum burn 1 vol ' num2str(obj.volume,'%.16E') ' fix ' ...
@@ -505,6 +508,12 @@ classdef Mat
             decMtx=obj.defDecMtx;
             decMtx(:,~obj.burnIdx)=[];
             decMtx(~obj.burnIdx,:)=[];
+        end
+        function disp(obj)
+          T=table({obj.isInFlux}',{obj.isBurned}',{obj.volume}',{obj.totMass}',{obj.totActMass}',{obj.FIMA}',...
+              'VariableNames',{'InFlux','Burned','Volume','Mass','ActMass','FIMA'},'RowNames',{obj.name}');
+          %T.Properties.VariableUnits={'','','cm^3','g','g','%'}';
+          disp(T)
         end
     end
 end
