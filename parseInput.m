@@ -43,7 +43,7 @@ if OPT.reactControl
         error('EQL0D:ReactControlTargetMatNotFound',['Error: Reactivity control target material ''' OPT.REA.targetMat ''' not found!']);
     end
     if ~isempty(OPT.REA.feedMat)
-        SYS.IDX.REA.feedMatMat=find(strcmp({MAT.name},OPT.REA.feedMat));
+        SYS.IDX.REA.feedMat=find(strcmp({MAT.name},OPT.REA.feedMat));
         if isempty(SYS.IDX.REA.feedMat)
             error('EQL0D:ReactControlSourceMatNotFound',['Error: Reactivity control source material ''' OPT.REA.feedMat ''' not found!']);
         end
