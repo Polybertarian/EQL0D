@@ -60,9 +60,9 @@ for file in "$@" ; do
 	EQL0D_COMMAND+=",'$file'"
 done
 EQL0D_COMMAND+="};addpath('$(dirname $0)');Cases(1)=[];EQL0Dlauncher(Cases,$CORES,$VERBOSE,$PRINTNQUIT,$RESTART,$RESET,$DEBUG);exit";
-if [ ! $OCTAVE ] ; then
-	matlab -nodisplay -nojvm -nosplash -nodesktop -r $EQL0D_COMMAND &> EQL0D.log &
-else
+if [ $OCTAVE ] ; then
 	octave --eval $EQL0D_COMMAND &> EQL0D.log &
+else
+	matlab -nodisplay -nojvm -nosplash -nodesktop -r $EQL0D_COMMAND &> EQL0D.log &
 fi
 exit 0
