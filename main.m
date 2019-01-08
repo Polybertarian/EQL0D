@@ -126,7 +126,7 @@ try
 catch exception % error handling
     fprintf('Error %s : %s\n',exception.identifier,exception.message);
     for i=1:length(exception.stack)
-        fprintf('in file %s at line %d and column %d \n',exception.stack(i).file,exception.stack(i).line,exception.stack(i).column);
+        fprintf('in file %s at line %d\n',exception.stack(i).file,exception.stack(i).line);
     end
     %fprintf('%s\n',getReport(exception,'extended'));
     save([SYS.Casename '.mat'])
