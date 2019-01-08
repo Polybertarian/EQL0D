@@ -13,7 +13,7 @@ classdef Mat
         burnIdx
         streams=struct('cont',[],'batch',[]);
     end
-    properties (SetAccess = immutable)
+    properties %(SetAccess = immutable)
         atomicMass
         decayEnergy
         halfLife

@@ -119,12 +119,16 @@ try
     for file=fields(FID)
         fclose(FID.(file{1}));
     end
-    if OPT.writeMail
+    %if OPT.writeMail
         %unix(['echo "...in ' pwd ' !" | mail -s "EQL0D calculation finished!" $LOGNAME'])
-    end
+    %end
     return
 catch exception % error handling
-    fprintf('%s\n',getReport(exception,'extended'));
+    fprintf('Error %s : %s\n',exception.identifier,exception.message);
+    for i=1:length(exception.stack)
+        fprintf('in file %s at line %d and column %d \n',exception.stack(i).file,exception.stack(i).line,exception.stack(i).column);
+    end
+    %fprintf('%s\n',getReport(exception,'extended'));
     save([SYS.Casename '.mat'])
     %[~,~]=unix(['echo "...in ' pwd ' !" | mail -s "EQL0D crashed!" $LOGNAME']);
     if usejava('jvm') && ~feature('ShowFigureWindows')

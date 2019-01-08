@@ -1,47 +1,50 @@
 #!/bin/bash
 
 USAGE=$'Usage: eql0d (-rRdb) (-n value) <filename1> ... <filenameN>
-	-n <CORES>    to run on <CORES> cores.
-	-b            to run in batch mode: calculations launched in parallel. 
-	-r            to run in restart mode: calculation restarts at last point in time.
-	-R            to run in restart & reset mode: calculation restarts from the beginning.
-	-d            to run in debugging mode: use existing depmtx_*.m files without calling Serpent
-        -p            to launch EQL0D, print Material compositions (*.txt and *.serp) and quit
-        -v            to run in verbose mode (more detailed log file)'
-CORES=1; RESTART=false; DEBUG=false; BATCH=false; RESET=false; PRINTNQUIT=false; VERBOSE=false;
-
-while getopts "n:rRdbpv" OPT; do
-    case $OPT in
-    	b)
-    	   BATCH=true;
-        ;;
-        r)
-           RESTART=true;
-        ;;
-        R)
-           RESET=true;
-        ;;
-        d)
-           DEBUG=true;
-        ;;
-        n)
-           CORES="$OPTARG"
-        ;;
-        p)
-            PRINTNQUIT=true;
-        ;;
-        v)
-	    VERBOSE=true;
-	;;
-        \?)
-           echo "$USAGE" >&2
-           exit 1
-        ;;
-	:)
-	   >&2 echo "Error: Missing parameter for $OPTARG !"
-	   exit 1
-	   ;;
-    esac
+-n <CORES>    to run on <CORES> cores.
+-o 			  to run using Octave.
+-b            to run in batch mode: calculations launched in parallel.
+-r            to run in restart mode: calculation restarts at last point in time.
+-R            to run in restart & reset mode: calculation restarts from the beginning.
+-d            to run in debugging mode: use existing depmtx_*.m files without calling Serpent
+-p            to launch EQL0D, print Material compositions (*.txt and *.serp) and quit
+-v            to run in verbose mode (more detailed log file)'
+CORES=1; RESTART=false; DEBUG=false; BATCH=false; RESET=false; PRINTNQUIT=false; VERBOSE=false; OCTAVE=false;
+while getopts "n:rRdbpvo" OPT; do
+	case $OPT in
+		o)
+		OCTAVE=true;
+		;;
+		b)
+		BATCH=true;
+		;;
+		r)
+		RESTART=true;
+		;;
+		R)
+		RESET=true;
+		;;
+		d)
+		DEBUG=true;
+		;;
+		n)
+		CORES="$OPTARG"
+		;;
+		p)
+		PRINTNQUIT=true;
+		;;
+		v)
+		VERBOSE=true;
+		;;
+		\?)
+		echo "$USAGE" >&2
+		exit 1
+		;;
+		:)
+		>&2 echo "Error: Missing parameter for $OPTARG !"
+		exit 1
+		;;
+	esac
 done
 
 shift $((OPTIND-1))
@@ -56,7 +59,10 @@ EQL0D_COMMAND="Cases={''"
 for file in "$@" ; do
 	EQL0D_COMMAND+=",'$file'"
 done
-EQL0D_COMMAND+="};addpath('$(dirname $0)');Cases(1)=[];EQL0Dlauncher(Cases,$CORES,$VERBOSE,$PRINTNQUIT,$RESTART,$RESET,$DEBUG);exit"
-
-matlab -nodisplay -nojvm -nosplash -nodesktop -r $EQL0D_COMMAND &> EQL0D.log &
-exit 0 
+EQL0D_COMMAND+="};addpath('$(dirname $0)');Cases(1)=[];EQL0Dlauncher(Cases,$CORES,$VERBOSE,$PRINTNQUIT,$RESTART,$RESET,$DEBUG);exit";
+if [ ! $OCTAVE ] ; then
+	matlab -nodisplay -nojvm -nosplash -nodesktop -r $EQL0D_COMMAND &> EQL0D.log &
+else
+	octave --eval $EQL0D_COMMAND &> EQL0D.log &
+fi
+exit 0
