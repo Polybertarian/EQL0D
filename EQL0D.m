@@ -46,7 +46,7 @@ function EQL0D(SYS)
                 [MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat] = renormalizeSystem(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.tgtFissRate);  % renormalize burn matrices to new fission rate
             end
             SYS = buildSystemMatrices(MAT,REP,SYS); % build global matrix
-            save([SYS.Casename '.mat']);  % save to .mat file
+            save([SYS.Casename '.mat'],'-v7');  % save to .mat file
             while ~SYS.stopInner % Inner loop
                 SYS.RUN.inCntr=SYS.RUN.inCntr+1; SYS.prevFIMA=[MAT(SYS.IDX.MAT.burn).FIMA];
                 SYS.prevN.BOC=[];
@@ -83,7 +83,7 @@ function EQL0D(SYS)
                 else
                     SYS=testConvergence(MAT,OPT,SYS,'inner');
                 end
-                %save([SYS.Casename '.mat']);
+                %save([SYS.Casename '.mat'],'-v7');
             end
             if OPT.printCycles&&~OPT.printSteps
                 for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
@@ -117,7 +117,7 @@ function EQL0D(SYS)
                 saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.filesToKeep,SYS);
             end
         end
-        save([SYS.Casename '.mat']);
+        save([SYS.Casename '.mat'],'-v7');
         fprintf('%s\n','**** EQL0D **** Procedure finished.');
         for file=fields(FID)
             fclose(FID.(file{1}));

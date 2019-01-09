@@ -50,7 +50,7 @@ try
             [MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat] = renormalizeSystem(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.tgtFissRate);  % Renormalize burn matrices to new fission rate
         end
         SYS = buildSystemMatrices(MAT,REP,SYS); % Build global matrix
-        save([SYS.Casename '.mat']);  % Save to .mat file
+        save([SYS.Casename '.mat'],'-v7');  % Save to .mat file
         while ~SYS.stopInner % Inner loop
             SYS.RUN.inCntr=SYS.RUN.inCntr+1; SYS.prevFIMA=[MAT(SYS.IDX.MAT.burn).FIMA];
             SYS.prevN.BOC=[];
@@ -82,7 +82,7 @@ try
             else
                 SYS=testConvergence(MAT,OPT,SYS,'inner');
             end
-            %save([SYS.Casename '.mat']);
+            %save([SYS.Casename '.mat'],'-v7');
         end
         if OPT.printCycles&&~OPT.printSteps
             for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
@@ -114,10 +114,11 @@ try
             SYS.RUN.ouCntr=SYS.RUN.ouCntr+1;
             saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS.Casename,SYS.RUN.ouCntr,~SYS.RUN.PCC.corrector&SYS.RUN.PCC.active);
     end
-    save([SYS.Casename '.mat']);
+    save([SYS.Casename '.mat'],'-v7');
     fprintf('%s\n','**** EQL0D **** Procedure finished.');
-    for file=fields(FID)
-        fclose(FID.(file{1}));
+    names=fieldnames(FID);
+    for file=1:numel(names)
+        fclose(FID.(names{file}));
     end
     %if OPT.writeMail
         %unix(['echo "...in ' pwd ' !" | mail -s "EQL0D calculation finished!" $LOGNAME'])
@@ -129,7 +130,7 @@ catch exception % error handling
         fprintf('in file %s at line %d\n',exception.stack(i).file,exception.stack(i).line);
     end
     %fprintf('%s\n',getReport(exception,'extended'));
-    save([SYS.Casename '.mat'])
+    save([SYS.Casename '.mat'],'-v7')
     %[~,~]=unix(['echo "...in ' pwd ' !" | mail -s "EQL0D crashed!" $LOGNAME']);
     if usejava('jvm') && ~feature('ShowFigureWindows')
         exit(1)

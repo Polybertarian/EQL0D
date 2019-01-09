@@ -2,6 +2,8 @@ function [MAT,OPT,REP,SYS] = initialize(SYS)
 %[MAT,OPT,REP,SYS] = INITIALIZE(SYS) regroups all steps to parse the user input and initialize
 %the initial variables of EQL0D
 
+global DAT
+
 try
     stdFields={'nCores','debugMode','verboseMode','printAndQuit','restartCalc','restartCalc','resetCounters'};
     for i=find(~isfield(SYS,stdFields))
@@ -26,7 +28,7 @@ try
                 MAT(i).write(''); % Write material compositions for Serpent
                 MAT(i).printMaterial(0,0,0,'EoC')
             end
-            save([SYS.Casename '.mat']);
+            save([SYS.Casename '.mat'],'-v7');
             exit(0)
         end
 
@@ -77,7 +79,7 @@ try
         end
         modifySerpentInput(SYS.Casename,'det',[])
     end
-    save([SYS.Casename '.mat']);
+    save([SYS.Casename '.mat'],'-v7');
     fprintf('%s\n','**** EQL0D **** Procedure initialized.');
 catch exception
     fprintf('%s\n','**** EQL0D **** Error during initialization!');
