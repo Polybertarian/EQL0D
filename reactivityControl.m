@@ -67,11 +67,9 @@ function [MAT,SYS] = reactivityControl(MAT,SYS,REA,IDX)
                 NChange=changeUp(j+1)*downFraction.*sum(MAT(IDX.targetMat).N(IDX.downNucl,end));
                 switch REA.mode
                 case 'addMass'
-                    [MAT(IDX.targetMat),MAT(IDX.feedMat)] = transferNuclides(MAT(IDX.targetMat),MAT(IDX.feedMat),...
-                    IDX.downNucl,NChange);
+                    [MAT(IDX.targetMat),MAT(IDX.feedMat)] = transferNuclides(MAT(IDX.targetMat),MAT(IDX.feedMat),IDX.downNucl,NChange);
                 case 'addVolume'
-                    [MAT(IDX.targetMat),MAT(IDX.feedMat)] = transferNuclides(MAT(IDX.targetMat),MAT(IDX.feedMat),...
-                    IDX.upNucl,NChange);
+                    [MAT(IDX.targetMat),MAT(IDX.feedMat)] = transferNuclides(MAT(IDX.targetMat),MAT(IDX.feedMat),IDX.upNucl,NChange);
                     MAT(IDX.targetMat).volume=MAT(IDX.targetMat).volume+changeUp(j);
                 case 'replace'
                     [MAT(IDX.targetMat),MAT(IDX.feedMat),NChangeRepl] = replaceNuclides(MAT(IDX.targetMat),MAT(IDX.feedMat),...
@@ -81,11 +79,9 @@ function [MAT,SYS] = reactivityControl(MAT,SYS,REA,IDX)
                 NChange=changeUp(j+1)*upFraction.*sum(MAT(IDX.feedMat).N(IDX.upNucl,end));
                 switch REA.mode
                 case 'addMass'
-                    [MAT(IDX.targetMat),MAT(IDX.feedMat)] = transferNuclides(MAT(IDX.targetMat),MAT(IDX.feedMat),...
-                    IDX.upNucl,NChange);
+                    [MAT(IDX.targetMat),MAT(IDX.feedMat)] = transferNuclides(MAT(IDX.targetMat),MAT(IDX.feedMat),IDX.upNucl,NChange);
                 case 'addVolume'
-                    [MAT(IDX.targetMat),MAT(IDX.feedMat)] = transferNuclides(MAT(IDX.targetMat),MAT(IDX.feedMat),...
-                    IDX.upNucl,NChange);
+                    [MAT(IDX.targetMat),MAT(IDX.feedMat)] = transferNuclides(MAT(IDX.targetMat),MAT(IDX.feedMat),IDX.upNucl,NChange);
                     MAT(IDX.targetMat).volume=MAT(IDX.targetMat).volume+changeUp(j);
                 case 'replace'
                     [MAT(IDX.targetMat),MAT(IDX.feedMat),NChangeRepl] = replaceNuclides(MAT(IDX.targetMat),MAT(IDX.feedMat),...

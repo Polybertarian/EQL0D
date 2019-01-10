@@ -4,10 +4,9 @@ global FID
 
 tic
 try
-    [MAT,OPT,REP,SYS] = initialize(SYS); %%% Initialize or restart from .mat file
+    [MAT,OPT,REP,SYS] = initialize(SYS); % Initialize or restart from .mat file
 
-    %% Outer Loop / Cycles
-    while ~SYS.stopOuter
+    while ~SYS.stopOuter % Outer Loop / Cycles
         SYS.RUN.ouCntr=SYS.RUN.ouCntr+1; SYS.RUN.inCntr=0;
         if strcmp(OPT.iterMode,'equilibrium')
             SYS.RUN.tStep(end+1)=OPT.cycleLength(SYS.RUN.ouCntr)*24.0*3600.0;
@@ -17,14 +16,14 @@ try
         SYS.stopInner=false; SYS.RUN.PCC.active=OPT.PCC; SYS.RUN.PCC.corrector=false;SYS.oldFIMA=[MAT.FIMA];
         SYS.oldN=[];
         for i=1:length(MAT)
-            SYS.oldN=[SYS.oldN MAT(i).N(:,end)]; %%% Store compositions from previous loop
+            SYS.oldN=[SYS.oldN MAT(i).N(:,end)]; % Store compositions from previous loop
         end
         if ~SYS.debugMode
-            modifySerpentInput(SYS.Casename,'dep',OPT.cycleLength(SYS.RUN.ouCntr)); %%% Adapt depletion time/burnup in Serpent
+            modifySerpentInput(SYS.Casename,'dep',OPT.cycleLength(SYS.RUN.ouCntr)); % Adapt depletion time/burnup in Serpent
             runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores); % run serpent
         end
         if ~SYS.debugMode||SYS.RUN.ouCntr==1
-            [MAT,SYS] = loadSerpentData(MAT,SYS); %%% Read Serpent outputs
+            [MAT,SYS] = loadSerpentData(MAT,SYS); % Read Serpent outputs
             if ~SYS.debugMode
                 if SYS.RUN.ouCntr==1
                     SYS.RUN.ouCntr=0;

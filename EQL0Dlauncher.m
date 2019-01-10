@@ -3,8 +3,10 @@ function EQL0Dlauncher(Cases,nCores,verbose,printNquit,restart,reset,debug)
 SYS=struct('nCores',nCores,'verboseMode',logical(verbose),'printAndQuit',logical(printNquit),...
     'restartCalc',logical(restart),'resetCounters',logical(reset),'debugMode',logical(debug));
 format long
-warning('off','backtrace'); warning('off','MATLAB:declareGlobalBeforeUse');
+%warning('off','backtrace');
+warning('off','MATLAB:declareGlobalBeforeUse');
 warning('off','MATLAB:maxNumCompThreads:Deprecated'); warning('off','MATLAB:nearlySingularMatrix');
+warning('off','Octave:classdef-to-struct');
 
 for i=1:length(Cases)
     if exist(Cases{i},'file')==2

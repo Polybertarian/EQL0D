@@ -8,7 +8,7 @@ for i=1:length(SYS.IDX.REP.matGroups)
     SYS.MTX.total{2,i}=[];
     SYS.MTX.burnMat{2,i}=[];
     streams=[];
-    
+
     for j=SYS.IDX.REP.matGroups{i}
         SYS.MTX.total{2,i}=blkdiag(SYS.MTX.total{2,i},MAT(j).normBurnMtx(coeffs)+MAT(j).decMtx);
         SYS.MTX.burnMat{2,i}=vertcat(SYS.MTX.burnMat{2,i},j*ones(length(MAT(j).burnZAI),1));
@@ -47,4 +47,3 @@ end
 
 return
 end
-

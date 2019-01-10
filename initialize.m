@@ -10,7 +10,7 @@ try
         SYS.(stdFields{i})=false;
     end
     if SYS.restartCalc
-        load([SYS.Casename '.mat']);
+        load([SYS.Casename '.mat'],'MAT','SYS','REP','DAT','OPT');
         openLogs(true,SYS.REA); %re-open logs
         fprintf('%s\n','**** EQL0D **** Procedure re-started.');
     else
@@ -34,7 +34,7 @@ try
 
         if exist('DAT','var')~=1 % Load isotope list and properties
             fprintf('%s\n',['**** EQL0D **** Library undefined! Loading default ''' OPT.defaultDataLibrary '''']);
-            load([OPT.defaultDataLibrary '.mat'],DAT)
+            load([OPT.defaultDataLibrary '.mat'],DAT);
         end
         SYS.nuclearDataLibrary=DAT.libraryName;
         if ~exist('MAT','var')
@@ -77,7 +77,7 @@ try
                 MAT(i).printMaterial(SYS.RUN.ouCntr,SYS.RUN.inCntr,SYS.RUN.nowTime,'EoC');
             end
         end
-        modifySerpentInput(SYS.Casename,'det',[])
+        modifySerpentInput(SYS.Casename,'det',[]);
     end
     save([SYS.Casename '.mat'],'-v7');
     fprintf('%s\n','**** EQL0D **** Procedure initialized.');
