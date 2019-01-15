@@ -6,13 +6,13 @@ function [MAT,SYS] = burnCycle(MAT,OPT,REP,SYS)
         SYS = buildSystemMatrices(MAT,REP,SYS); % Build global matrix
     end
 
-    parfor j=1:length(SYS.IDX.REP.matGroups)
+    for j=1:length(SYS.IDX.REP.matGroups)
         burnVec{j}=[]; % Prepare vector for solving
         for k=SYS.IDX.REP.matGroups{j}
             burnVec{j}=vertcat(burnVec{j},MAT(k).atDens(MAT(k).burnIdx));
         end
     end
-    parfor j=1:length(SYS.IDX.REP.matGroups)
+    for j=1:length(SYS.IDX.REP.matGroups)
         if SYS.RUN.PCC.corrector || ~SYS.RUN.PCC.active
             tStep=SYS.RUN.tStep(end)/OPT.nSubSteps;
             burnVec2{j}=CRAMsolve(SYS.MTX.total{2,j},tStep,burnVec{j});
@@ -119,7 +119,7 @@ function [MAT,SYS] = burnCycle(MAT,OPT,REP,SYS)
             MAT(i).printMaterial(SYS.RUN.ouCntr,SYS.RUN.inCntr,SYS.RUN.nowTime,'AB');
         end
     end
-    parfor i=SYS.IDX.MAT.burn
+    for i=SYS.IDX.MAT.burn
         MAT(i).write(OPT.matWriteStyle); % Write compositions to serp files
     end
 end
