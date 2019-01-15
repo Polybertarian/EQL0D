@@ -1,10 +1,9 @@
 function [MAT,SYS] = burnCycle(MAT,OPT,REP,SYS)
     %[MAT,SYS] = burnCycle(MAT,OPT,REP,SYS) depletes the materials in the System
 
-    if OPT.renormalize
-        [MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat] = renormalizeSystem(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.tgtFissRate); % Renormalize burn matrices to new fission rate
-        SYS = buildSystemMatrices(MAT,REP,SYS); % Build global matrix
-    end
+
+    [MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat] = renormalizeSystem(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.tgtFissRate); % Renormalize burn matrices to new fission rate
+    SYS = buildSystemMatrices(MAT,REP,SYS); % Build global matrix
 
     for j=1:length(SYS.IDX.REP.matGroups)
         burnVec{j}=[]; % Prepare vector for solving
