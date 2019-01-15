@@ -10,7 +10,7 @@ end
 if status~=0
     error('Serpent:CrashDuringRun',['Error: SSS simulation aborted \n' errmsg]);
 else
-    fprintf('%s\n','*** SERPENT *** Serpent run finished!');
+    fprintf('%s\n',' *** SRPNT ***  Serpent run finished!');
 end
 return
 end

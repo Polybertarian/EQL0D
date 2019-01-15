@@ -61,7 +61,7 @@ for file in "$@" ; do
 done
 EQL0D_COMMAND+="};addpath('$(dirname $0)');Cases(1)=[];EQL0Dlauncher(Cases,$CORES,$VERBOSE,$PRINTNQUIT,$RESTART,$RESET,$DEBUG);exit";
 if [ "$OCTAVE" = true ] ; then
-	octave --eval $EQL0D_COMMAND &> EQL0D.log &
+	octave -W --eval $EQL0D_COMMAND &> EQL0D.log &
 else
 	matlab -nodisplay -nojvm -nosplash -nodesktop -r $EQL0D_COMMAND &> EQL0D.log &
 fi

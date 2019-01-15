@@ -24,12 +24,15 @@ try
         end
 
         if SYS.printAndQuit
+            fprintf('%s\n','**** EQL0D **** Writing materials and quitting...');
             for i=find([MAT.isBurned])
                 MAT(i).write(''); % Write material compositions for Serpent
-                MAT(i).printMaterial(0,0,0,'EoC')
+                MAT(i).printMaterial(0,0,0,'EoC');
             end
-            save([SYS.Casename '.mat'],'-v7');
-            exit(0)
+            %ave([SYS.Casename '.mat'],'-v7');
+            fprintf('%s\n','**** EQL0D **** Procedure finished.');
+            toc
+            exit(0);
         end
 
         if exist('DAT','var')~=1 % Load isotope list and properties
@@ -38,9 +41,9 @@ try
         end
         SYS.nuclearDataLibrary=DAT.libraryName;
         if ~exist('MAT','var')
-            error('EQLOD:MATVectorUndefined','Error: MAT vector undefined!')
+            error('EQLOD:MATVectorUndefined','Error: MAT vector undefined!');
         elseif isempty(MAT)
-            error('EQLOD:MATVectorEmpty','Error: MAT vector empty!')
+            error('EQLOD:MATVectorEmpty','Error: MAT vector empty!');
         end
         if ~exist('REP','var')
             fprintf('%s\n','**** EQL0D **** Warning: No reprocessing streams defined!');

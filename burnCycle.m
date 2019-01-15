@@ -62,12 +62,16 @@ function [MAT,SYS] = burnCycle(MAT,OPT,REP,SYS)
         end
     end
 
-    SYS.prevN.EOC=[];
+    SYS.prevN.EOC=[]; % Store compositions from previous loop
     for i=1:length(MAT)
-        SYS.prevN.EOC=[SYS.prevN.EOC MAT(i).N(:,end)]; % Store compositions from previous loop
+        SYS.prevN.EOC=[SYS.prevN.EOC MAT(i).N(:,end)];
     end
 
-    %% Redox control
+    for k=1:numel(MAT) % Save compositions before batch
+        MAT(k).N(:,end+1)=MAT(k).N(:,end);
+    end
+    SYS.RUN.nowTime(end+1)=SYS.RUN.nowTime(end); % Update time
+
     if OPT.redoxControl  % Adjust redox
         for i=SYS.IDX.redoxMat
             [MAT(i),dN] = MAT(i).redoxControl(SYS.IDX.redoxHalide{i},SYS.IDX.redoxNuc{i},OPT.REDOX.replaceMode);
@@ -76,7 +80,6 @@ function [MAT,SYS] = burnCycle(MAT,OPT,REP,SYS)
         end
     end
 
-    %% Batch processes
     if ~isempty(SYS.IDX.REP.batch)  % Batchwise EoS processes
         if SYS.verboseMode
             fprintf('%s\n','** BATCH ** Performing batch processing steps...');
@@ -94,7 +97,6 @@ function [MAT,SYS] = burnCycle(MAT,OPT,REP,SYS)
     end
     [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)] = computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.NUBAR,SYS.LEAK); % Compute k-eff
 
-    %% Reactivity control
     if OPT.reactControl  % Adjust reactivity
         [MAT,SYS] = reactivityControl(MAT,SYS,SYS.REA,SYS.IDX.REA);
     end
@@ -112,13 +114,12 @@ function [MAT,SYS] = burnCycle(MAT,OPT,REP,SYS)
         [MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat] = renormalizeSystem(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.tgtFissRate);
     end
 
-    %%% Print material composition to file
-    if OPT.printSteps
+    if OPT.printSteps     % Print material composition to txt file
         for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
             MAT(i).printMaterial(SYS.RUN.ouCntr,SYS.RUN.inCntr,SYS.RUN.nowTime,'AB');
         end
     end
     parfor i=SYS.IDX.MAT.burn
-        MAT(i).write(OPT.matWriteStyle); % Write compositions
+        MAT(i).write(OPT.matWriteStyle); % Write compositions to serp files
     end
 end

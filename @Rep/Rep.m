@@ -4,11 +4,10 @@ classdef Rep
     name
     srcMat
     srcMatIdx=[];
-    srcNucIdx=[];
+    nucIdx=[];
     srcNucMass=[];
     dstMat
     dstMatIdx=[];
-    dstNucIdx=[];
     dstNucMass=[];
     elements
     elementsNames
@@ -52,7 +51,6 @@ classdef Rep
         obj.share=obj.share(idx2);
       else
         obj.elements=elements;
-
       end
       switch type
         case {'cont','continuous'}
@@ -102,14 +100,14 @@ classdef Rep
     function [dstMAT,srcMAT] = batchProcessing(obj,dstMAT,srcMAT,tStep)
       %%% 1)determine isotopics, 2)determine total quantity, 3) make change
       if isempty(obj.srcMatIdx)
-        frac=obj.share./dstMAT.atomicMass(obj.dstNucIdx)/1.0E24;
+        frac=obj.share./dstMAT.atomicMass(obj.nucIdx)/1.0E24;
       else
         if ismember(obj.mode,{'keepAFPM','keepAM','keepTotM'})
-          frac=srcMAT.mFrac(obj.srcNucIdx)./srcMAT.atomicMass(obj.srcNucIdx)/1.0E24;
+          frac=srcMAT.mFrac(obj.nucIdx)./srcMAT.atomicMass(obj.nucIdx)/1.0E24;
         elseif ismember(obj.mode,{'keepAFPA','keepAA','keepTotA'})
-          frac=srcMAT.aFrac(obj.srcNucIdx);
+          frac=srcMAT.aFrac(obj.nucIdx);
         else
-          frac=srcMAT.aFrac(obj.srcNucIdx);
+          frac=srcMAT.aFrac(obj.nucIdx);
         end
       end
       if ismember(obj.mode,{'keepAFPM','keepAM','keepTotM'})
@@ -134,39 +132,42 @@ classdef Rep
           mDefect=dstMAT.initTotActN-dstMAT.totActN;
         case 'remove'
           if obj.rate*tStep<1
-            mDefect=obj.rate*tStep*srcMAT.N(obj.srcNucIdx,end); %not a mass
+            mDefect=obj.rate*tStep*srcMAT.N(obj.nucIdx,end); %not a mass
           else
-            mDefect=srcMAT.N(obj.srcNucIdx,end); %not a mass
+            mDefect=srcMAT.N(obj.nucIdx,end); %not a mass
           end
           frac=obj.share;
       end
       switch fillmode
         case 'atomic'
-          fprintf('%s\n',['** BATCH ** Computed atomic defect: ' num2str(sum(mDefect)*1E24,'%E') ' atoms.']);
+          fprintf('%s\n',['  ** BATCH **   Computed atomic defect: ' num2str(sum(mDefect)*1E24,'%E') ' atoms.']);
         case 'mass'
-          fprintf('%s\n',['** BATCH ** Computed mass defect: ' num2str(sum(mDefect)/1000) ' kg.']);
+          fprintf('%s\n',['  ** BATCH **   Computed mass defect: ' num2str(sum(mDefect)/1000) ' kg.']);
       end
       if obj.srcMatIdx~=0
-        srcMAT.N(:,end+1)=srcMAT.N(:,end);
-        srcMAT.N(obj.srcNucIdx,end)=srcMAT.N(obj.srcNucIdx,end)-frac.*mDefect;
-        changeSrc=srcMAT.N(obj.srcNucIdx,end)-srcMAT.N(obj.srcNucIdx,end-1);
-        nucNames={srcMAT.nuclideName{obj.srcNucIdx}};
+        saveSrc=srcMAT.N(obj.nucIdx,end);
+      end
+      if obj.dstMatIdx~=0
+        saveDst=dstMAT.N(obj.nucIdx,end);
+      end
+      [srcMAT,dstMAT]=transferNuclides(srcMAT,dstMAT,obj.nucIdx,frac.*mDefect);
+      if obj.srcMatIdx~=0
+        changeSrc=srcMAT.N(obj.nucIdx,end)-saveSrc;
+        nucNames={srcMAT.nuclideName{obj.nucIdx}};
         srcMatName=srcMAT.name;
       else
-        changeSrc=zeros(length(find(obj.dstNucIdx)));
+        changeSrc=zeros(length(find(obj.nucIdx)));
         srcMatName='void';
       end
       if obj.dstMatIdx~=0
-        dstMAT.N(:,end+1)=dstMAT.N(:,end);
-        dstMAT.N(obj.dstNucIdx,end)=dstMAT.N(obj.dstNucIdx,end)+frac.*mDefect;
-        changeDst=dstMAT.N(obj.dstNucIdx,end)-dstMAT.N(obj.dstNucIdx,end-1);
-        nucNames={dstMAT.nuclideName{obj.dstNucIdx}};
+        changeDst=dstMAT.N(obj.nucIdx,end)-saveDst;
+        nucNames={dstMAT.nuclideName{obj.nucIdx}};
         dstMatName=dstMAT.name;
       else
-        changeDst=zeros(length(find(obj.srcNucIdx)));
+        changeDst=zeros(length(find(obj.nucIdx)));
         dstMatName='void';
       end
-      fprintf('%s\n','** BATCH ** Summary of changes: ');
+      fprintf('%s\n','  ** BATCH **   Summary of changes: ');
       fprintf('%8s\t\t%13s\t\t%13s\n','Nuc.',srcMatName,dstMatName);
       for i=1:length(changeDst)
         fprintf('%8s\t\t%+13E\t\t%+13E\n',nucNames{i},1E24*changeSrc(i),1E24*changeDst(i));
@@ -189,21 +190,13 @@ classdef Rep
       usesMat=strcmp(obj.srcMat,matName)|strcmp(obj.dstMat,matName);
     end
     function repMtx=get.repMtx(obj)
-      repMtx=spalloc(length(obj.srcNucIdx),length(obj.srcNucIdx),length(obj.elements));
+      repMtx=spalloc(length(obj.nucIdx),length(obj.nucIdx),length(obj.elements));
       if ~obj.isKeep
         if isempty(obj.srcMatIdx) % void source = find destination elements
-          repMtx(sub2ind(size(repMtx),find(obj.dstNucIdx),find(obj.dstNucIdx)))=+obj.share*obj.rate;
+          repMtx(sub2ind(size(repMtx),find(obj.nucIdx),find(obj.nucIdx)))=+obj.share*obj.rate;
         else % non-void source & destination = find both
-          repMtx(sub2ind(size(repMtx),find(obj.srcNucIdx),find(obj.srcNucIdx)))=-obj.share*obj.rate;
+          repMtx(sub2ind(size(repMtx),find(obj.nucIdx),find(obj.nucIdx)))=-obj.share*obj.rate;
         end
-      end
-    end
-    function obj=setIdx(obj,srcMatZAI,dstMatZAI)
-      if ~isempty(srcMatZAI)
-        obj.srcNucIdx=ismember(srcMatZAI,obj.elements);
-      end
-      if ~isempty(dstMatZAI)
-        obj.dstNucIdx=ismember(dstMatZAI,obj.elements);
       end
     end
   end

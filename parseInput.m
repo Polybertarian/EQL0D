@@ -12,7 +12,6 @@ function [MAT,OPT,REP,SYS] = parseInput(MAT,OPT,REP,SYS)
         fprintf('%s\n','****  PCC  **** Predictor-Corrector is OFF.');
     end
 
-    % Adapt vectors (Cycle length, etc.)
     if length(OPT.cycleLength)<OPT.nCycles  % repeat last value in cycleLength vector to match nCycles
         OPT.cycleLength=[OPT.cycleLength repmat(OPT.cycleLength(end),1,OPT.nCycles-length(OPT.cycleLength))];
     end
@@ -20,8 +19,7 @@ function [MAT,OPT,REP,SYS] = parseInput(MAT,OPT,REP,SYS)
         OPT.nSteps=[OPT.nSteps repmat(OPT.nSteps(end),1,OPT.nCycles-length(OPT.nSteps))];
     end
 
-    %% Reactivity control
-    if OPT.reactControl
+    if OPT.reactControl % Reactivity control
         fprintf('%s\n','**** REACT **** Reactivity control is ON.');
         SYS.REA=OPT.REA;
         SYS.reactControl=true;
@@ -64,8 +62,7 @@ function [MAT,OPT,REP,SYS] = parseInput(MAT,OPT,REP,SYS)
         SYS.reactControl=false;
     end
 
-    %% Reprocessing
-    if ~isempty(REP)
+    if ~isempty(REP) % Reprocessing
         matsNeeded=unique({REP.srcMat REP.dstMat}); % materials declared as source/destination for streams
         matsExisting={'' MAT.name}; % materials declared in input
         for j=find(~ismember(matsNeeded,matsExisting))
@@ -84,35 +81,32 @@ function [MAT,OPT,REP,SYS] = parseInput(MAT,OPT,REP,SYS)
             REP(i).dstMatIdx=REP(i).findDst({MAT.name});
             REP(i)=REP(i).adaptElements(MAT(1).ZAI);
             if ~isempty(REP(i).srcMatIdx)
-                REP(i).srcNucIdx=ismember(MAT(REP(i).srcMatIdx).ZAI,REP(i).elements);
+                REP(i).nucIdx=ismember(MAT(REP(i).srcMatIdx).ZAI,REP(i).elements);
                 if REP(i).isKeep
-                    REP(i).srcNucMass=MAT(REP(i).srcMatIdx).atomicMass(REP(i).srcNucIdx);
+                    REP(i).srcNucMass=MAT(REP(i).srcMatIdx).atomicMass(REP(i).nucIdx);
                 end
             end
             if ~isempty(REP(i).dstMatIdx)
-                REP(i).dstNucIdx=ismember(MAT(REP(i).dstMatIdx).ZAI,REP(i).elements);
+                REP(i).nucIdx=ismember(MAT(REP(i).dstMatIdx).ZAI,REP(i).elements);
                 if REP(i).isKeep
-                    REP(i).dstNucMass=MAT(REP(i).dstMatIdx).atomicMass(REP(i).dstNucIdx);
+                    REP(i).dstNucMass=MAT(REP(i).dstMatIdx).atomicMass(REP(i).nucIdx);
                 end
             end
         end
         for i=SYS.IDX.REP.batch % find nuclide positions affected by batch streams
             if isempty(REP(i).srcMatIdx)&&~isempty(REP(i).dstMatIdx)
-                REP(i).srcNucIdx=false(size(MAT(REP(i).dstMatIdx).ZAI));
-                REP(i).dstNucIdx=ismember(MAT(REP(i).dstMatIdx).ZAI,REP(i).elements);
+                REP(i).nucIdx=ismember(MAT(REP(i).dstMatIdx).ZAI,REP(i).elements);
             elseif isempty(REP(i).dstMatIdx)&&~isempty(REP(i).srcMatIdx)
-                REP(i).dstNucIdx=false(size(MAT(REP(i).srcMatIdx).ZAI));
-                REP(i).srcNucIdx=ismember(MAT(REP(i).srcMatIdx).ZAI,REP(i).elements);
+                REP(i).nucIdx=ismember(MAT(REP(i).srcMatIdx).ZAI,REP(i).elements);
             elseif ~isempty(REP(i).dstMatIdx)&&~isempty(REP(i).srcMatIdx)
-                REP(i).srcNucIdx=ismember(MAT(REP(i).srcMatIdx).ZAI,REP(i).elements);
-                REP(i).dstNucIdx=ismember(MAT(REP(i).dstMatIdx).ZAI,MAT(REP(i).srcMatIdx).ZAI(REP(i).srcNucIdx));
+                REP(i).nucIdx=ismember(MAT(REP(i).srcMatIdx).ZAI,REP(i).elements);
             else
                 error('Error: Source and/or Destination not recognized while processing')
             end
         end
         for j=SYS.IDX.REP.batch % Convert to mass fraction for batch streams
             if ismember(REP(j).mode,{'keepTotM','keepAM','keepAFPM'})
-                REP(j).share=REP(j).share.*MAT(REP(j).dstMatIdx).atomicMass(REP(j).dstNucIdx);
+                REP(j).share=REP(j).share.*MAT(REP(j).dstMatIdx).atomicMass(REP(j).nucIdx);
                 REP(j).share=REP(j).share/sum(REP(j).share);
             end
         end
@@ -203,5 +197,4 @@ function [MAT,OPT,REP,SYS] = parseInput(MAT,OPT,REP,SYS)
         [SYS.MTX.rep{[1 2],i}]=deal([]);
     end
     [SYS.MTX.total{[1 2]}]=deal([]);
-
 end

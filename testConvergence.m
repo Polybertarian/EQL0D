@@ -1,29 +1,29 @@
-function SYS = testConvergence(MAT,OPT,SYS,loop)
+function [stopOuter,stopInner] = testConvergence(MAT,OPT,SYS,loop)
 %TESTCONVERGENCE tests convergence in loop of Mat composition based on convParam
 
 switch OPT.iterMode
   case 'steps'
     if strcmp(loop,'outer')
-      SYS.stopOuter=(SYS.RUN.ouCntr>=OPT.nCycles);
+      stopOuter=(SYS.RUN.ouCntr>=OPT.nCycles);
       return
     else
-      SYS.stopInner=(SYS.RUN.inCntr>=OPT.nSteps(SYS.RUN.ouCntr));
+      stopInner=(SYS.RUN.inCntr>=OPT.nSteps(SYS.RUN.ouCntr));
       return
     end
   case 'equilibrium'
     if strcmp(loop,'outer')
       if SYS.RUN.ouCntr>=OPT.nCycles
-        SYS.stopOuter=true;
-        fprintf('%s\n','*** OUTER CONVERGENCE *** maximum iterations reached!');
+        stopOuter=true;
+        fprintf('%s\n',' *** OUTER ***  maximum iterations reached!');
         return
       elseif SYS.RUN.ouCntr==1
-        SYS.stopOuter=false;
+        stopOuter=false;
         return
       end
     else
       if SYS.RUN.inCntr>=OPT.nSteps(SYS.RUN.ouCntr)
-        SYS.stopInner=true;
-        fprintf('%s\n','** INNER CONVERGENCE ** maximum iterations reached!');
+        stopInner=true;
+        fprintf('%s\n','  ** INNER **   maximum iterations reached!');
         return
       end
     end
@@ -57,12 +57,12 @@ switch OPT.iterMode
         switch loop
           case 'inner'
             if floor(SYS.RUN.inCntr/20)==ceil(SYS.RUN.inCntr/20)
-              fprintf('%s\n',['** INNER CONVERGENCE ** outer ' num2str(SYS.RUN.ouCntr) ' inner ' ...
+              fprintf('%s\n',['  ** INNER **   outer ' num2str(SYS.RUN.ouCntr) ' inner ' ...
                 num2str(SYS.RUN.inCntr) ': ' OPT.CONV.(loop).criterion ' in ' MAT(i).name ' for ' ...
                 char(ZAI2Name(MAT(i).ZAI(idx(idx2)))) ': ' num2str(diff,'%.3G')]);
             end
           case 'outer'
-            fprintf('%s\n',['*** OUTER CONVERGENCE *** outer ' num2str(SYS.RUN.ouCntr) ': ' ...
+            fprintf('%s\n',[' *** OUTER ***  outer ' num2str(SYS.RUN.ouCntr) ': ' ...
               OPT.CONV.(loop).criterion ' in ' MAT(i).name ' for ' char(ZAI2Name(MAT(i).ZAI(idx(idx2)))) ': ' ...
               num2str(diff,'%.3G')]);
         end
@@ -96,14 +96,14 @@ end
 switch loop
   case 'inner'
     if all(isConverged)
-      SYS.stopInner=true;
-      fprintf('%s\n',['** INNER CONVERGENCE ** ' loop ' loop of outer iteration ' ...
+      stopInner=true;
+      fprintf('%s\n',['  ** INNER **   ' loop ' loop of outer iteration ' ...
         num2str(SYS.RUN.ouCntr) ' converged after ' num2str(SYS.RUN.inCntr) ' iterations!']);
     end
   case 'outer'
     if all(isConverged)
-      SYS.stopOuter=true;
-      fprintf('%s\n',['*** OUTER CONVERGENCE *** ' loop ' loop converged after ' ...
+      stopOuter=true;
+      fprintf('%s\n',[' *** OUTER ***  ' loop ' loop converged after ' ...
         num2str(SYS.RUN.ouCntr) ' iterations!']);
     end
 end

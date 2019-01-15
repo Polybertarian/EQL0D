@@ -227,7 +227,7 @@ function actMass = get.actMass(obj)
 end
 function molarComp = get.molarComp(obj)
     molarComp=zeros(size(obj.N(:,end)));
-    molarComp(~isElement([8,9,17],obj.ZAI))=obj.N(~isElement([8,9,17],obj.ZAI),end);
+    molarComp(~isElement([9,17],obj.ZAI))=obj.N(~isElement([9,17],obj.ZAI),end);
     molarComp=100*molarComp/sum(molarComp);
     molarComp(isnan(molarComp))=0.0;
 end
@@ -297,12 +297,10 @@ end
 %%% Write/Print
 function status = write(obj,matWriteStyle)
     fileName=[obj.name '.serp'];
-    %Check if existing file & backup
-    if exist(['./' fileName],'file')==2
-        movefile(fileName,[fileName '.bak'],'f')
+    if exist(['./' fileName],'file')==2 %Check if existing file & backup
+        movefile(fileName,[fileName '.bak'],'f');
     end
-    %Open file
-    [fid,errmsg]=fopen(['./' fileName],'w');
+    [fid,errmsg]=fopen(['./' fileName],'w'); %Open file
     if ~isempty(errmsg)
         error(errmsg);
     end
@@ -347,9 +345,9 @@ function status = printMaterial(obj,ouCntr,inCntr,time,style)
     otherwise
         suffix=style;
     end
-    [fid,errmsg]=fopen([obj.name '_' suffix '.txt'],'wt'); %%% Open file
+    [fid,errmsg]=fopen([obj.name '_' suffix '.txt'],'wt'); % Open file
     if ~isempty(errmsg)
-        error(errmsg)
+        error(errmsg);
     end
     matZAI=obj.ZAI;
     matN=obj.N(:,end)*1E24;
@@ -359,7 +357,7 @@ function status = printMaterial(obj,ouCntr,inCntr,time,style)
     matM=matMDens*matV/1000; %kg
     matComp=obj.molarComp;
     matA=obj.activity;   %Bq
-    matH=obj.decayHeat/1E6;        %MW
+    matH=obj.decayHeat/1E6; %MW
     matName=obj.nuclideName;
     idxAct=isActinide(matZAI);
     idxFP=isFP(matZAI);
@@ -374,8 +372,7 @@ function status = printMaterial(obj,ouCntr,inCntr,time,style)
     else
         denat='U-Vector NOT denatured.';
     end
-    %%% Header
-    if obj.isBurned
+    if obj.isBurned % Header
         fprintf(fid,'%s\n',['Material ''' obj.name ''', volume ' num2str(obj.volume,'%.4G')...
         ' cm3, time ' num2str(time,'%.4G') ' EFPD, burn-up '...
         num2str(obj.FIMA,'%.3f') ' %FIMA or ' num2str(obj.FPFrac,'%.3f') ' %FP/(FP+A). ' denat]);
@@ -384,19 +381,15 @@ function status = printMaterial(obj,ouCntr,inCntr,time,style)
         ' cm3, time ' num2str(time,'%.4G') ' EFPD.']);
     end
 
-    printFmt=struct('header',[],'content',[],'line',[]);
-    printFmt.header=['%-9s%-9s' repmat('%-13s',1,11) '\n'];
-    printFmt.content=['%-9s%-9u' repmat('%-13.5E',1,11) '\n'];
-    printFmt.line='%s\n';
+    printFmt=struct('header',[],'content',[],'line',[]); printFmt.header=['%-9s%-9s' repmat('%-13s',1,11) '\n'];
+    printFmt.content=['%-9s%-9u' repmat('%-13.5E',1,11) '\n']; printFmt.line='%s\n';
     printContent=struct('header',[],'line',[]);
     printContent.header={{'Nuclide','ZAI','Atomic dens.','Tot. atoms','Molar frac.','Mass dens.',...
     'Tot. mass','Activity','Dec. heat','Toxicity','Capture','Fissions','(n,2n)'},{'','Units',...
     '[/b.cm^3]','[atoms]','[mol%]','[g/cm^3]','[kg]','[Bq]','[MW]','[Sv]','[/s]','[/s]','[/s]'}};
     printContent.line=repmat('_',1,15*11);
-    fprintf(fid,printFmt.line,printContent.line);
-    fprintf(fid,printFmt.header,printContent.header{1}{:});
-    fprintf(fid,printFmt.header,printContent.header{2}{:});
-    fprintf(fid,printFmt.line,printContent.line);
+    fprintf(fid,printFmt.line,printContent.line); fprintf(fid,printFmt.header,printContent.header{1}{:});
+    fprintf(fid,printFmt.header,printContent.header{2}{:}); fprintf(fid,printFmt.line,printContent.line);
     fprintf(fid,['%-10s%-8s' repmat('%-13.5E',1,11) '\n'],'FPs','20<Z<73',sum(matADens(idxFP)),...
     sum(matN(idxFP)) ,sum(matComp(idxFP)) ,sum(matMDens(idxFP)) ,sum(matM(idxFP)),...
     sum(matA(idxFP)) ,sum(matH(idxFP)) ,sum(matTox(idxFP)) ,sum(matCapt(idxFP)),...
@@ -410,37 +403,25 @@ function status = printMaterial(obj,ouCntr,inCntr,time,style)
     sum(matA(idxAFP)),sum(matH(idxAFP)),sum(matTox(idxAFP)),sum(matCapt(idxAFP)),...
     sum(matFiss(idxAFP)),sum(matN2n(idxAFP)));
     fprintf(fid,['%-10s%-8s' repmat('%-13.5E',1,11) '\n'],'Total','All',sum(matADens),...
-    sum(matN),sum(matComp),sum(matMDens),sum(matM),...
-    sum(matA),sum(matH),sum(matTox),sum(matCapt),...
+    sum(matN),sum(matComp),sum(matMDens),sum(matM),sum(matA),sum(matH),sum(matTox),sum(matCapt),...
     sum(matFiss),sum(matN2n));
     fprintf(fid,printFmt.line,printContent.line);
 
     %%% Nuclide data
     for k=idxExist'
         fprintf(fid,printFmt.content,char(matName{k}),matZAI(k),matADens(k),matN(k),...
-        matComp(k),matMDens(k),matM(k),matA(k),matH(k),matTox(k),matCapt(k),...
-        matFiss(k),matN2n(k));
+        matComp(k),matMDens(k),matM(k),matA(k),matH(k),matTox(k),matCapt(k),matFiss(k),matN2n(k));
     end
     fprintf(fid,printFmt.line,printContent.line);
     for j=1:111
-        elemIdx=isElement(j,obj.ZAI);
-        elemN=sum(matN(elemIdx));
-        elemADens=sum(matADens(elemIdx));
-        elemMDens=sum(matMDens(elemIdx));
-        elemM=sum(matM(elemIdx));
-        elemComp=sum(matComp(elemIdx));
-        elemA=sum(matA(elemIdx));
-        elemH=sum(matH(elemIdx));
-        elemName=ZAI2Name(j);
-        elemFiss=sum(matFiss(elemIdx));
-        elemCapt=sum(matCapt(elemIdx));
-        elemN2n=sum(matN2n(elemIdx));
-        elemTox=sum(matTox(elemIdx));
+        elemIdx=isElement(j,obj.ZAI); elemN=sum(matN(elemIdx)); elemADens=sum(matADens(elemIdx));
+        elemMDens=sum(matMDens(elemIdx)); elemM=sum(matM(elemIdx)); elemComp=sum(matComp(elemIdx));
+        elemA=sum(matA(elemIdx)); elemH=sum(matH(elemIdx)); elemName=ZAI2Name(j); elemFiss=sum(matFiss(elemIdx));
+        elemCapt=sum(matCapt(elemIdx)); elemN2n=sum(matN2n(elemIdx)); elemTox=sum(matTox(elemIdx));
         fprintf(fid,printFmt.content,char(elemName{1}),j,elemADens,elemN,elemComp,...
         elemMDens,elemM,elemA,elemH,elemTox,elemCapt,elemFiss,elemN2n);
     end
-    %%% Close file
-    status=fclose(fid);
+    status=fclose(fid); % Close file
 end
 %%% Methods
 function idx = find(obj,ZAI)
