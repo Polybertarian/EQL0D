@@ -58,13 +58,11 @@ function [MAT,SYS] = reactivityControl(MAT,SYS,REA,IDX)
                 if j==REA.maxIter
                     changeUp(j)=changeUp(max(find(abs(reactDiff)==min(abs(reactDiff)),1,'first')));
                 else
-                    disp(['Search boundaries a=' num2str(a) ' and b=' num2str(b)])
+                    %disp(['Search boundaries a=' num2str(a) ' and b=' num2str(b)])
                     changeUp(j)=max([a min([changeUp(j-1)-reactDiff(j-1)*(b-a)/(fb-fa) b])]); %regula falsi
                     %changeUp(j)=max([min([(changeUp(j-1)*reactDiff(j)-changeUp(j)*reactDiff(j-1))/(reactDiff(j)-reactDiff(j-1)) maxBound]),minBound]);
                 end
             end
-            disp(changeUp(j))
-            disp(MAT(srcMat).N(nucIdx,end)./fraction)
             NChange=changeUp(j)*fraction;
             switch REA.mode
             case 'addMass'
@@ -75,11 +73,9 @@ function [MAT,SYS] = reactivityControl(MAT,SYS,REA,IDX)
             case 'replace'
                 [MAT(srcMat),MAT(dstMat),NRepl] = replaceNuclides(MAT(srcMat),MAT(dstMat),nucIdx,NChange,IDX.replNuc,replFraction);
             end
-            disp(MAT(srcMat).N(nucIdx,end)./fraction)
             [MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat] = renormalizeSystem(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.tgtFissRate);
             [keff,~] = computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.NUBAR,SYS.LEAK);
             reactDiff(j)=1E5*(1/REA.targetKeff-1/keff);
-            disp(reactDiff(j));
             if j==2
                 fb=reactDiff(2);
             else
