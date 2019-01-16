@@ -78,7 +78,7 @@ function main(SYS)
                     end
                     SYS.RUN.PCC.corrector=false; SYS.stopInner=true;
                 else
-                    [~,SYS.stopInner]=testConvergence(MAT,OPT,SYS,'inner');
+                    SYS.stopInner=testConvergence(MAT,OPT,SYS,'inner');
                 end
                 %save([SYS.Casename '.mat'],'-v7');
             end
@@ -87,7 +87,7 @@ function main(SYS)
                     MAT(i).printMaterial(SYS.RUN.ouCntr,SYS.RUN.inCntr,SYS.RUN.nowTime,'EoC'); % Print compositions at EoC
                 end
             end
-            [SYS.stopOuter,~]=testConvergence(MAT,OPT,SYS,'outer'); % Stop outer loop?
+            SYS.stopOuter=testConvergence(MAT,OPT,SYS,'outer'); % Stop outer loop?
         end
 
 

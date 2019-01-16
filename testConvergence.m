@@ -1,4 +1,4 @@
-function [stopOuter,stopInner] = testConvergence(MAT,OPT,SYS,loop)
+function stopLoop = testConvergence(MAT,OPT,SYS,loop)
 %TESTCONVERGENCE tests convergence in loop of Mat composition based on convParam
 
 switch OPT.iterMode
