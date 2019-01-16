@@ -4,25 +4,25 @@ function stopLoop = testConvergence(MAT,OPT,SYS,loop)
 switch OPT.iterMode
   case 'steps'
     if strcmp(loop,'outer')
-      stopOuter=(SYS.RUN.ouCntr>=OPT.nCycles);
+      stopLoop=(SYS.RUN.ouCntr>=OPT.nCycles);
       return
     else
-      stopInner=(SYS.RUN.inCntr>=OPT.nSteps(SYS.RUN.ouCntr));
+      stopLoop=(SYS.RUN.inCntr>=OPT.nSteps(SYS.RUN.ouCntr));
       return
     end
   case 'equilibrium'
     if strcmp(loop,'outer')
       if SYS.RUN.ouCntr>=OPT.nCycles
-        stopOuter=true;
+        stopLoop=true;
         fprintf('%s\n',' *** OUTER ***  maximum iterations reached!');
         return
       elseif SYS.RUN.ouCntr==1
-        stopOuter=false;
+        stopLoop=false;
         return
       end
     else
       if SYS.RUN.inCntr>=OPT.nSteps(SYS.RUN.ouCntr)
-        stopInner=true;
+        stopLoop=true;
         fprintf('%s\n','  ** INNER **   maximum iterations reached!');
         return
       end
@@ -96,13 +96,13 @@ end
 switch loop
   case 'inner'
     if all(isConverged)
-      stopInner=true;
+      stopLoop=true;
       fprintf('%s\n',['  ** INNER **   ' loop ' loop of outer iteration ' ...
         num2str(SYS.RUN.ouCntr) ' converged after ' num2str(SYS.RUN.inCntr) ' iterations!']);
     end
   case 'outer'
     if all(isConverged)
-      stopOuter=true;
+      stopLoop=true;
       fprintf('%s\n',[' *** OUTER ***  ' loop ' loop converged after ' ...
         num2str(SYS.RUN.ouCntr) ' iterations!']);
     end
