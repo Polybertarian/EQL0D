@@ -25,6 +25,7 @@ function main(SYS)
             if ~SYS.debugMode||SYS.RUN.ouCntr==1
                 [MAT,SYS] = loadSerpentData(MAT,SYS); % Read Serpent outputs
                 if ~SYS.debugMode
+                    saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS.Casename,SYS.RUN.ouCntr,~SYS.RUN.PCC.corrector&SYS.RUN.PCC.active);
                     if SYS.RUN.ouCntr==1
                         SYS.RUN.ouCntr=0;
                     end
@@ -38,7 +39,6 @@ function main(SYS)
                     if SYS.RUN.ouCntr==0
                         SYS.RUN.ouCntr=1;
                     end
-                    saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS.Casename,SYS.RUN.ouCntr,~SYS.RUN.PCC.corrector&SYS.RUN.PCC.active);
                     printK(SYS,'AB','C','Serpent'); % Print keff and kinf to file
                 end
             end
@@ -62,15 +62,15 @@ function main(SYS)
                     SYS.RUN.PCC.corrector=true; SYS.RUN.PCC.nSteps=OPT.nSteps(SYS.RUN.ouCntr);
                     runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores); % Run Serpent/Read outputs
                     [MAT,SYS] = loadSerpentData(MAT,SYS);
-                    SYS.RUN.nowTime(end+1)=SYS.RUN.nowTime(end)-SYS.RUN.tStep(end)*OPT.nSteps(SYS.RUN.ouCntr)/(24.0*3600.0);
-                    for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
-                        MAT(i).N(:,end+1)=SYS.prevN.BOC(:,i);
-                    end
-                    SYS = buildSystemMatrices(MAT,REP,SYS);
                     saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS.Casename,SYS.RUN.ouCntr,~SYS.RUN.PCC.corrector&SYS.RUN.PCC.active);
                     printK(SYS,'AB','P','Serpent');
                     [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT(SYS.IDX.MAT.inFlux),SYS.RR(3).notInMat,SYS.NUBAR,SYS.LEAK);
                     printK(SYS,'AB','P','EQL0D');
+                    
+                    SYS.RUN.nowTime(end+1)=SYS.RUN.nowTime(end)-SYS.RUN.tStep(end)*OPT.nSteps(SYS.RUN.ouCntr)/(24.0*3600.0);
+                    for i=[SYS.IDX.MAT.burn SYS.IDX.MAT.decay]
+                        MAT(i).N(:,end+1)=SYS.prevN.BOC(:,i);
+                    end
 
                     while SYS.RUN.inCntr<=OPT.nSteps(SYS.RUN.ouCntr) %%Burn system
                         [MAT,SYS]=burnCycle(MAT,OPT,REP,SYS);
@@ -89,7 +89,6 @@ function main(SYS)
             end
             SYS.stopOuter=testConvergence(MAT,OPT,SYS,'outer'); % Stop outer loop?
         end
-
 
         if ~SYS.debugMode % Last step / Equilibrium results
             runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores);
