@@ -52,21 +52,11 @@ if [ -z "$1" ] ; then
 	exit 1
 fi
 
-# Hostname check (PSI)
-if [[ $(hostname) != lclrs[0-9][0-9] ]] && [[ $(hostname) != lchpc0[6-7] ]]; then
-       echo "Error: $(hostname) is not able to run an EQL0D calculation." >&2
-       exit 1
-fi
-
 EQL0D_COMMAND="Cases={''"
 for file in "$@" ; do
 	EQL0D_COMMAND+=",'$file'"
 done
 EQL0D_COMMAND+="};addpath('$(dirname $0)');Cases(1)=[];EQL0Dlauncher(Cases,$CORES,$VERBOSE,$PRINTNQUIT,$RESTART,$RESET,$DEBUG);exit"
 
-#if [[ $(hostname) = lclrs[0-9][0-9] ]]; then
-k5run -B matlab -nodisplay -nojvm -nosplash -nodesktop -r $EQL0D_COMMAND &> EQL0D.log &
-#else
-#nohup matlab -nodisplay -nojvm -nosplash -nodesktop -r $EQL0D_COMMAND > EQL0D.log  &
-#fi
+matlab -nodisplay -nojvm -nosplash -nodesktop -r $EQL0D_COMMAND &> EQL0D.log &
 exit 0 

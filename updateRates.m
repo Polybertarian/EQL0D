@@ -1,28 +1,22 @@
-function [MAT, MTX] = updateRates(MAT,SYS)
+function MAT = updateRates(MAT,SYS)
 %MAT = UPDATERATES(MAT,SYS) Updates reaction rates in case of PCC
-if(SYS.PCC.corrector)
-    coeffs=(SYS.inCntr-1)/SYS.PCC.nSteps;
-    coeffs=[1-coeffs coeffs];
-    mCaptXS=coeffs(1)*SYS.RR.inMat{1}.capt+coeffs(2)*SYS.RR.inMat{2}.capt;
-    mFissXS=coeffs(1)*SYS.RR.inMat{1}.fiss+coeffs(2)*SYS.RR.inMat{2}.fiss;
-    mN2nXS =coeffs(1)*SYS.RR.inMat{1}.n2n+coeffs(2)*SYS.RR.inMat{2}.n2n;
-    mN3nXS =coeffs(1)*SYS.RR.inMat{1}.n3n+coeffs(2)*SYS.RR.inMat{2}.n3n;
-    for i=SYS.IDX.MAT.inFlux
-        MAT(i).mCaptXS=mCaptXS;
-        MAT(i).mFissXS=mFissXS;
-        MAT(i).mN2nXS=mN2nXS;
-        MAT(i).mN3nXS=mN3nXS;
-    end
-    MTX=coeffs(1)*SYS.MTX.total{1}+coeffs(2)*SYS.MTX.total{2}; %%% Interpolate and solve 
-else
-    for i=SYS.IDX.MAT.inFlux
-        MAT(i).mCaptXS=SYS.RR.inMat{2}.capt;
-        MAT(i).mFissXS=SYS.RR.inMat{2}.fiss;
-        MAT(i).mN2nXS =SYS.RR.inMat{2}.n2n;
-        MAT(i).mN3nXS =SYS.RR.inMat{2}.n3n;
-    end
-    MTX=[];
+
+coeffs = interpCoeffs(SYS);
+
+for i=SYS.IDX.MAT.inFlux
+    MAT(i).mCaptXS=coeffs(3)*SYS.RR.devCapt(3,i)*SYS.RR.inMat{3}.capt...
+        +coeffs(2)*SYS.RR.devCapt(2,i)*SYS.RR.inMat{2}.capt...
+        +coeffs(1)*SYS.RR.devCapt(1,i)*SYS.RR.inMat{1}.capt;
+    MAT(i).mFissXS=coeffs(3)*SYS.RR.devFiss(3,i)*SYS.RR.inMat{3}.fiss...
+        +coeffs(2)*SYS.RR.devFiss(2,i)*SYS.RR.inMat{2}.fiss...
+        +coeffs(1)*SYS.RR.devFiss(1,i)*SYS.RR.inMat{1}.fiss;
+    MAT(i).mN2nXS =coeffs(3)*SYS.RR.inMat{3}.n2n +coeffs(2)*SYS.RR.inMat{2}.n2n...
+        +coeffs(1)*SYS.RR.inMat{1}.n2n;
+    MAT(i).mN3nXS =coeffs(3)*SYS.RR.inMat{3}.n3n +coeffs(2)*SYS.RR.inMat{2}.n3n...
+        +coeffs(1)*SYS.RR.inMat{1}.n3n;
 end
+
 return
+
 end
 
