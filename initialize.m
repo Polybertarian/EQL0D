@@ -74,7 +74,7 @@ else
   SYS.RR.LEAK=cell(2,1);
   SYS.MTX.defaultDecay=sparse(DAT.decayMatrix(isProduced(DAT.libraryName,DAT.ZAI0),isProduced(DAT.libraryName,DAT.ZAI0)));
   if(OPT.PCC)
-    OPT.renormalize=false;
+  %  OPT.renormalize=false;
   end
   
   %%% Write material compositions for Serpent
