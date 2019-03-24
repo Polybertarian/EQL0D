@@ -1,6 +1,6 @@
 function [INGTOX,INHTOX] = ingAndInhTox(ZAI)
-%INGTOX [INGTOX,INHTOX] = INGANDINHTOX(ZAI) returns the ingestion and 
-%inhalation radiotoxicities for the nuclides in the ZAI vector. 
+%INGTOX [INGTOX,INHTOX] = INGANDINHTOX(ZAI) returns the ingestion and
+%inhalation radiotoxicities for the nuclides in the ZAI vector.
 %They are hard-coded here. Taken from radiotox.h in Serpent files.
 
 DATA=[
@@ -2018,4 +2018,3 @@ INHTOX(ismember(ZAI,DATA(:,1)))=DATA(ismember(DATA(:,1),ZAI),3);
 
 return
 end
-

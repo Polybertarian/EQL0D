@@ -4,7 +4,7 @@ function main(SYS)
 
 try
     [MAT,OPT,REP,SYS] = initialize(SYS); %%% Initialize or restart from .mat file
-    
+
     %% Outer Loop / Cycles
     while(~SYS.stopOuter)
         SYS.ouCntr=SYS.ouCntr+1; SYS.inCntr=0;
@@ -38,7 +38,7 @@ try
                 if(SYS.ouCntr==0)
                     SYS.ouCntr=1;
                 end
-                saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS.Casename,SYS.ouCntr,~SYS.PCC.corrector&SYS.PCC.active);  
+                saveFiles({MAT(SYS.IDX.MAT.burn).name},OPT.keepFiles,SYS.Casename,SYS.ouCntr,~SYS.PCC.corrector&SYS.PCC.active);
                 %%% Move files to folder
                 printK(SYS,'AB','C','Serpent'); % print keff and kinf to file
             end
@@ -56,9 +56,9 @@ try
             for i=1:length(MAT)
                 SYS.prevN.BOC=[SYS.prevN.BOC MAT(i).N(:,end)]; %%% Store compositions from previous loop
             end
-            
+
             [MAT,SYS]=burnCycle(MAT,OPT,REP,SYS);  % deplete materials and perform batch operations
-            
+
             if(OPT.PCC&&~SYS.debugMode) %Corrector step
                 SYS.PCC.corrector=true; SYS.PCC.nSteps=OPT.nSteps(SYS.ouCntr);
                 runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores,SYS.FID.log); %%% Run Serpent/Read outputs
@@ -72,7 +72,7 @@ try
                 printK(SYS,'AB','P','Serpent');
                 [SYS.KEFF.EQL0D(end+1),SYS.KINF.EQL0D(end+1)]=computeK(MAT,SYS);
                 printK(SYS,'AB','P','EQL0D');
-                
+
                 while(SYS.inCntr<=OPT.nSteps(SYS.ouCntr)) %%% Burn system
                     [MAT,SYS]=burnCycle(MAT,OPT,REP,SYS);
                     SYS.inCntr=SYS.inCntr+1;
@@ -90,7 +90,7 @@ try
         end
         SYS=testConvergence(MAT,OPT,SYS,'outer'); %%% stop outer loop?
     end
-    
+
     %% Last step / Equilibrium results
     if(~SYS.debugMode)
         runSerpent(OPT.serpentPath,SYS.Casename,SYS.nCores,SYS.FID.log);

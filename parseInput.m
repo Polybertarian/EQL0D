@@ -25,7 +25,7 @@ if(OPT.reactControl)
   if ~iscolumn(OPT.REA.replFraction)
     OPT.REA.replFraction=OPT.REA.replFraction';
   end
-  
+
   SYS.IDX.REA.target=find(strcmp({MAT.name},OPT.REA.targetMat));
   if ~isempty(OPT.REA.feedMat)
     SYS.IDX.REA.feed=find(strcmp({MAT.name},OPT.REA.feedMat));
@@ -68,16 +68,16 @@ if ~isempty(REP)
   for j=find(~ismember(matsNeeded,matsExisting))
     MAT(end+1)=Mat(matsNeeded{j},0,0,1e6,0,[],[]); % create dummy materials
   end
-  
+
   %%% Look for continuous/batch reprocessing streams
   REP=REP([find([REP.isCont]&~[REP.isKeep]) find([REP.isCont]&[REP.isKeep])...
     find([REP.isBatch]&~[REP.isKeep]) find([REP.isBatch]&[REP.isKeep])]);
-  
+
   SYS.IDX.REP.cont =find([REP.isCont]);
   SYS.IDX.REP.batch=find([REP.isBatch]);
   SYS.IDX.REP.keep =find([REP.isKeep]);
   SYS.IDX.REP.contKeep=find([REP.isKeep]&[REP.isCont]);
-  
+
   %%% Identify source and destination material indexes
   for i=1:length(REP)
     REP(i).srcMatIdx=REP(i).findSrc({MAT.name});
@@ -96,7 +96,7 @@ if ~isempty(REP)
       end
     end
   end
-  
+
   %%% find nuclide positions affected by batch streams
   for i=SYS.IDX.REP.batch
     if isempty(REP(i).srcMatIdx)&&~isempty(REP(i).dstMatIdx)
@@ -112,7 +112,7 @@ if ~isempty(REP)
       error('Error: Source and/or Destination not recognized while processing')
     end
   end
-  
+
   %%% Convert to mass fraction for batch streams
   for j=SYS.IDX.REP.batch
     if ismember(REP(j).mode,{'keepTotM','keepAM','keepAFPM'})
@@ -121,7 +121,7 @@ if ~isempty(REP)
     end
   end
   %%% indexes refering to materials in flux
-  
+
   SYS.IDX.MAT.cont=find(ismember({MAT.name},unique({REP([REP.isCont]).srcMat REP([REP.isCont]).dstMat})));
 else %no reprocessing
   SYS.IDX.REP.cont=[];
@@ -235,4 +235,3 @@ end
 [SYS.MTX.total{[1 2]}]=deal([]);
 
 end
-

@@ -6,4 +6,3 @@ for j=SYS.IDX.MAT.burn
 end
 return
 end
-

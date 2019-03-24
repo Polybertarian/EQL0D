@@ -1,5 +1,5 @@
 function EQL0Dlauncher(Cases,nCores,verbose,printNquit,restart,reset,debug)
-% Launcher for EQL0D, handles batch case launching 
+% Launcher for EQL0D, handles batch case launching
 SYS=struct('nCores',nCores,'verboseMode',logical(verbose),'printAndQuit',logical(printNquit),...
     'restartCalc',logical(restart),'resetCounters',logical(reset),'debugMode',logical(debug));
 format long

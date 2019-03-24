@@ -440,4 +440,3 @@ haveSymbol=[
 varargout = {ismember([varargin{:}],haveSymbol)};
 
 end
-

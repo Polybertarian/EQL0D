@@ -123,4 +123,3 @@ parfor i=SYS.IDX.MAT.burn
     MAT(i).write(OPT.matWriteStyle); %%% Write compositions
 end
 end
-

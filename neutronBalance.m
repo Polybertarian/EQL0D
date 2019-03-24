@@ -26,14 +26,14 @@ for i=1:nMat
     nBalance(nNuc+1,nCols*(i-1)+1)=sum(atoms(idxAct));
     nBalance(nNuc+1,nCols*(i-1)+2)=sum(captRate(idxAct));
     nBalance(nNuc+1,nCols*(i-1)+3)=sum(fissRate(idxAct));
-    nBalance(nNuc+1,nCols*(i-1)+4)=sum(n2nRate(idxAct)); 
-    nBalance(nNuc+1,nCols*(i-1)+5)=sum(decRate(idxAct)); 
+    nBalance(nNuc+1,nCols*(i-1)+4)=sum(n2nRate(idxAct));
+    nBalance(nNuc+1,nCols*(i-1)+5)=sum(decRate(idxAct));
     %FPs
     nBalance(nNuc+2,nCols*(i-1)+1)=sum(atoms(idxFP));
     nBalance(nNuc+2,nCols*(i-1)+2)=sum(captRate(idxFP));
     nBalance(nNuc+2,nCols*(i-1)+3)=sum(fissRate(idxFP));
-    nBalance(nNuc+2,nCols*(i-1)+4)=sum(n2nRate(idxFP));  
-    nBalance(nNuc+2,nCols*(i-1)+5)=sum(decRate(idxFP)); 
+    nBalance(nNuc+2,nCols*(i-1)+4)=sum(n2nRate(idxFP));
+    nBalance(nNuc+2,nCols*(i-1)+5)=sum(decRate(idxFP));
     %Others
     nBalance(nNuc+3,nCols*(i-1)+1)=sum(atoms(idxOth));
     nBalance(nNuc+3,nCols*(i-1)+2)=sum(captRate(idxOth));
@@ -44,8 +44,8 @@ for i=1:nMat
     nBalance(nNuc+4,nCols*(i-1)+1)=sum(atoms);
     nBalance(nNuc+4,nCols*(i-1)+2)=sum(captRate);
     nBalance(nNuc+4,nCols*(i-1)+3)=sum(fissRate);
-    nBalance(nNuc+4,nCols*(i-1)+4)=sum(n2nRate); 
-    nBalance(nNuc+4,nCols*(i-1)+5)=sum(decRate); 
+    nBalance(nNuc+4,nCols*(i-1)+4)=sum(n2nRate);
+    nBalance(nNuc+4,nCols*(i-1)+5)=sum(decRate);
 end
 matZAI(~any(nBalance(:,2:4),2))=[];
 matNames(~any(nBalance(:,2:4),2))=[];

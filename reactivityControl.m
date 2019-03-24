@@ -19,7 +19,7 @@ if(criterion) %activate reactivity control if above tolerance
     saveFeed=MAT(SYS.IDX.REA.feed).N(:,end);
   end
   fprintf(SYS.FID.log,'%s\n',['** REACT ** k-eff: ' num2str(SYS.KEFF.EQL0D(end)) ' > tol. limit, searching...']);
-  
+
   switch REA.mode
     case {'replace','addMass'}
       j=0;
