@@ -27,6 +27,7 @@ if SYS.restartCalc
     error(errmsg)
   end
 else
+  run('userPrefs.m')
   run('defaultConfig.m'); %%% Default config
   if exist([SYS.Casename '.m'],'file')==2
     run([SYS.Casename '.m']);
