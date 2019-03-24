@@ -15,16 +15,17 @@ exst=[exist([SYS.Casename '_arr0.m'],'file')==2,...
 for i=SYS.IDX.MAT.burn
     exst(end+1)=(exist(['depmtx_' MAT(i).name '0.m'],'file')==2);
 end
-if(~all(exst))
+if ~all(exst)
     error('Error: Serpent outputs not found!')
 end
 
 %%% Remove oldest step data
 SYS.RR.notInMat(1)=[]; SYS.RR.inMat(1)=[];
-SYS.RR.NU(1,:)=[]; SYS.RR.LEAK(1)=[]; SYS.RR.LEAK(3)=0;
+SYS.RR.NU(1,:)=[]; SYS.RR.LEAK(1)=[];
 %SYS.RR.intCapt(1,:)=[]; SYS.RR.intCapt(3,1:numel(MAT))=zeros(1,numel(MAT));
 %SYS.RR.intFiss(1,:)=[]; SYS.RR.intFiss(3,1:numel(MAT))=zeros(1,numel(MAT));
 %SYS.RR.intProd(1,:)=[]; SYS.RR.intProd(3,1:numel(MAT))=zeros(1,numel(MAT));
+%SYS.RR.LEAK(3)=0;
 SYS.RR.NU(3,1:numel(MAT))=zeros(1,numel(MAT));
 SYS.RR.devFiss(1,:)=[];SYS.RR.devCapt(1,:)=[];
 SYS.RR.devFiss(3,1:numel(MAT))=zeros(1,numel(MAT));
@@ -37,7 +38,7 @@ for i=SYS.IDX.MAT.inFlux
     SYS.RR.intCapt(i)=DETintCapt(i,11);
     SYS.RR.intFiss(i)=DETintFiss(i,11);
     SYS.RR.intProd(i)=DETintProd(i,11);
-    if(SYS.RR.intFiss(i)~=0)
+    if SYS.RR.intFiss(i)~=0
         SYS.RR.NU(3,i)=SYS.RR.intProd(i)/SYS.RR.intFiss(i);
     end
 end
@@ -102,6 +103,3 @@ end
 %sigma_1*phi1*N1+sigma_2*phi2*N2 = ftot
 %sigma_av = ftot/(phi1*N1+phi2*N2)
 %sigma_1 = F1/(phi1*N1)
-
-
-
