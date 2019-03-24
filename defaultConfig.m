@@ -1,5 +1,5 @@
 %%% Default values
-OPT.serpentPath='sss2';
+OPT.serpentPath='runsss /afs/psi.ch/project/fast_lrs/workspace/COD/SERP/Serpent2/EQL0D/2.1.30/sss2';
 OPT.cycleLength=365;
 OPT.nCycles=9;
 OPT.nSteps=[50 2000];
@@ -27,7 +27,7 @@ OPT.REA.replFraction=[];
 OPT.REA.feedMat='feed';
 OPT.REA.targetMat='fuel';
 OPT.REA.tol=200; %pcm
-OPT.REA.maxIter=50; 
+OPT.REA.maxIter=50;
 
 %%% Redox control
 OPT.redoxControl=false;
