@@ -492,7 +492,7 @@ classdef Mat
             burnZAI=obj.ZAI(obj.burnIdx);
         end
         function obj=loadBurnMatrix(obj)
-            run(strtrim(ls(['depmtx_' obj.name '*0.m'])));
+            run(strtrim(ls(['depmtx_' obj.name '0.m'])));
             clearvars N0 N1 t
             A=sparse(A);
             idx=find(ismember(ZAI,[-1 10 666]));
