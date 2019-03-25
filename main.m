@@ -124,7 +124,7 @@ try
     return
 catch exception %%% error handling
     fprintf('%s\n',getReport(exception,'extended'));
-    save([SYS.Casename '_err.mat'])
+    save([SYS.Casename '.mat'])
     [~,~]=unix(['echo "...in ' pwd ' !" | mail -s "EQL0D crashed!" $LOGNAME']);
     exit(1)
 end
