@@ -142,18 +142,46 @@ function [MAT,OPT,REP,SYS] = initialize(SYS)
         %  fprintf(fID,'\n%s\n','set depmtx 1 1');
         %  fclose(fID);
         %end
-        [~,isAbsent]=unix(['grep -c "set arr 1" ' SYS.Casename]);
-        if str2double(isAbsent)==0
+        isAbsent=[]; % Check presence of necessary input parameters in Serpent file
+        %[~,isAbsent{end+1}]=unix(['grep -c "set depmtx 1" ' inputName]);
+        [status,isAbsent{end+1}]=unix(['grep -c "set arr 1" ' SYS.Casename]);
+        [status,isAbsent{end+1}]=unix(['grep -c "det intFlux" ' SYS.Casename]);
+        [status,isAbsent{end+1}]=unix(['grep -c "det intFiss" ' SYS.Casename]);
+        [status,isAbsent{end+1}]=unix(['grep -c "det intProd" ' SYS.Casename]);
+        [status,isAbsent{end+1}]=unix(['grep -c "det intCapt" ' SYS.Casename]);
+        isAbsent=~logical(str2double(isAbsent));
+
+        if any(isAbsent)
             [fID,~]=fopen(SYS.Casename,'a');
-            fprintf(fID,'\n%s\n','set arr 1 0');
-            fclose(fID);
-        end
-        [~,isAbsent]=unix(['grep -c "det intFlux" ' SYS.Casename]);
-        if str2double(isAbsent)==0
-            [fID,~]=fopen(SYS.Casename,'a');
-            fprintf(fID,'\n%s','det intFlux ');
-            for i=SYS.IDX.MAT.inFlux
-                fprintf(fID,'%s',['dm ' MAT(i).name ' ']);
+            % if isAbsent(1)
+            % fprintf(fID,'\n%s\n','set depmtx 1 1');
+            % end
+            if isAbsent(1)
+                fprintf(fID,'\n%s\n','set arr 1 0');
+            end
+            if isAbsent(2)
+                fprintf(fID,'\n%s','det intFlux ');
+                for i=SYS.IDX.MAT.inFlux
+                    fprintf(fID,'%s',['dm ' MAT(i).name ' ']);
+                end
+            end
+            if isAbsent(3)
+                fprintf(fID,'\n%s','det intFiss dr -6 void ');
+                for i=SYS.IDX.MAT.inFlux
+                    fprintf(fID,'%s',['dm ' MAT(i).name ' ']);
+                end
+            end
+            if isAbsent(4)
+                fprintf(fID,'\n%s','det intProd dr -7 void ');
+                for i=SYS.IDX.MAT.inFlux
+                    fprintf(fID,'%s',['dm ' MAT(i).name ' ']);
+                end
+            end
+            if isAbsent(5)
+                fprintf(fID,'\n%s','det intCapt dr -2 void ');
+                for i=SYS.IDX.MAT.inFlux
+                    fprintf(fID,'%s',['dm ' MAT(i).name ' ']);
+                end
             end
             fclose(fID);
         end
