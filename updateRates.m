@@ -17,5 +17,4 @@ for i=SYS.IDX.MAT.inFlux
 end
 
 return
-
 end

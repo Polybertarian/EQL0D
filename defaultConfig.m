@@ -35,7 +35,7 @@ OPT.REDOX.replaceMode='replaceMass';
 OPT.REDOX.replaceWith=922380;
 
 %%% Misc
-OPT.writeMail=true;
+OPT.writeMail=false;
 OPT.matWriteStyle='nofix';
 OPT.keepFiles=true;
 
