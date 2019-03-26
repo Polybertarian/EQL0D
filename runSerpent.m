@@ -1,4 +1,4 @@
-function [] = runSerpent(serpentPath,Casename,nCores,logFID)
+function [] = runSerpent(serpentPath,Casename,nCores)
 %RUNSERPENT Calls OPT.serpentPath with input fileName and nCores
 
 if(exist([Casename '.seed'],'file')==2)
@@ -10,7 +10,7 @@ end
 if(status~=0)
     error('Error: SSS simulation aborted');
 else
-    fprintf(logFID,'%s\n','*** SERPENT *** Serpent run finished!');
+    fprintf('%s\n','*** SERPENT *** Serpent run finished!');
 end
 return
 end

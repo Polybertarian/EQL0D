@@ -9,7 +9,6 @@ function [MAT,OPT,REP,SYS] = initialize(SYS)
 
     if SYS.restartCalc
         load([SYS.Casename '.mat']);
-        [SYS.FID.log,errmsg]=fopen([SYS.Casename '.log'],'at');
         if ~isempty(errmsg)
             error(errmsg)
         end
@@ -34,7 +33,6 @@ function [MAT,OPT,REP,SYS] = initialize(SYS)
         else
             error(['Cannot find configuration file ' SYS.Casename '.m !'])
         end
-        [SYS.FID.log,errmsg]=fopen([SYS.Casename '.log'],'wt');
         if ~isempty(errmsg)
             error(errmsg)
         end
@@ -188,7 +186,7 @@ function [MAT,OPT,REP,SYS] = initialize(SYS)
     end
     clearvars -except OPT SYS DAT MAT REP
     save([SYS.Casename '.mat']);
-    fprintf(SYS.FID.log,'%s\n','**** EQL0D **** Procedure initialized.');
+    fprintf('%s\n','**** EQL0D **** Procedure initialized.');
 
     return
 end
