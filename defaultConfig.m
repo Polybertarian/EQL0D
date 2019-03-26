@@ -37,7 +37,7 @@ OPT.REDOX.replaceWith=922380;
 %%% Misc
 OPT.writeMail=false;
 OPT.matWriteStyle='nofix';
-OPT.keepFiles=true;
+OPT.keepFiles={};
 
 %%% Convergence
 OPT.CONV.inner.criterion='maxNucDatRelDiff';

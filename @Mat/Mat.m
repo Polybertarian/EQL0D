@@ -437,7 +437,7 @@ classdef Mat
         end
         %%% Methods
         function idx = find(obj,ZAI)
-            if(all(ZAI<1000))
+            if all(ZAI<1000) 
                 idx=find(isElement(ZAI,obj.ZAI));
             else
                 idx=find(ismember(obj.ZAI,ZAI));
@@ -456,7 +456,7 @@ classdef Mat
         end
         function [obj,sol] = redoxControl(obj,halideIdx,nucIdx,mode)
             excess=sum(obj.oxState.*obj.N(:,end));
-            if(excess~=0)
+            if excess~=0
                 alpha_halide=obj.N(halideIdx,end)/sum(obj.N(halideIdx,end));
                 alpha_target=obj.N(nucIdx,end)/sum(obj.N(nucIdx,end));
                 switch mode
@@ -476,7 +476,7 @@ classdef Mat
             dN=obj.N(:,end)-obj.N(:,end-1);
         end
         function nBMtx = normBurnMtx(obj,coeffs)
-            if(obj.isInFlux)
+            if obj.isInFlux
                 nBMtx=obj.burnMtx{3}*coeffs(3);
                 for i=1:2
                     if ~isempty(obj.burnMtx{i})
