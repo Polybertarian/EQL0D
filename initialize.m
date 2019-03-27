@@ -9,15 +9,12 @@ function [MAT,OPT,REP,SYS] = initialize(SYS)
 
     if SYS.restartCalc
         load([SYS.Casename '.mat']);
-        if ~isempty(errmsg)
-            error(errmsg)
-        end
         [SYS.FID.keff,errmsg]=fopen('keff.txt','at');
 
         if OPT.reactControl
             switch OPT.REA.mode
             case {'replace','addMass'}
-                SYS.FID.react=fopen('reactivity.txt','at');
+                [SYS.FID.react,errmsg]=fopen('reactivity.txt','at');
             case 'addVolume'
                 [SYS.FID.volume,errmsg]=fopen('volume.txt','at');
             end
@@ -33,16 +30,12 @@ function [MAT,OPT,REP,SYS] = initialize(SYS)
         else
             error(['Cannot find configuration file ' SYS.Casename '.m !'])
         end
-        if ~isempty(errmsg)
-            error(errmsg)
-        end
         if SYS.resetCounters
             tmp=load([SYS.Casename '.mat'],'MAT');
             for i=find([MAT.isCont]&~[MAT.isStr])
                 MAT(i).N(:,end+1)=tmp.MAT(i).N(:,end);
             end
         end
-
         if exist('DAT','var')~=1 % load isotope list and properties
             warning('Library undefined! Loading default...')
             load([OPT.defaultDataLibrary '.mat'],DAT)
@@ -50,7 +43,7 @@ function [MAT,OPT,REP,SYS] = initialize(SYS)
         SYS.nuclearDataLibrary=DAT.libraryName;
         if ~exist('MAT','var')
             error('Error: MAT vector undefined!')
-        elseif(isempty(MAT))
+        elseif isempty(MAT)
             error('Error: MAT vector empty!')
         end
         if ~exist('REP','var')
