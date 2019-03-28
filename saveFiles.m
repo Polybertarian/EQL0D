@@ -19,7 +19,6 @@ function saveFiles(matNames,keepFiles,Casename,ouCntr,PCCActive)
     end
 
     cycleExt=num2str(ouCntr-1,'%.2d');
-    if ouCntr>1
         if exist([Casename '_res' '.m'],'file')==2
             movefile([Casename '_res' '.m'],[Casename '_res' cycleExt '.m']);
         end
@@ -33,5 +32,4 @@ function saveFiles(matNames,keepFiles,Casename,ouCntr,PCCActive)
                 movefile(['depmtx_' matNames{j} '0.m'],['depmtx_' matNames{j} cycleExt '.m']);
             end
         end
-    end
 end
