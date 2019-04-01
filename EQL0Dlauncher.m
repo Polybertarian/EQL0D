@@ -26,7 +26,7 @@ function EQL0Dlauncher(Cases,nCores,verbose,printNquit,restart,reset,debug)
                     end
                     dirName=['run' num2str(j,'%.2d')];
                     mkdir(dirName);
-                    files2Move=[dir('depmtx_*.m');dir('*_res*.m');dir('*_arr*.m');dir('*_det*.m');dir('*.mat');dir('*.txt');dir([SYS.Casename '.log'])];
+                    files2Move=[dir('depmtx_*.m');dir('*_res*.m');dir('*_arr*.m');dir('*_det*.m');dir('*.mat');dir('*.txt');dir(['EQL0D.log'])];
                     files2Move={files2Move.name};
                     for k=1:numel(files2Move)
                         movefile(files2Move{k},dirName);
