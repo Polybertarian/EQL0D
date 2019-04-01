@@ -365,13 +365,11 @@ classdef Mat
                 denat='U-Vector NOT denatured.';
             end
             %%% Header
+            fprintf(fid,'%s',['Material ''' obj.name ''', volume ' num2str(obj.volume,'%.4G') ' cm3, time ' num2str(SYS.nowTime(end),'%.4G') ' EFPD'])
             if obj.isBurned
-                fprintf(fid,'%s\n',['Material ''' obj.name ''', volume ' num2str(obj.volume,'%.4G')...
-                    ' cm3, time ' num2str(SYS.nowTime(end),'%.4G') ' EFPD, burn-up '...
-                    num2str(obj.FIMA,'%.3f') ' %FIMA or ' num2str(obj.FPFrac,'%.3f') ' %FP/(FP+A). ' denat]);
+                fprintf(fid,'%s',[', integral flux ' num2str(obj.intFlux,'%.4G') ' cm, burn-up ' num2str(obj.FIMA,'%.3f') ' %FIMA or ' num2str(obj.FPFrac,'%.3f') ' %FP/(FP+A). ' denat]);
             else
-                fprintf(fid,'%s\n',['Material ''' obj.name ''', volume ' num2str(obj.volume,'%.4G')...
-                    ' cm3, time ' num2str(SYS.nowTime(end),'%.4G') ' EFPD.']);
+                fprintf(fid,'%s\n','.');
             end
 
             printFmt=struct('header',[],'content',[],'line',[]);
