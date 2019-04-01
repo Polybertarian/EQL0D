@@ -369,7 +369,7 @@ classdef Mat
             if obj.isBurned
                 fprintf(fid,'%s',[', integral flux ' num2str(obj.intFlux,'%.4G') ' cm, burn-up ' num2str(obj.FIMA,'%.3f') ' %FIMA or ' num2str(obj.FPFrac,'%.3f') ' %FP/(FP+A). ' denat]);
             else
-                fprintf(fid,'%s\n','.']);
+                fprintf(fid,'%s\n','.');
             end
 
             printFmt=struct('header',[],'content',[],'line',[]);
