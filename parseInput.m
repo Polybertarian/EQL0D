@@ -62,28 +62,23 @@ end
 
 %% Reprocessing
 if ~isempty(REP)
-  %%% Create 'dummy' materials for streams
-  matsNeeded=unique({REP.srcMat REP.dstMat}); % materials declared as source/destination for streams
+  matsNeeded=unique({REP.srcMat REP.dstMat}); % Create 'dummy' materials declared as source/destination for streams
   matsExisting={'' MAT.name}; % materials declared in input
   for j=find(~ismember(matsNeeded,matsExisting))
     MAT(end+1)=Mat(matsNeeded{j},0,0,1e6,0,[],[]); % create dummy materials
   end
 
-  %%% Look for continuous/batch reprocessing streams
-  REP=REP([find([REP.isCont]&~[REP.isKeep]) find([REP.isCont]&[REP.isKeep])...
-    find([REP.isBatch]&~[REP.isKeep]) find([REP.isBatch]&[REP.isKeep])]);
-
+  % Look for continuous/batch reprocessing streams
+  REP=REP([find([REP.isCont]&~[REP.isKeep]) find([REP.isCont]&[REP.isKeep]) find([REP.isBatch]&~[REP.isKeep]) find([REP.isBatch]&[REP.isKeep])]);
   SYS.IDX.REP.cont =find([REP.isCont]);
   SYS.IDX.REP.batch=find([REP.isBatch]);
-  SYS.IDX.REP.keep =find([REP.isKeep]);
   SYS.IDX.REP.contKeep=find([REP.isKeep]&[REP.isCont]);
 
-  %%% Identify source and destination material indexes
-  for i=1:length(REP)
+  for i=1:length(REP) % Identify source and destination material indexes
     REP(i).srcMatIdx=REP(i).findSrc({MAT.name});
     REP(i).dstMatIdx=REP(i).findDst({MAT.name});
     REP(i)=REP(i).adaptElements(MAT(1).ZAI);
-    if(~isempty(REP(i).srcMatIdx))
+    if ~isempty(REP(i).srcMatIdx)
       REP(i).srcNucIdx=ismember(MAT(REP(i).srcMatIdx).ZAI,REP(i).elements);
       if REP(i).isKeep
         REP(i).srcNucMass=MAT(REP(i).srcMatIdx).atomicMass(REP(i).srcNucIdx);
@@ -96,9 +91,7 @@ if ~isempty(REP)
       end
     end
   end
-
-  %%% find nuclide positions affected by batch streams
-  for i=SYS.IDX.REP.batch
+  for i=SYS.IDX.REP.batch % find nuclide positions affected by batch streams
     if isempty(REP(i).srcMatIdx)&&~isempty(REP(i).dstMatIdx)
       REP(i).srcNucIdx=false(size(MAT(REP(i).dstMatIdx).ZAI));
       REP(i).dstNucIdx=ismember(MAT(REP(i).dstMatIdx).ZAI,REP(i).elements);
@@ -112,19 +105,15 @@ if ~isempty(REP)
       error('Error: Source and/or Destination not recognized while processing')
     end
   end
-
-  %%% Convert to mass fraction for batch streams
-  for j=SYS.IDX.REP.batch
+  for j=SYS.IDX.REP.batch %%% Convert to mass fraction for batch streams
     if ismember(REP(j).mode,{'keepTotM','keepAM','keepAFPM'})
       REP(j).share=REP(j).share.*MAT(REP(j).dstMatIdx).atomicMass(REP(j).dstNucIdx);
       REP(j).share=REP(j).share/sum(REP(j).share);
     end
   end
-  %%% indexes refering to materials in flux
-
-  SYS.IDX.MAT.cont=find(ismember({MAT.name},unique({REP([REP.isCont]).srcMat REP([REP.isCont]).dstMat})));
-else %no reprocessing
-  SYS.IDX.REP.cont=[];
+  SYS.IDX.MAT.cont=find(ismember({MAT.name},unique({REP([REP.isCont]).srcMat REP([REP.isCont]).dstMat})));  %%% indexes refering to materials in flux
+else
+  SYS.IDX.REP.cont=[]; %no reprocessing
   SYS.IDX.REP.batch=[];
   SYS.IDX.MAT.cont=[];
 end
@@ -142,8 +131,7 @@ for i=SYS.IDX.MAT.cont
   end
 end
 
-%%% material groups
-SYS.IDX.REP.matGroups={};
+SYS.IDX.REP.matGroups={}; % material groups
 i=unique([SYS.IDX.MAT.burn SYS.IDX.MAT.cont]);
 while ~isempty(i)
   SYS.IDX.REP.matGroups{end+1}=i(1);
@@ -159,8 +147,7 @@ while ~isempty(i)
 end
 SYS.IDX.REP.matGroups=[SYS.IDX.REP.matGroups num2cell(SYS.IDX.MAT.decay(~ismember(SYS.IDX.MAT.decay,SYS.IDX.MAT.cont)))];
 
-% streams for each material
-for i=1:length(REP)
+for i=1:length(REP) % streams for each material
   switch REP(i).isCont
     case true
       if ~isempty(REP(i).srcMatIdx)
@@ -179,8 +166,7 @@ for i=1:length(REP)
   end
 end
 
-%% Redox control material indexes
-if OPT.redoxControl
+if OPT.redoxControl %% Redox control material indexes
   SYS.IDX.redoxMat=find(strcmp({MAT.name},OPT.REDOX.materials));
   SYS.IDX.redoxHalide={MAT(SYS.IDX.redoxMat).mainHalide};
   if isfield(OPT.REDOX,'changeElement')
@@ -197,8 +183,7 @@ if OPT.redoxControl
   end
 end
 
-%% Adapt things for materials outside of the flux
-for i=SYS.IDX.MAT.burn
+for i=SYS.IDX.MAT.burn % Adapt things for materials outside of the flux
   [SYS.MTX.decay{[1 2],i}]=deal([]);
   [SYS.MTX.burn{[1 2],i}]=deal(spalloc(length(SYS.MTX.decay{1,i}),length(SYS.MTX.decay{1,i}),0));
   [SYS.IDX.matZAI{[1 2],i}]=deal([]);
@@ -233,5 +218,4 @@ for i=SYS.IDX.REP.cont
   [SYS.MTX.rep{[1 2],i}]=deal([]);
 end
 [SYS.MTX.total{[1 2]}]=deal([]);
-
 end
