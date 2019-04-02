@@ -40,10 +40,10 @@ function obj = Rep(name,srcMat,dstMat,elements,share,rate,type)
         obj.share=share;
     end
     if ~iscolumn(obj.share)
-        obj.share=obj.share';
+        obj.share=ctranspose(obj.share);
     end
     if ~iscolumn(elements)
-        elements=elements';
+        elements=ctranspose(elements);
     end
     obj.elementsNames=strjoin(ZAI2Name(elements)');
     if any(elements<111)
