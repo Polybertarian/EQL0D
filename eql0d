@@ -2,52 +2,33 @@
 
 USAGE=$'Usage: eql0d (-rRdb) (-n value) <filename1> ... <filenameN>
 	-n <CORES>    to run on <CORES> cores.
-	-b            to run in batch mode: calculations launched in parallel. 
+	-b            to run in batch mode: calculations launched in parallel.
 	-r            to run in restart mode: calculation restarts at last point in time.
 	-R            to run in restart & reset mode: calculation restarts from the beginning.
 	-d            to run in debugging mode: use existing depmtx_*.m files without calling Serpent
         -p            to launch EQL0D, print Material compositions (*.txt and *.serp) and quit
         -v            to run in verbose mode (more detailed log file)'
-CORES=1; RESTART=false; DEBUG=false; BATCH=false; RESET=false; PRINTNQUIT=false; VERBOSE=false;
+_batch=false; _cores=1; _reset=false; _debug=false; _restart=false;  _printnquit=false; _verbose=false;
 
 while getopts "n:rRdbpv" OPT; do
     case $OPT in
-    	b)
-    	   BATCH=true;
-        ;;
-        r)
-           RESTART=true;
-        ;;
-        R)
-           RESET=true;
-        ;;
-        d)
-           DEBUG=true;
-        ;;
-        n)
-           CORES="$OPTARG"
-        ;;
-        p)
-            PRINTNQUIT=true;
-        ;;
-        v)
-	    VERBOSE=true;
-	;;
-        \?)
-           echo "$USAGE" >&2
-           exit 1
-        ;;
-	:)
-	   >&2 echo "Error: Missing parameter for $OPTARG !"
-	   exit 1
-	   ;;
+        b) _batch=true ;;
+        r) _restart=true ;;
+        R) _reset=true ;;
+        d) _debug=true ;;
+        n) _cores="$OPTARG" ;;
+        p) _printnquit=true ;;
+        v) _verbose=true ;;
+        \?) echo "$USAGE" >&2
+        exit 1 ;;
+        :) >&2 echo "Error: Missing parameter for $OPTARG !"
+        exit 1 ;;
     esac
 done
-
 shift $((OPTIND-1))
 
 # Filename check
-if [ -z "$1" ] ; then
+if [[ -z "$1" ]] ; then
 	>&2 echo "Error: no filename given."
 	exit 1
 fi
@@ -56,7 +37,7 @@ EQL0D_COMMAND="Cases={''"
 for file in "$@" ; do
 	EQL0D_COMMAND+=",'$file'"
 done
-EQL0D_COMMAND+="};addpath('$(dirname $0)');Cases(1)=[];EQL0Dlauncher(Cases,$CORES,$VERBOSE,$PRINTNQUIT,$RESTART,$RESET,$DEBUG);exit"
+EQL0D_COMMAND+="};addpath('$(dirname $0)');Cases(1)=[];EQL0Dlauncher(Cases,$_cores,$_verbose,$_printnquit,$_restart,$_reset,$_debug);exit"
 
-matlab -nodisplay -nojvm -nosplash -nodesktop -r $EQL0D_COMMAND &> EQL0D.log &
-exit 0 
+matlab -nodisplay -nojvm -nosplash -nodesktop -r "$EQL0D_COMMAND" &> EQL0D.log &
+exit 0
