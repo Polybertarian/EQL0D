@@ -1,6 +1,17 @@
 #!/bin/bash
 
-USAGE=$'Usage: eql0d (-rRdb) (-n value) <filename1> ... <filenameN>
+function eql0d {
+
+local _usage
+local _cores
+local _reset
+local _debug
+local _restart
+local _print_and_quit
+local _verbose
+local _command
+
+_usage=$'Usage: eql0d (-rRdb) (-n value) <filename1> ... <filenameN>
 	-n <CORES>    to run on <CORES> cores.
 	-b            to run in batch mode: calculations launched in parallel.
 	-r            to run in restart mode: calculation restarts at last point in time.
@@ -8,18 +19,18 @@ USAGE=$'Usage: eql0d (-rRdb) (-n value) <filename1> ... <filenameN>
 	-d            to run in debugging mode: use existing depmtx_*.m files without calling Serpent
         -p            to launch EQL0D, print Material compositions (*.txt and *.serp) and quit
         -v            to run in verbose mode (more detailed log file)'
-_batch=false; _cores=1; _reset=false; _debug=false; _restart=false;  _printnquit=false; _verbose=false;
+_cores=1; _reset=false; _debug=false; _restart=false;  _print_and_quit=false; _verbose=false;
 
-while getopts "n:rRdbpv" OPT; do
+while getopts "n:rRdpv" OPT; do
     case $OPT in
-        b) _batch=true ;;
+#        b) _batch=true ;;
         r) _restart=true ;;
         R) _reset=true ;;
         d) _debug=true ;;
         n) _cores="$OPTARG" ;;
-        p) _printnquit=true ;;
+        p) _print_and_quit=true ;;
         v) _verbose=true ;;
-        \?) echo "$USAGE" >&2
+        \?) echo "${_usage}" >&2
         exit 1 ;;
         :) >&2 echo "Error: Missing parameter for $OPTARG !"
         exit 1 ;;
@@ -33,11 +44,13 @@ if [[ -z "$1" ]] ; then
 	exit 1
 fi
 
-EQL0D_COMMAND="Cases={''"
+_command="Cases={''"
 for file in "$@" ; do
-	EQL0D_COMMAND+=",'$file'"
+	_command+=",'$file'"
 done
-EQL0D_COMMAND+="};addpath('$(dirname $0)');Cases(1)=[];EQL0Dlauncher(Cases,$_cores,$_verbose,$_printnquit,$_restart,$_reset,$_debug);exit"
+_command+="};addpath('$(dirname $0)');Cases(1)=[];EQL0Dlauncher(Cases,$_cores,$_verbose,$_print_and_quit,$_restart,$_reset,$_debug);exit"
 
-matlab -nodisplay -nojvm -nosplash -nodesktop -r "$EQL0D_COMMAND" &> EQL0D.log &
+matlab -nodisplay -nojvm -nosplash -nodesktop -r "$_command" &> EQL0D.log &
 exit 0
+
+}
